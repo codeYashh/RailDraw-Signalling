@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 38" width="24" height="38">
+  <line x1="4" y1="38" x2="20" y2="38" stroke="#0f172a" stroke-width="2"/>
+  <rect x="6" y="8" width="12" height="30" rx="1" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5"/>
+  <path d="M 6 8 Q 12 2 18 8 Z" fill="#eab308" stroke="#0f172a" stroke-width="1.5"/>
+  <text x="12" y="20" font-family="Arial, sans-serif" font-size="5" font-weight="bold" text-anchor="middle" fill="#0f172a">KM</text>
+  <text x="12" y="28" font-family="Arial, sans-serif" font-size="5.5" font-weight="bold" text-anchor="middle" fill="#0f172a">124</text>
+</svg>

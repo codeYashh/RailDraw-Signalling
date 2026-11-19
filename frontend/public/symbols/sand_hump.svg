@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 46 26" width="46" height="26">
+  <line x1="4" y1="18" x2="26" y2="18" stroke="#0f172a" stroke-width="2.5"/>
+  <path d="M 26 18 Q 34 8 42 18 Z" fill="#fde047" stroke="#0f172a" stroke-width="2"/>
+  <line x1="28" y1="18" x2="40" y2="18" stroke="#0f172a" stroke-width="2"/>
+  <text x="34" y="24" font-family="Arial, sans-serif" font-size="5" font-weight="bold" text-anchor="middle" fill="#0f172a">SAND</text>
+</svg>

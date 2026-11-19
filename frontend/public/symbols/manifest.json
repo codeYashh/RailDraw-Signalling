@@ -1,0 +1,1188 @@
+{
+  "standard": "Indian Railways Signal Engineering Manual (IRSEM) & RDSO Standard S&T Symbols",
+  "version": "1.0.0",
+  "updatedAt": "2026-11-15T20:41:00Z",
+  "totalSymbols": 45,
+  "symbols": [
+    {
+      "id": "cls_2aspect",
+      "name": "2-Aspect Colour Light Signal",
+      "category": "Signals",
+      "description": "Two aspect colour light signal (Red/Green) mounted on tubular mast with circular background plate.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. SD-10021",
+      "defaultSize": {
+        "width": 32,
+        "height": 48
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 48
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "cls",
+        "2-aspect",
+        "running"
+      ],
+      "svgFile": "cls_2aspect.svg"
+    },
+    {
+      "id": "cls_3aspect",
+      "name": "3-Aspect Colour Light Signal",
+      "category": "Signals",
+      "description": "Three aspect colour light signal (Red/Yellow/Green) for multi-aspect signalling.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. SD-10022",
+      "defaultSize": {
+        "width": 32,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "cls",
+        "3-aspect",
+        "mabs"
+      ],
+      "svgFile": "cls_3aspect.svg"
+    },
+    {
+      "id": "cls_4aspect",
+      "name": "4-Aspect Colour Light Signal",
+      "category": "Signals",
+      "description": "Four aspect colour light signal (Red/Yellow/Double Yellow/Green) for high density routes.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. SD-10023",
+      "defaultSize": {
+        "width": 34,
+        "height": 64
+      },
+      "anchorPoint": {
+        "x": 17,
+        "y": 64
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "cls",
+        "4-aspect",
+        "automatic signalling"
+      ],
+      "svgFile": "cls_4aspect.svg"
+    },
+    {
+      "id": "signal_semaphore",
+      "name": "Semaphore Stop Signal",
+      "category": "Signals",
+      "description": "Mechanical semaphore stop signal with horizontal square-ended red arm and white stripe.",
+      "sourceReference": "IRSEM Part II / RDSO S-3286",
+      "defaultSize": {
+        "width": 44,
+        "height": 52
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 52
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "semaphore",
+        "mechanical"
+      ],
+      "svgFile": "signal_semaphore.svg"
+    },
+    {
+      "id": "signal_shunt",
+      "name": "Shunt Signal (Position Light / Disc)",
+      "category": "Signals",
+      "description": "Position light shunt signal / disc shunt signal for shunting movements.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. SD-10041",
+      "defaultSize": {
+        "width": 30,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 15,
+        "y": 36
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "shunt",
+        "yard"
+      ],
+      "svgFile": "signal_shunt.svg"
+    },
+    {
+      "id": "signal_calling_on",
+      "name": "Calling-On Signal",
+      "category": "Signals",
+      "description": "Calling-on signal mounted beneath a stop signal with prominent circular 'C' marker disc.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. SD-10025",
+      "defaultSize": {
+        "width": 32,
+        "height": 40
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 40
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "subsidiary",
+        "calling-on"
+      ],
+      "svgFile": "signal_calling_on.svg"
+    },
+    {
+      "id": "signal_repeater",
+      "name": "Repeater Signal",
+      "category": "Signals",
+      "description": "Repeater signal with illuminated letter 'R' marker board indicating aspect of ahead signal.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. SD-10028",
+      "defaultSize": {
+        "width": 32,
+        "height": 48
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 48
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "repeater",
+        "sighting"
+      ],
+      "svgFile": "signal_repeater.svg"
+    },
+    {
+      "id": "signal_home",
+      "name": "Home Signal",
+      "category": "Signals",
+      "description": "First stop signal controlling entry of train into station yard.",
+      "sourceReference": "IRSEM Part II / RDSO Standard Signalling Plan",
+      "defaultSize": {
+        "width": 32,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "home",
+        "first stop"
+      ],
+      "svgFile": "signal_home.svg"
+    },
+    {
+      "id": "signal_starter",
+      "name": "Starter Signal",
+      "category": "Signals",
+      "description": "Station departure signal controlling movement from a line to main line/block section.",
+      "sourceReference": "IRSEM Part II / RDSO Standard Signalling Plan",
+      "defaultSize": {
+        "width": 32,
+        "height": 52
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 52
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "starter",
+        "departure"
+      ],
+      "svgFile": "signal_starter.svg"
+    },
+    {
+      "id": "signal_advance_starter",
+      "name": "Advance Starter Signal",
+      "category": "Signals",
+      "description": "Last stop signal controlling entry into the absolute block section.",
+      "sourceReference": "IRSEM Part II / RDSO Standard Signalling Plan",
+      "defaultSize": {
+        "width": 36,
+        "height": 52
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 52
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "advance starter",
+        "last stop"
+      ],
+      "svgFile": "signal_advance_starter.svg"
+    },
+    {
+      "id": "signal_outer",
+      "name": "Outer Signal",
+      "category": "Signals",
+      "description": "Outer stop signal in two-aspect territory, placed at adequate braking distance from home.",
+      "sourceReference": "IRSEM Part II / RDSO Signalling Rules",
+      "defaultSize": {
+        "width": 32,
+        "height": 50
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 50
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "outer",
+        "two-aspect"
+      ],
+      "svgFile": "signal_outer.svg"
+    },
+    {
+      "id": "signal_distant",
+      "name": "Distant Signal",
+      "category": "Signals",
+      "description": "Permissive signal with circular 'P' marker board indicating aspect of first stop signal.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. SD-10024",
+      "defaultSize": {
+        "width": 34,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 17,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "distant",
+        "permissive",
+        "p-marker"
+      ],
+      "svgFile": "signal_distant.svg"
+    },
+    {
+      "id": "signal_ibs",
+      "name": "Intermediate Block Signal (IBS)",
+      "category": "Signals",
+      "description": "Intermediate block stop signal with circular 'IB' marker disc dividing long block section.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. SD-10029",
+      "defaultSize": {
+        "width": 34,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 17,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "ibs",
+        "intermediate block"
+      ],
+      "svgFile": "signal_ibs.svg"
+    },
+    {
+      "id": "signal_gate",
+      "name": "Gate Signal",
+      "category": "Signals",
+      "description": "Level crossing interlocked gate stop signal with circular 'G' marker disc.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. SD-10027",
+      "defaultSize": {
+        "width": 34,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 17,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "gate",
+        "level crossing",
+        "g-marker"
+      ],
+      "svgFile": "signal_gate.svg"
+    },
+    {
+      "id": "point_machine",
+      "name": "Point Machine (Electric)",
+      "category": "Points & Machines",
+      "description": "Electrically operated point machine with throw rod, detection rod, and lock rod connections.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. S-10880",
+      "defaultSize": {
+        "width": 40,
+        "height": 32
+      },
+      "anchorPoint": {
+        "x": 20,
+        "y": 16
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "point",
+        "machine",
+        "interlocking",
+        "turnout"
+      ],
+      "svgFile": "point_machine.svg"
+    },
+    {
+      "id": "point_turnout",
+      "name": "Point Switch / Turnout",
+      "category": "Points & Machines",
+      "description": "1 in 8.5 / 1 in 12 single turnout point with curved diverging switch rail.",
+      "sourceReference": "IRSEM Part II / Track Signalling Plan",
+      "defaultSize": {
+        "width": 54,
+        "height": 28
+      },
+      "anchorPoint": {
+        "x": 10,
+        "y": 20
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "track",
+        "point",
+        "turnout",
+        "switch"
+      ],
+      "svgFile": "point_turnout.svg"
+    },
+    {
+      "id": "derailing_switch",
+      "name": "Derailing Switch (Trap)",
+      "category": "Points & Machines",
+      "description": "Derailing switch / trap switch provided on sidings to isolate running lines.",
+      "sourceReference": "IRSEM Part II / RDSO Standard Signalling Plan",
+      "defaultSize": {
+        "width": 44,
+        "height": 28
+      },
+      "anchorPoint": {
+        "x": 22,
+        "y": 14
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "point",
+        "trap",
+        "derail",
+        "safety"
+      ],
+      "svgFile": "derailing_switch.svg"
+    },
+    {
+      "id": "crossing_diamond",
+      "name": "Diamond Crossing",
+      "category": "Points & Machines",
+      "description": "Diamond crossing intersection of two railway tracks without slips.",
+      "sourceReference": "IRSEM Part II / Track Standards",
+      "defaultSize": {
+        "width": 40,
+        "height": 40
+      },
+      "anchorPoint": {
+        "x": 20,
+        "y": 20
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "crossing",
+        "diamond",
+        "track"
+      ],
+      "svgFile": "crossing_diamond.svg"
+    },
+    {
+      "id": "track_circuit_boundary",
+      "name": "Track Circuit Boundary (GJ)",
+      "category": "Track Circuits & Axle Counters",
+      "description": "Glued insulated rail joint (GJ) / block joint separating adjacent DC/audio-frequency track circuits.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. S-22101",
+      "defaultSize": {
+        "width": 24,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 12,
+        "y": 18
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "track circuit",
+        "glued joint",
+        "insulated rail joint"
+      ],
+      "svgFile": "track_circuit_boundary.svg"
+    },
+    {
+      "id": "axle_counter",
+      "name": "Axle Counter Track Device",
+      "category": "Track Circuits & Axle Counters",
+      "description": "SSDAC / MSDAC high frequency track device (Tx/Rx heads) clamped to web of rail.",
+      "sourceReference": "IRSEM Part II / RDSO/SPN/177",
+      "defaultSize": {
+        "width": 36,
+        "height": 32
+      },
+      "anchorPoint": {
+        "x": 18,
+        "y": 16
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "axle counter",
+        "track device",
+        "detection"
+      ],
+      "svgFile": "axle_counter.svg"
+    },
+    {
+      "id": "level_crossing_interlocked",
+      "name": "Level Crossing Gate (Interlocked)",
+      "category": "Level Crossings",
+      "description": "Manned interlocked level crossing gate with electrically/mechanically operated lifting barriers.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. SD-10060",
+      "defaultSize": {
+        "width": 48,
+        "height": 40
+      },
+      "anchorPoint": {
+        "x": 24,
+        "y": 20
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "level crossing",
+        "lc gate",
+        "barrier",
+        "interlocked"
+      ],
+      "svgFile": "level_crossing_interlocked.svg"
+    },
+    {
+      "id": "level_crossing_unmanned",
+      "name": "Level Crossing (Unmanned)",
+      "category": "Level Crossings",
+      "description": "Unmanned level crossing warning mark on track signalling plan.",
+      "sourceReference": "IRSEM Part II / RDSO Signalling Plan",
+      "defaultSize": {
+        "width": 36,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 18,
+        "y": 18
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "level crossing",
+        "unmanned"
+      ],
+      "svgFile": "level_crossing_unmanned.svg"
+    },
+    {
+      "id": "location_box_single",
+      "name": "Location Box (Single Apparatus Case)",
+      "category": "Location Boxes & Housing",
+      "description": "Single apparatus case location box for trackside relays, batteries, transformers and cable terminations.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. S-11500",
+      "defaultSize": {
+        "width": 36,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 18,
+        "y": 36
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "location box",
+        "apparatus case",
+        "cable",
+        "l1",
+        "l12"
+      ],
+      "svgFile": "location_box_single.svg"
+    },
+    {
+      "id": "location_box_double",
+      "name": "Location Box (Half / Double Apparatus Case)",
+      "category": "Location Boxes & Housing",
+      "description": "Double apparatus case location box for multi-cable terminations and auto signalling sections.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. S-11501",
+      "defaultSize": {
+        "width": 48,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 24,
+        "y": 36
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "location box",
+        "double apparatus case",
+        "relay"
+      ],
+      "svgFile": "location_box_double.svg"
+    },
+    {
+      "id": "junction_box",
+      "name": "Junction Box",
+      "category": "Location Boxes & Housing",
+      "description": "Weatherproof trackside junction box for cable branching and disconnection.",
+      "sourceReference": "IRSEM Part II / RDSO S-11505",
+      "defaultSize": {
+        "width": 28,
+        "height": 28
+      },
+      "anchorPoint": {
+        "x": 14,
+        "y": 28
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "junction box",
+        "cable branching",
+        "jb"
+      ],
+      "svgFile": "junction_box.svg"
+    },
+    {
+      "id": "cable_termination_box",
+      "name": "Cable Termination Box (CTB)",
+      "category": "Location Boxes & Housing",
+      "description": "Cable termination box with disconnection links and WAGO/fuse terminals.",
+      "sourceReference": "IRSEM Part II / RDSO S-11508",
+      "defaultSize": {
+        "width": 32,
+        "height": 32
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 32
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "ctb",
+        "cable termination",
+        "rack"
+      ],
+      "svgFile": "cable_termination_box.svg"
+    },
+    {
+      "id": "relay_hut",
+      "name": "Relay Hut",
+      "category": "Location Boxes & Housing",
+      "description": "Pre-fabricated / brick relay hut for housing vital electronic interlocking and auto-section equipment.",
+      "sourceReference": "IRSEM Part II / RDSO Standard Relay Hut",
+      "defaultSize": {
+        "width": 44,
+        "height": 38
+      },
+      "anchorPoint": {
+        "x": 22,
+        "y": 38
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "relay hut",
+        "auto section",
+        "interlocking",
+        "housing"
+      ],
+      "svgFile": "relay_hut.svg"
+    },
+    {
+      "id": "relay_room",
+      "name": "Station Relay Room",
+      "category": "Location Boxes & Housing",
+      "description": "Station building relay room housing Q-series relays, EI racks and data logger.",
+      "sourceReference": "IRSEM Part II / Railway Standards",
+      "defaultSize": {
+        "width": 48,
+        "height": 40
+      },
+      "anchorPoint": {
+        "x": 24,
+        "y": 40
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "relay room",
+        "ei",
+        "station"
+      ],
+      "svgFile": "relay_room.svg"
+    },
+    {
+      "id": "signal_cabin",
+      "name": "Signal Cabin",
+      "category": "Location Boxes & Housing",
+      "description": "Elevated / ground signal cabin with operating panel and visual yard oversight.",
+      "sourceReference": "IRSEM Part II / RDSO Signalling Plan",
+      "defaultSize": {
+        "width": 46,
+        "height": 44
+      },
+      "anchorPoint": {
+        "x": 23,
+        "y": 44
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal cabin",
+        "tower",
+        "station master"
+      ],
+      "svgFile": "signal_cabin.svg"
+    },
+    {
+      "id": "station_building",
+      "name": "Station Building",
+      "category": "Location Boxes & Housing",
+      "description": "Main railway station passenger and operational building.",
+      "sourceReference": "IRSEM Part II / IR Architecture",
+      "defaultSize": {
+        "width": 54,
+        "height": 38
+      },
+      "anchorPoint": {
+        "x": 27,
+        "y": 38
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "station",
+        "building",
+        "sm office"
+      ],
+      "svgFile": "station_building.svg"
+    },
+    {
+      "id": "cable_marker_route",
+      "name": "Cable Route Marker Post",
+      "category": "Cable Markers & Joints",
+      "description": "Reinforced concrete cable route marker post planted along cable trench at every 50m.",
+      "sourceReference": "IRSEM Para 15.11 / RDSO Drawing No. SD-10080",
+      "defaultSize": {
+        "width": 26,
+        "height": 40
+      },
+      "anchorPoint": {
+        "x": 13,
+        "y": 40
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "marker",
+        "cable route",
+        "concrete post"
+      ],
+      "svgFile": "cable_marker_route.svg"
+    },
+    {
+      "id": "cable_marker_joint",
+      "name": "Cable Joint Marker Post",
+      "category": "Cable Markers & Joints",
+      "description": "Post indicating exact location of straight-through cable thermo-shrink joint in ground.",
+      "sourceReference": "IRSEM Para 15.11 / RDSO Drawing No. SD-10081",
+      "defaultSize": {
+        "width": 26,
+        "height": 40
+      },
+      "anchorPoint": {
+        "x": 13,
+        "y": 40
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "marker",
+        "joint",
+        "cable joint",
+        "splice"
+      ],
+      "svgFile": "cable_marker_joint.svg"
+    },
+    {
+      "id": "cable_marker_track_crossing",
+      "name": "Track Crossing Cable Marker",
+      "category": "Cable Markers & Joints",
+      "description": "Marker on both sides of track crossing indicating GI/RCC pipe sleeve location.",
+      "sourceReference": "IRSEM Para 15.11 / RDSO Drawing No. SD-10082",
+      "defaultSize": {
+        "width": 28,
+        "height": 40
+      },
+      "anchorPoint": {
+        "x": 14,
+        "y": 40
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "marker",
+        "track crossing",
+        "pipe"
+      ],
+      "svgFile": "cable_marker_track_crossing.svg"
+    },
+    {
+      "id": "cable_termination",
+      "name": "Cable Termination Point",
+      "category": "Cable Markers & Joints",
+      "description": "Point where main outdoor cable pothead or termination is made.",
+      "sourceReference": "IRSEM Chapter 15 / S&T Practice",
+      "defaultSize": {
+        "width": 24,
+        "height": 24
+      },
+      "anchorPoint": {
+        "x": 12,
+        "y": 12
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "termination",
+        "cable pothead"
+      ],
+      "svgFile": "cable_termination.svg"
+    },
+    {
+      "id": "earth_pit",
+      "name": "Earth Pit (Maintenance-Free)",
+      "category": "Protection & Grounding",
+      "description": "Maintenance-free copper-bonded earth electrode with test link chamber for signalling equipment.",
+      "sourceReference": "IRSEM Chapter 19 / RDSO/SPN/197",
+      "defaultSize": {
+        "width": 32,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 36
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "earth pit",
+        "grounding",
+        "protection"
+      ],
+      "svgFile": "earth_pit.svg"
+    },
+    {
+      "id": "lightning_arrestor",
+      "name": "Lightning Arrestor / SPD",
+      "category": "Protection & Grounding",
+      "description": "Class B & C Surge Protection Device for signalling transmission lines.",
+      "sourceReference": "IRSEM Chapter 19 / RDSO Guidelines",
+      "defaultSize": {
+        "width": 28,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 14,
+        "y": 36
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "spd",
+        "surge",
+        "lightning"
+      ],
+      "svgFile": "lightning_arrestor.svg"
+    },
+    {
+      "id": "block_instrument",
+      "name": "Block Instrument",
+      "category": "Civil & Track Infrastructure",
+      "description": "Double line lock & block instrument / Daido tokenless block instrument.",
+      "sourceReference": "IRSEM Part II / RDSO S-10090",
+      "defaultSize": {
+        "width": 36,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 18,
+        "y": 36
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "block",
+        "instrument",
+        "tokenless"
+      ],
+      "svgFile": "block_instrument.svg"
+    },
+    {
+      "id": "train_indicator",
+      "name": "Train Indicator (TDI)",
+      "category": "Civil & Track Infrastructure",
+      "description": "Track occupancy / train arrival direction indicator for cabins.",
+      "sourceReference": "IRSEM Part II / Signalling Standards",
+      "defaultSize": {
+        "width": 32,
+        "height": 32
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 16
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "indicator",
+        "tdi"
+      ],
+      "svgFile": "train_indicator.svg"
+    },
+    {
+      "id": "platform",
+      "name": "Passenger Platform Edge",
+      "category": "Civil & Track Infrastructure",
+      "description": "High level passenger platform edge along track.",
+      "sourceReference": "IR Engineering Code / Drawing Standards",
+      "defaultSize": {
+        "width": 50,
+        "height": 24
+      },
+      "anchorPoint": {
+        "x": 25,
+        "y": 20
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "platform",
+        "station",
+        "civil"
+      ],
+      "svgFile": "platform.svg"
+    },
+    {
+      "id": "bridge",
+      "name": "Railway Bridge",
+      "category": "Civil & Track Infrastructure",
+      "description": "Steel girder / RCC bridge crossing river, nallah or road.",
+      "sourceReference": "IR Bridge Manual / Drawing Conventions",
+      "defaultSize": {
+        "width": 56,
+        "height": 32
+      },
+      "anchorPoint": {
+        "x": 28,
+        "y": 16
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "bridge",
+        "structure",
+        "girder"
+      ],
+      "svgFile": "bridge.svg"
+    },
+    {
+      "id": "culvert",
+      "name": "Culvert Crossing",
+      "category": "Civil & Track Infrastructure",
+      "description": "Pipe or slab culvert under railway embankment.",
+      "sourceReference": "IR Bridge Manual / RDSO S-10075",
+      "defaultSize": {
+        "width": 44,
+        "height": 28
+      },
+      "anchorPoint": {
+        "x": 22,
+        "y": 14
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "culvert",
+        "drainage",
+        "pipe"
+      ],
+      "svgFile": "culvert.svg"
+    },
+    {
+      "id": "km_post",
+      "name": "Kilometre Post",
+      "category": "Civil & Track Infrastructure",
+      "description": "Trackside kilometre post indicating railway route chainage.",
+      "sourceReference": "IR Permanent Way Manual",
+      "defaultSize": {
+        "width": 24,
+        "height": 38
+      },
+      "anchorPoint": {
+        "x": 12,
+        "y": 38
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "km post",
+        "chainage",
+        "marker"
+      ],
+      "svgFile": "km_post.svg"
+    },
+    {
+      "id": "sighting_board",
+      "name": "Signal Sighting Board",
+      "category": "Signals",
+      "description": "Passenger / Goods warning board placed at 1000m before first stop signal.",
+      "sourceReference": "IRSEM Part II / RDSO SD-10035",
+      "defaultSize": {
+        "width": 36,
+        "height": 42
+      },
+      "anchorPoint": {
+        "x": 18,
+        "y": 42
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "sighting board",
+        "warning",
+        "board"
+      ],
+      "svgFile": "sighting_board.svg"
+    },
+    {
+      "id": "sand_hump",
+      "name": "Sand Hump",
+      "category": "Points & Machines",
+      "description": "Safety siding terminating in a mound of sand to stop runaway vehicles.",
+      "sourceReference": "IRSEM Part II / RDSO Signalling Plan",
+      "defaultSize": {
+        "width": 46,
+        "height": 26
+      },
+      "anchorPoint": {
+        "x": 8,
+        "y": 18
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "sand hump",
+        "overrun",
+        "safety siding"
+      ],
+      "svgFile": "sand_hump.svg"
+    },
+    {
+      "id": "buffer_stop",
+      "name": "Buffer Stop",
+      "category": "Civil & Track Infrastructure",
+      "description": "Track buffer stop / friction buffer at dead end of track.",
+      "sourceReference": "IRSEM Part II / RDSO Drawing No. S-10098",
+      "defaultSize": {
+        "width": 34,
+        "height": 30
+      },
+      "anchorPoint": {
+        "x": 17,
+        "y": 20
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "buffer stop",
+        "dead end",
+        "terminal"
+      ],
+      "svgFile": "buffer_stop.svg"
+    }
+  ]
+}

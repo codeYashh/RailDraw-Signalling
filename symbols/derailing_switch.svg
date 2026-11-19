@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 28" width="44" height="28">
+  <line x1="2" y1="14" x2="42" y2="14" stroke="#0f172a" stroke-width="2"/>
+  <line x1="14" y1="14" x2="28" y2="6" stroke="#ef4444" stroke-width="3"/>
+  <circle cx="14" cy="14" r="2.5" fill="#0f172a"/>
+  <text x="22" y="24" font-family="Arial, sans-serif" font-size="6.5" font-weight="bold" text-anchor="middle" fill="#0f172a">DS</text>
+</svg>

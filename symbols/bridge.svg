@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 32" width="56" height="32">
+  <line x1="2" y1="16" x2="54" y2="16" stroke="#0f172a" stroke-width="3"/>
+  <polygon points="10,8 10,24 16,16" fill="#64748b"/>
+  <polygon points="46,8 46,24 40,16" fill="#64748b"/>
+  <line x1="12" y1="6" x2="44" y2="6" stroke="#0f172a" stroke-width="2"/>
+  <line x1="12" y1="26" x2="44" y2="26" stroke="#0f172a" stroke-width="2"/>
+  <text x="28" y="22" font-family="Arial, sans-serif" font-size="6" font-weight="bold" text-anchor="middle" fill="#0f172a">BRIDGE</text>
+</svg>

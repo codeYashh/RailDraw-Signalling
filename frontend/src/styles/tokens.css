@@ -1,0 +1,135 @@
+/* RailDraw Design System Tokens
+ * Palette: Single Primary (Steel Navy), Neutral Slate Scale, One Sparing Accent (Signal Amber)
+ * Spacing: 4px / 8px base grid
+ * Radii: 6px (sm), 8px (md), 12px (lg)
+ * Shadows: 2 subtle elevation levels (no glow, no gradients, no glassmorphism)
+ */
+
+:root {
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'Cascadia Mono', 'Consolas', monospace;
+
+  /* Light Surface & Neutrals */
+  --surface-page: #f6f7f9;
+  --surface-card: #ffffff;
+  --surface-subtle: #eef1f5;
+  --surface-hover: #e5eaf0;
+  --surface-active: #dce3ec;
+
+  /* Borders */
+  --border-default: #d1d9e2;
+  --border-subtle: #e5ebf1;
+  --border-strong: #9aa7b8;
+
+  /* Text / Ink (WCAG AA compliant) */
+  --ink-primary: #111827;
+  --ink-secondary: #374151;
+  --ink-muted: #556171;
+  --ink-inverse: #ffffff;
+
+  /* Single Primary Color — Indian Railways Steel Navy */
+  --primary: #0f2942;
+  --primary-hover: #173b5e;
+  --primary-active: #0a1d30;
+  --primary-subtle: #e8eff6;
+  --primary-border: #bfd0e2;
+  --primary-ink: #ffffff;
+
+  /* Sparing Accent — Signal Amber */
+  --accent: #b45309;
+  --accent-solid: #d97706;
+  --accent-subtle: #fef3c7;
+  --accent-border: #f59e0b;
+
+  /* Semantic Status */
+  --status-success: #15803d;
+  --status-success-bg: #f0fdf4;
+  --status-success-border: #bbf7d0;
+
+  --status-warning: #b45309;
+  --status-warning-bg: #fffbeb;
+  --status-warning-border: #fde68a;
+
+  --status-error: #b91c1c;
+  --status-error-bg: #fef2f2;
+  --status-error-border: #fecaca;
+
+  /* Canvas & Chrome */
+  --canvas-backdrop: #e6eaef;
+  --chrome-bar: #0f2942;
+  --chrome-bar-border: #0a1d30;
+  --chrome-ink: #f8fafc;
+  --chrome-ink-muted: #cbd5e1;
+
+  /* Corner Radii (3 values only) */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Shadows (2 levels only) */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.14);
+
+  /* Focus ring */
+  --focus-ring: #1d4ed8;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 180ms ease;
+}
+
+.theme-dark {
+  --surface-page: #0e141b;
+  --surface-card: #151d27;
+  --surface-subtle: #1c2633;
+  --surface-hover: #233040;
+  --surface-active: #2a394c;
+
+  --border-default: #2c394a;
+  --border-subtle: #202b38;
+  --border-strong: #46576d;
+
+  --ink-primary: #f1f5f9;
+  --ink-secondary: #cbd5e1;
+  --ink-muted: #93a3b8;
+  --ink-inverse: #0e141b;
+
+  /* Primary adapted for dark surfaces (WCAG AA with white text) */
+  --primary: #2563a6;
+  --primary-hover: #2f74bf;
+  --primary-active: #1e528a;
+  --primary-subtle: #152940;
+  --primary-border: #2c5178;
+  --primary-ink: #ffffff;
+
+  /* Sparing Accent */
+  --accent: #f59e0b;
+  --accent-solid: #d97706;
+  --accent-subtle: #2b2112;
+  --accent-border: #784b14;
+
+  /* Semantic Status */
+  --status-success: #4ade80;
+  --status-success-bg: #11281b;
+  --status-success-border: #1e4d32;
+
+  --status-warning: #fbbf24;
+  --status-warning-bg: #2b2112;
+  --status-warning-border: #784b14;
+
+  --status-error: #f87171;
+  --status-error-bg: #2c1518;
+  --status-error-border: #6b2229;
+
+  --canvas-backdrop: #111822;
+  --chrome-bar: #151d27;
+  --chrome-bar-border: #2c394a;
+  --chrome-ink: #f1f5f9;
+  --chrome-ink-muted: #93a3b8;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.32);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.48);
+
+  --focus-ring: #60a5fa;
+}

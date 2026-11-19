@@ -1,0 +1,140 @@
+{
+  "name": "Indian Railways Signal Engineering Manual (IRSEM) S&T Cable Laying Rules",
+  "code": "IRSEM-CH15-2024",
+  "version": "2.4",
+  "authority": "Railway Board & RDSO Lucknow",
+  "units": {
+    "length": "metres",
+    "depth": "metres",
+    "conductorSize": "sq mm"
+  },
+  "depthRules": [
+    {
+      "method": "Normal Trenching",
+      "minDepth": 1.0,
+      "recommendedDepth": 1.0,
+      "reference": "IRSEM Para 15.5.1",
+      "description": "Standard cable trench depth in normal soil along railway alignment"
+    },
+    {
+      "method": "Track crossing",
+      "minDepth": 1.2,
+      "recommendedDepth": 1.2,
+      "reference": "IRSEM Para 15.5.3 & RDSO/SPN/196",
+      "description": "Depth below bottom of rail/sleeper under track crossings"
+    },
+    {
+      "method": "Rail crossing",
+      "minDepth": 1.2,
+      "recommendedDepth": 1.2,
+      "reference": "IRSEM Para 15.5.3",
+      "description": "Depth under running rail crossings"
+    },
+    {
+      "method": "Road crossing",
+      "minDepth": 1.0,
+      "recommendedDepth": 1.0,
+      "reference": "IRSEM Para 15.5.4",
+      "description": "Depth below road surface with mandatory pipe casing extending 1m either side"
+    },
+    {
+      "method": "Trenchless-HDD",
+      "minDepth": 1.5,
+      "recommendedDepth": 2.0,
+      "reference": "Railway Board Policy on HDD / RDSO Guidelines",
+      "description": "Depth for horizontal directional drilling under formation or tracks"
+    },
+    {
+      "method": "Rocky terrain",
+      "minDepth": 0.8,
+      "recommendedDepth": 0.8,
+      "reference": "IRSEM Para 15.5.2",
+      "description": "Minimum depth in hard rock with concrete protective cover"
+    }
+  ],
+  "layingMethodConstraints": {
+    "Track crossing": {
+      "pipeRequired": true,
+      "allowedPipes": ["GI Pipe", "RCC Pipe", "HDPE Pipe", "Trenchless-HDD"],
+      "message": "Track crossings must be provided with GI/RCC/HDPE pipe encasement (IRSEM 15.5.3)."
+    },
+    "Road crossing": {
+      "pipeRequired": true,
+      "allowedPipes": ["GI Pipe", "RCC Pipe", "HDPE Pipe", "Trenchless-HDD"],
+      "message": "Road crossings must have protective pipe casing (IRSEM 15.5.4)."
+    },
+    "Culvert crossing": {
+      "pipeRequired": true,
+      "allowedPipes": ["GI Pipe", "Cable Trough", "Cable Tray", "HDPE Pipe"],
+      "message": "Culvert crossings should use GI pipe or cable trough securely clamped."
+    },
+    "Along Bridge": {
+      "pipeRequired": true,
+      "allowedPipes": ["Cable Trough", "Cable Tray", "GI Pipe"],
+      "message": "Bridge runs must be supported on perforated cable tray/trough with hold-down brackets."
+    }
+  },
+  "protectionSpecs": {
+    "sandBeddingThicknessMm": 50,
+    "sandCoverThicknessMm": 50,
+    "protectiveCoverType": "Class II Bricks laid flat or Precast RCC Slabs (300x150x50mm)",
+    "markerIntervalMetres": 50,
+    "powerSeparationMetres": 0.5
+  },
+  "standardCores": [2, 4, 6, 8, 12, 18, 24, 30],
+  "standardSizesSqMm": [1.5, 2.5, 4.0, 6.0, 10.0, 16.0, 25.0, 50.0, 70.0],
+  "defaultNotes": [
+    "1. All dimensions are in metres unless specified otherwise.",
+    "2. The cable shall be laid at a minimum depth of 1.0 m below ground level in normal soil and 1.2 m below rail level at track crossings as per IRSEM Chapter 15.",
+    "3. A 50 mm layer of clean sieved sand shall be provided below the cables as bedding and 50 mm sand cover above cables before placing protective covers.",
+    "4. Protective RCC slabs / second class bricks shall be placed continuously over the sand cover.",
+    "5. Cable Route Markers (CRM) shall be planted at intervals not exceeding 50 metres, at all route deviations, track crossings, and at cable joints (CJM).",
+    "6. Under track and road crossings, cables shall be taken through approved Class 'B' GI / RCC / HDPE pipes.",
+    "7. Minimum clearance of 500 mm shall be strictly maintained between Signalling/Telecom cables and any Power cables.",
+    "8. Spare cores in signalling cables shall be terminated with proper tags and earthed as per RDSO maintenance instructions.",
+    "9. Trenchless / HDD method where adopted shall maintain minimum 1.5 m depth below rail formation with proper casing."
+  ],
+  "defaultNotesHindi": [
+    "१. अन्यथा विनिर्दिष्ट न होने पर सभी विमाएँ मीटर में हैं।",
+    "२. आईआरएसईएम अध्याय १५ के अनुसार केबल सामान्य मिट्टी में जमीन स्तर से न्यूनतम १.० मीटर नीचे तथा ट्रैक क्रॉसिंग पर रेल स्तर से १.२ मीटर नीचे बिछाई जाएगी।",
+    "३. केबल बिछाने से पहले ५० मिमी छनी हुई बालू की परत तथा केबल के ऊपर ५० मिमी बालू की कुशन दी जाएगी।",
+    "४. बालू कुशन के ऊपर लगातार द्वितीय श्रेणी की ईंटें अथवा आरसीसी स्लैब सुरक्षा हेतु बिछाए जाएंगे।",
+    "५. प्रत्येक ५० मीटर पर, मोड़ों पर, ट्रैक क्रॉसिंग एवं जोड़ों पर केबल रूट मार्कर लगाए जाएंगे।",
+    "६. ट्रैक तथा सड़क क्रॉसिंग पर अनुमोदित जीआई / आरसीसी / एचडीपीई पाइप में केबल ले जाई जाएगी।",
+    "७. सिगनलिंग केबल एवं पावर केबल के मध्य न्यूनतम ५०० मिमी की दूरी अनिवार्य रूप से रखी जाएगी।"
+  ],
+  "drawingBorders": {
+    "A3": {
+      "widthMm": 420,
+      "heightMm": 297,
+      "marginLeftMm": 20,
+      "marginTopMm": 10,
+      "marginRightMm": 10,
+      "marginBottomMm": 10
+    },
+    "A4": {
+      "widthMm": 297,
+      "heightMm": 210,
+      "marginLeftMm": 20,
+      "marginTopMm": 10,
+      "marginRightMm": 10,
+      "marginBottomMm": 10
+    },
+    "A2": {
+      "widthMm": 594,
+      "heightMm": 420,
+      "marginLeftMm": 25,
+      "marginTopMm": 15,
+      "marginRightMm": 15,
+      "marginBottomMm": 15
+    },
+    "A1": {
+      "widthMm": 841,
+      "heightMm": 594,
+      "marginLeftMm": 30,
+      "marginTopMm": 15,
+      "marginRightMm": 15,
+      "marginBottomMm": 15
+    }
+  }
+}

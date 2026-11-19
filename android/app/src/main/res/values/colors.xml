@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="railway_navy">#0D2B45</color>
+    <color name="railway_darknavy">#061524</color>
+    <color name="railway_gold">#F1A208</color>
+    <color name="railway_crimson">#780C10</color>
+    <color name="background_light">#F8FAFC</color>
+    <color name="surface_card">#FFFFFF</color>
+</resources>

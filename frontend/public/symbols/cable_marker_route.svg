@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 40" width="26" height="40">
+  <line x1="4" y1="40" x2="22" y2="40" stroke="#0f172a" stroke-width="2"/>
+  <!-- Tapered concrete post -->
+  <polygon points="6,40 20,40 18,10 8,10" fill="#e2e8f0" stroke="#0f172a" stroke-width="2"/>
+  <polygon points="8,10 13,4 18,10" fill="#94a3b8" stroke="#0f172a" stroke-width="1.5"/>
+  <!-- Directional arrow -->
+  <line x1="9" y1="22" x2="17" y2="22" stroke="#ef4444" stroke-width="2"/>
+  <polygon points="17,20 20,22 17,24" fill="#ef4444"/>
+  <text x="13" y="32" font-family="Arial, sans-serif" font-size="5" font-weight="bold" text-anchor="middle" fill="#0f172a">CRM</text>
+</svg>

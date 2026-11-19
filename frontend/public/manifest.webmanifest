@@ -1,0 +1,30 @@
+{
+  "name": "RailDraw Signalling (\u092d\u093e\u0930\u0924\u0940\u092f \u0930\u0947\u0932 S&T)",
+  "short_name": "RailDraw",
+  "description": "Indian Railways S&T Signalling CAD Drawing Generator with Voice & Hindi input",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#0d2b45",
+  "categories": [
+    "productivity",
+    "utilities",
+    "engineering"
+  ],
+  "lang": "hi-IN",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

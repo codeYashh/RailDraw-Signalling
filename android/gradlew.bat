@@ -1,0 +1,2 @@
+@rem Forward to cached Gradle 9.7.1
+@"C:\Users\User\.gradle\wrapper\dists\gradle-9.7.1-bin\1w1c7tv4s851m17nbqdsro2tv\gradle-9.7.1\bin\gradle.bat" %*

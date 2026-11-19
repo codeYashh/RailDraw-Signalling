@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">RailDraw</string>
+    <string name="describe_hint">Describe your drawing. Example: Cable route from L1 to L12, 500 m: 20 m trenchless, 50 m GI pipe, 430 m normal trenching, 7 cables of 12 core</string>
+    <string name="mic_denied_message">Microphone access was denied. You can still type your drawing details in the box!</string>
+    <string name="generate_drawing">Generate Drawing</string>
+    <string name="save_to_phone">Save to Phone</string>
+    <string name="save_as_pdf">Save as PDF</string>
+    <string name="share">Share</string>
+    <string name="edit">Edit</string>
+    <string name="saved_to_gallery">Saved to Gallery (Pictures/RailDraw)</string>
+    <string name="saved_pdf">Saved PDF to Documents/RailDraw</string>
+</resources>
