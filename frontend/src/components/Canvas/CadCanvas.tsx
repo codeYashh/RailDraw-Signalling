@@ -16,7 +16,7 @@ interface CadCanvasProps {
   onSelectSymbol?: (id: string | null) => void;
   onUpdatePlacedSymbols?: (placedSymbols: PlacedSymbol[]) => void;
   onOpenAddSymbolPicker?: () => void;
-  onOpenEditInfo?: () => void;
+  onOpenEditInfo?: (tab?: 'route' | 'segments' | 'cable' | 'titleBlock') => void;
   onOpenSymbolManager?: () => void;
 }
 
@@ -301,15 +301,30 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
       {/* CAD Viewport Toolbar */}
       <div className="min-h-[52px] px-3 py-1 bg-surface-subtle border-b border-line flex items-center justify-between gap-2 text-ink-primary z-10 shrink-0">
         <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
+          {onToggleEditMode && (
+            <button
+              type="button"
+              onClick={onToggleEditMode}
+              className={`min-h-[40px] px-3 inline-flex items-center gap-1.5 rounded-sm text-xs font-bold border transition-all duration-fast shrink-0 shadow-xs ${
+                isEditMode
+                  ? 'bg-accent text-white border-accent shadow-sm ring-2 ring-accent/30'
+                  : 'bg-surface-card hover:bg-surface-hover active:bg-surface-active text-ink-primary border-line'
+              }`}
+              title="Toggle interactive editing mode for symbols and text"
+            >
+              <Move className="w-3.5 h-3.5" />
+              <span>{isEditMode ? 'Exit Editing' : 'Edit Mode'}</span>
+            </button>
+          )}
           {onOpenEditInfo && (
             <button
               type="button"
-              onClick={onOpenEditInfo}
+              onClick={() => onOpenEditInfo()}
               className="min-h-[40px] px-2.5 inline-flex items-center gap-1.5 bg-primary hover:bg-primary-hover active:bg-primary-active text-primary-ink rounded-sm text-xs font-semibold shadow-xs transition-colors duration-fast shrink-0"
-              title="Edit written text, dimensions, and drawing info"
+              title="Edit written text, names, lengths, and notes"
             >
               <Sliders className="w-3.5 h-3.5" />
-              <span>Edit Info</span>
+              <span>Edit Words &amp; Text</span>
             </button>
           )}
           {onOpenAddSymbolPicker && (
@@ -332,21 +347,6 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
             >
               <Tag className="w-3.5 h-3.5" />
               <span>Symbols ({placedSymbols.length})</span>
-            </button>
-          )}
-          {onToggleEditMode && (
-            <button
-              type="button"
-              onClick={onToggleEditMode}
-              className={`min-h-[40px] px-2.5 inline-flex items-center gap-1.5 rounded-sm text-xs font-semibold border transition-colors duration-fast shrink-0 ${
-                isEditMode
-                  ? 'bg-accent-subtle text-accent border-accent-border'
-                  : 'bg-surface-card hover:bg-surface-hover active:bg-surface-active text-ink-primary border-line'
-              }`}
-              title="Move placed symbols on the sheet"
-            >
-              {isEditMode ? <Check className="w-3.5 h-3.5" /> : <Move className="w-3.5 h-3.5" />}
-              <span>{isEditMode ? 'Done Moving' : 'Move'}</span>
             </button>
           )}
         </div>
@@ -392,9 +392,12 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
       </div>
 
       {isEditMode && (
-        <div className="px-3 py-2 bg-primary-subtle text-ink-primary text-xs font-medium flex items-center justify-between border-b border-primary-border shrink-0">
-          <span>Drag symbols to reposition them on the sheet.</span>
-          <span className="tabular-nums text-ink-secondary">{placedSymbols.length} placed</span>
+        <div className="px-3 py-1.5 bg-accent-subtle text-ink-primary text-xs font-semibold flex items-center justify-between border-b border-accent-border shrink-0 animate-in fade-in">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <span>Editing Mode Active: Drag symbols to reposition, or click any symbol / words on the drawing to re-write.</span>
+          </span>
+          <span className="tabular-nums text-ink-secondary hidden sm:inline">{placedSymbols.length} placed symbol(s)</span>
         </div>
       )}
 
@@ -518,7 +521,22 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
             <text x={VB_WIDTH - 60} y="12" fontSize="11" fontWeight="700" fontFamily="sans-serif" fill="#1E3A8A" textAnchor="end">
               TOTAL: {totalLength} m &nbsp;|&nbsp; {project.metadata.drawingNumber || 'IR/S&T/CAD'}
             </text>
-            <text x="0" y="28" fontSize="13.5" fontWeight="900" fontFamily="sans-serif" fill="#0C2340" letterSpacing="0.3px">
+            <text
+              x="0"
+              y="28"
+              fontSize="13.5"
+              fontWeight="900"
+              fontFamily="sans-serif"
+              fill="#0C2340"
+              letterSpacing="0.3px"
+              style={{ cursor: isEditMode ? 'pointer' : 'default' }}
+              onClick={(e) => {
+                if (isEditMode && onOpenEditInfo) {
+                  e.stopPropagation();
+                  onOpenEditInfo('titleBlock');
+                }
+              }}
+            >
               {cableTypeLabel.toUpperCase()} CABLE ROUTE : {project.startNode.id} TO {project.endNode.id}
             </text>
             <line x1="0" y1="34" x2={VB_WIDTH - 60} y2="34" stroke="#0C2340" strokeWidth="1.2" />
@@ -526,13 +544,33 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
 
           {/* 3. TOP REFERENCE ROW: START/END BADGES & TRACK C/L DESIGNATION */}
           {/* Start Location Node Badge (Top Left) */}
-          <g transform={`translate(${routeStartX}, 63)`} id="badge-start-node">
+          <g
+            transform={`translate(${routeStartX}, 63)`}
+            id="badge-start-node"
+            style={{ cursor: isEditMode ? 'pointer' : 'default' }}
+            onClick={(e) => {
+              if (isEditMode && onOpenEditInfo) {
+                e.stopPropagation();
+                onOpenEditInfo('route');
+              }
+            }}
+          >
             {(() => {
               const labelText = project.startNode.id;
               const badgeW = Math.min(Math.max(labelText.length * 7.2 + 18, 75), 180);
               return (
                 <g>
-                  <rect x={-badgeW / 2} y="-9" width={badgeW} height="18" fill="#0C2340" stroke="#0284C7" strokeWidth="1.5" rx="3" />
+                  <rect
+                    x={-badgeW / 2}
+                    y="-9"
+                    width={badgeW}
+                    height="18"
+                    fill="#0C2340"
+                    stroke={isEditMode ? '#F59E0B' : '#0284C7'}
+                    strokeWidth={isEditMode ? '2' : '1.5'}
+                    strokeDasharray={isEditMode ? '4,2' : undefined}
+                    rx="3"
+                  />
                   <text x="0" y="3.5" fill="#FFFFFF" fontSize="9" fontWeight="800" fontFamily="sans-serif" textAnchor="middle">
                     {labelText}
                   </text>
@@ -543,13 +581,33 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
           </g>
 
           {/* End Location Node Badge (Top Right) */}
-          <g transform={`translate(${routeEndX}, 63)`} id="badge-end-node">
+          <g
+            transform={`translate(${routeEndX}, 63)`}
+            id="badge-end-node"
+            style={{ cursor: isEditMode ? 'pointer' : 'default' }}
+            onClick={(e) => {
+              if (isEditMode && onOpenEditInfo) {
+                e.stopPropagation();
+                onOpenEditInfo('route');
+              }
+            }}
+          >
             {(() => {
               const labelText = project.endNode.id;
               const badgeW = Math.min(Math.max(labelText.length * 7.2 + 18, 75), 180);
               return (
                 <g>
-                  <rect x={-badgeW / 2} y="-9" width={badgeW} height="18" fill="#0C2340" stroke="#0284C7" strokeWidth="1.5" rx="3" />
+                  <rect
+                    x={-badgeW / 2}
+                    y="-9"
+                    width={badgeW}
+                    height="18"
+                    fill="#0C2340"
+                    stroke={isEditMode ? '#F59E0B' : '#0284C7'}
+                    strokeWidth={isEditMode ? '2' : '1.5'}
+                    strokeDasharray={isEditMode ? '4,2' : undefined}
+                    rx="3"
+                  />
                   <text x="0" y="3.5" fill="#FFFFFF" fontSize="9" fontWeight="800" fontFamily="sans-serif" textAnchor="middle">
                     {labelText}
                   </text>
@@ -808,7 +866,16 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
                   : '#F1F5F9';
 
                 const segElement = (
-                  <g key={seg.id || idx}>
+                  <g
+                    key={seg.id || idx}
+                    style={{ cursor: isEditMode ? 'pointer' : 'default' }}
+                    onClick={(e) => {
+                      if (isEditMode && onOpenEditInfo) {
+                        e.stopPropagation();
+                        onOpenEditInfo('segments');
+                      }
+                    }}
+                  >
                     {/* REAL-WORLD ENVIRONMENT ACCORDING TO LAYING METHOD */}
                     {isBridge ? (
                       /* 1. REAL-WORLD BRIDGE: Steel Truss Girder + Masonry Piers + River Water Beneath! */
@@ -1149,7 +1216,16 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
             </g>
 
             {/* Technical Trench Notes (Dynamic from actual cable & route specs) */}
-            <g transform="translate(190, 48)">
+            <g
+              transform="translate(190, 48)"
+              style={{ cursor: isEditMode ? 'pointer' : 'default' }}
+              onClick={(e) => {
+                if (isEditMode && onOpenEditInfo) {
+                  e.stopPropagation();
+                  onOpenEditInfo('cable');
+                }
+              }}
+            >
               <text x="0" y="16" fontSize="13.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">
                 {cableCount} Nos. x {cableCore} Core {cableTypeLabel}
               </text>
@@ -1175,11 +1251,21 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
           </g>
 
           {/* PANEL B: GENERAL NOTES & DYNAMIC SYMBOLS LEGEND (RIGHT) */}
-          <g transform="translate(490, 275)" id="layer-legend-notes">
-            <rect x="0" y="0" width="440" height="230" fill="#F8FAFC" stroke="#0C2340" strokeWidth="1.5" rx="4" />
+          <g
+            transform="translate(490, 275)"
+            id="layer-legend-notes"
+            style={{ cursor: isEditMode ? 'pointer' : 'default' }}
+            onClick={(e) => {
+              if (isEditMode && onOpenEditInfo) {
+                e.stopPropagation();
+                onOpenEditInfo('titleBlock');
+              }
+            }}
+          >
+            <rect x="0" y="0" width="440" height="230" fill="#F8FAFC" stroke={isEditMode ? '#0284C7' : '#0C2340'} strokeWidth={isEditMode ? '1.8' : '1.5'} rx="4" />
             <rect x="0" y="0" width="440" height="28" fill="#0C2340" rx="3" />
             <text x="14" y="19" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="sans-serif" letterSpacing="0.5px">
-              GENERAL NOTES &amp; DRAWING LEGEND
+              GENERAL NOTES &amp; DRAWING LEGEND {isEditMode && '(CLICK TO EDIT)'}
             </text>
 
             {/* Dynamic Graphical Legend based on actual laying methods in THIS drawing */}
@@ -1249,8 +1335,17 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
           </g>
 
           {/* 6. ENGINEERING STAMP / TITLE BLOCK (BOTTOM — Dynamic!) */}
-          <g transform={`translate(30, ${VB_HEIGHT - 65})`}>
-            <rect x="0" y="0" width={VB_WIDTH - 60} height="38" fill="#F1F5F9" stroke="#0C2340" strokeWidth="1.2" />
+          <g
+            transform={`translate(30, ${VB_HEIGHT - 65})`}
+            style={{ cursor: isEditMode ? 'pointer' : 'default' }}
+            onClick={(e) => {
+              if (isEditMode && onOpenEditInfo) {
+                e.stopPropagation();
+                onOpenEditInfo('titleBlock');
+              }
+            }}
+          >
+            <rect x="0" y="0" width={VB_WIDTH - 60} height="38" fill="#F1F5F9" stroke={isEditMode ? '#F59E0B' : '#0C2340'} strokeWidth={isEditMode ? '1.8' : '1.2'} />
             <line x1="180" y1="0" x2="180" y2="38" stroke="#0C2340" strokeWidth="1" />
             <line x1="360" y1="0" x2="360" y2="38" stroke="#0C2340" strokeWidth="1" />
             <line x1="540" y1="0" x2="540" y2="38" stroke="#0C2340" strokeWidth="1" />

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, Plus, Clock, Trash2, Monitor } from 'lucide-react';
+import { X, Plus, Clock, Trash2, Sparkles } from 'lucide-react';
 import { SavedDrawingRecord } from '../../services/storageService';
 import { VandeBharatLogo } from '../Brand/VandeBharatLogo';
 import { Button } from '../ui/Button';
@@ -13,7 +13,8 @@ interface HistoryDrawerProps {
   onSelect: (item: SavedDrawingRecord) => void;
   onDelete: (id: string) => void;
   onNewDrawing: () => void;
-  onSwitchToAdvanced?: () => void;
+  onOpenUpdates?: () => void;
+  isUpdateAvailable?: boolean;
 }
 
 export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
@@ -24,7 +25,8 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
   onSelect,
   onDelete,
   onNewDrawing,
-  onSwitchToAdvanced,
+  onOpenUpdates,
+  isUpdateAvailable,
 }) => {
   useEffect(() => {
     if (!isOpen) return;
@@ -162,21 +164,25 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-3 border-t border-line bg-surface-subtle space-y-2.5">
-          {onSwitchToAdvanced && (
+        <div className="p-3 border-t border-line bg-surface-subtle space-y-2">
+          {onOpenUpdates && (
             <Button
               variant="secondary"
               size="sm"
-              className="w-full"
+              className="w-full relative"
               onClick={() => {
                 onClose();
-                onSwitchToAdvanced();
+                onOpenUpdates();
               }}
             >
-              <Monitor className="w-4 h-4" />
-              <span>Open Engineering Workbench</span>
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              <span>Check for Updates</span>
+              {isUpdateAvailable && (
+                <span className="w-2 h-2 rounded-full bg-status-success animate-ping absolute top-2 right-2" />
+              )}
             </Button>
           )}
+
           <p className="text-xs text-center text-ink-muted">
             Designed by <span className="font-medium text-ink-primary">Yash</span>
           </p>

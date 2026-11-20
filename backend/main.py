@@ -286,7 +286,7 @@ def phone_simulator():
             </div>
 
             <!-- Live RailDraw App Screen -->
-            <iframe id="appIframe" class="screen-frame" src="/app/"></iframe>
+            <iframe id="appIframe" class="screen-frame" src="/app/?v=1.0.2"></iframe>
 
             <!-- Bottom Android Bar -->
             <div class="gesture-bar-container">
@@ -365,7 +365,7 @@ def phone_simulator():
 
         function reloadPhone() {
             const iframe = document.getElementById('appIframe');
-            iframe.src = iframe.src;
+            iframe.src = '/app/?t=' + Date.now();
         }
 
         function injectPrompt(text) {

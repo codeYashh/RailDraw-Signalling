@@ -31,17 +31,17 @@ interface SimpleAppViewProps {
   project: DrawingProject;
   symbols: Record<string, SymbolItem>;
   onUpdateProject: (newProject: DrawingProject) => void;
-  onSwitchToAdvanced?: () => void;
+  onOpenUpdates?: () => void;
+  isUpdateAvailable?: boolean;
 }
 
 export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
   project,
   symbols,
   onUpdateProject,
-  onSwitchToAdvanced,
+  onOpenUpdates,
+  isUpdateAvailable,
 }) => {
-  const [showSplash, setShowSplash] = useState<boolean>(true);
-  const handleSplashFinish = useCallback(() => setShowSplash(false), []);
 
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
@@ -485,8 +485,6 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
 
   return (
     <div className={isDark ? 'theme-dark' : ''}>
-      {showSplash && <SplashScreen isDark={isDark} onFinish={handleSplashFinish} />}
-
       <HistoryDrawer
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
@@ -495,7 +493,8 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
         onSelect={handleOpenHistoryItem}
         onDelete={handleDeleteHistoryItem}
         onNewDrawing={handleNewDrawing}
-        onSwitchToAdvanced={onSwitchToAdvanced}
+        onOpenUpdates={onOpenUpdates}
+        isUpdateAvailable={isUpdateAvailable}
       />
 
       {screen === 'home' ? (
@@ -524,7 +523,6 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
             commitGeneratedProject(approvedProject, label)
           }
           onDismissDimensionProposal={() => setDimensionProposal(null)}
-          onSwitchToAdvanced={onSwitchToAdvanced}
         />
       ) : (
         <>

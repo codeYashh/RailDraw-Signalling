@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Menu, Sun, Moon, Mic, MicOff, ArrowRight, AlertCircle, Monitor, Globe, Radio } from 'lucide-react';
+import { Menu, Sun, Moon, Mic, MicOff, ArrowRight, AlertCircle, Globe, Radio } from 'lucide-react';
 import { ROUTE_PROMPT_EXAMPLES, UI_LIMITS } from '../../constants/uiConstants';
 import { DimensionProposal } from '../../services/promptParser';
 import { DrawingProject } from '../../types/drawing';
@@ -23,7 +23,6 @@ interface HomeComposerProps {
   dimensionProposal: DimensionProposal | null;
   onApproveDimensionProposal: (approvedProject: DrawingProject, label: string) => void;
   onDismissDimensionProposal: () => void;
-  onSwitchToAdvanced?: () => void;
 }
 
 export const HomeComposer: React.FC<HomeComposerProps> = ({
@@ -42,7 +41,6 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
   dimensionProposal,
   onApproveDimensionProposal,
   onDismissDimensionProposal,
-  onSwitchToAdvanced,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const hasPrompt = promptText.trim().length > 0;
@@ -84,17 +82,6 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
         </div>
 
         <div className="flex items-center gap-1">
-          {onSwitchToAdvanced && (
-            <button
-              type="button"
-              onClick={onSwitchToAdvanced}
-              className="hidden sm:inline-flex min-h-[44px] px-3 items-center gap-1.5 rounded-sm text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-hover active:bg-surface-active transition-colors duration-fast"
-              title="Open Desktop Engineering Workbench"
-            >
-              <Monitor className="w-4 h-4" />
-              <span>Workbench</span>
-            </button>
-          )}
           <button
             type="button"
             onClick={onToggleTheme}
@@ -145,7 +132,7 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
                     : 'text-ink-secondary hover:text-ink-primary'
                 }`}
               >
-                🇮🇳 हिंदी (Hindi)
+                हिंदी (Hindi)
               </button>
               <button
                 type="button"
@@ -156,7 +143,7 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
                     : 'text-ink-secondary hover:text-ink-primary'
                 }`}
               >
-                🌐 English
+                English
               </button>
             </div>
           </div>
@@ -180,11 +167,7 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
                   onGenerate();
                 }
               }}
-              placeholder={
-                isHindi
-                  ? 'उदा: सिग्नल S12 से पॉइंट मशीन P4 तक 800 मीटर केबल रूट: 120 मीटर ब्रिज, 30 मीटर कल्वर्ट और 650 मीटर केबल ट्रफ, 3x4 कोर सिग्नलिंग केबल'
-                  : 'Example: Signal S12 to Point Machine P4, 800 m: 120 m along bridge, 30 m culvert crossing, 650 m cable trough, 3x4 core signalling cables'
-              }
+              placeholder="Type.."
               aria-invalid={Boolean(errorMessage)}
               className="w-full bg-surface-page border border-line rounded-sm p-3 text-sm text-ink-primary placeholder:text-ink-muted resize-none leading-relaxed focus:border-primary focus:bg-surface-card focus:outline-none"
             />
@@ -195,8 +178,8 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
                 <Radio className="w-4 h-4 shrink-0 animate-spin" />
                 <span>
                   {isHindi
-                    ? '🎤 सुन रहे हैं... हिंदी में बोलिए: "सिग्नल S12 से पॉइंट मशीन P4 तक 800 मीटर केबल रूट..."'
-                    : '🎤 Listening... speak route details in English or Hindi...'}
+                    ? 'सुन रहे हैं... हिंदी में बोलिए: "सिग्नल S12 से पॉइंट मशीन P4 तक 800 मीटर केबल रूट..."'
+                    : 'Listening... speak route details in English or Hindi...'}
                 </span>
               </div>
             )}

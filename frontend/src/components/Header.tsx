@@ -5,6 +5,7 @@ import {
   Layers,
   Smartphone,
   RefreshCw,
+  Sparkles,
 } from 'lucide-react';
 import { UserRole, DrawingProject } from '../types/drawing';
 import { SAMPLE_PROJECT_REFERENCE, SAMPLE_PROJECT_YARD } from '../constants/railwayData';
@@ -16,6 +17,8 @@ interface HeaderProps {
   onLoadPreset: (project: DrawingProject) => void;
   onOpenSymbolManager: () => void;
   onOpenRulePack: () => void;
+  onOpenUpdates?: () => void;
+  isUpdateAvailable?: boolean;
   onSwitchToSimple?: () => void;
   isBackendOnline: boolean;
   isCheckingHealth: boolean;
@@ -29,6 +32,8 @@ export const Header: React.FC<HeaderProps> = ({
   onLoadPreset,
   onOpenSymbolManager,
   onOpenRulePack,
+  onOpenUpdates,
+  isUpdateAvailable,
   onSwitchToSimple,
   isBackendOnline,
   isCheckingHealth,
@@ -113,6 +118,21 @@ export const Header: React.FC<HeaderProps> = ({
             <BookOpen className="w-4 h-4" />
             <span>IRSEM Rules</span>
           </button>
+
+          {onOpenUpdates && (
+            <button
+              type="button"
+              onClick={onOpenUpdates}
+              className="relative min-h-[44px] px-3 inline-flex items-center gap-1.5 text-xs font-medium text-chrome-ink hover:bg-white/10 active:bg-white/15 rounded-sm border border-white/15 transition-colors duration-fast"
+              title="Check for software updates from GitHub"
+            >
+              <Sparkles className="w-4 h-4 text-amber-300" />
+              <span>Updates</span>
+              {isUpdateAvailable && (
+                <span className="w-2 h-2 rounded-full bg-status-success animate-ping absolute -top-0.5 -right-0.5" />
+              )}
+            </button>
+          )}
 
           <label className="min-h-[44px] px-2.5 inline-flex items-center gap-1.5 rounded-sm border border-white/15 bg-white/5">
             <ShieldCheck className="w-4 h-4 text-chrome-muted shrink-0" aria-hidden="true" />

@@ -8,6 +8,7 @@ interface DrawingInfoModalProps {
   onClose: () => void;
   project: DrawingProject;
   onSave: (updatedProject: DrawingProject) => void;
+  initialTab?: 'route' | 'segments' | 'cable' | 'titleBlock';
 }
 
 const LAYING_METHODS: LayingMethod[] = [
@@ -38,12 +39,17 @@ export const DrawingInfoModal: React.FC<DrawingInfoModalProps> = ({
   onClose,
   project,
   onSave,
+  initialTab = 'route',
 }) => {
-  if (!isOpen) return null;
+  const [activeTab, setActiveTab] = useState<'route' | 'segments' | 'cable' | 'titleBlock'>(initialTab);
 
-  const [activeTab, setActiveTab] = useState<'route' | 'segments' | 'cable' | 'titleBlock'>('route');
+  React.useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab, isOpen]);
 
-  // Form State
+  // Form State - Always declared unconditionally
   const [startId, setStartId] = useState(project.startNode.id);
   const [startType, setStartType] = useState(project.startNode.type || 'cls_4aspect');
   const [endId, setEndId] = useState(project.endNode.id);
@@ -98,6 +104,44 @@ export const DrawingInfoModal: React.FC<DrawingInfoModalProps> = ({
   const [note2, setNote2] = useState(
     project.settings.customNotes?.[1] || 'Minimum bending radius of cable shall not be less than 15D.'
   );
+
+  // Re-sync form state when modal opens or project updates
+  React.useEffect(() => {
+    if (!isOpen) return;
+    setStartId(project.startNode.id);
+    setStartType(project.startNode.type || 'cls_4aspect');
+    setEndId(project.endNode.id);
+    setEndType(project.endNode.type || 'point_machine');
+    setSegments(JSON.parse(JSON.stringify(project.segments)));
+
+    const cab = project.cables?.[0] || {
+      id: 'cab-1',
+      cableType: 'Signalling',
+      count: 3,
+      coreCount: 4,
+      conductorSize: '1.5 sq mm Armoured Railway Cable',
+      isArmoured: true,
+      cableTag: 'SIG',
+      function: 'Signalling',
+    };
+    setCableCount(cab.count || 3);
+    setCableCore(cab.coreCount || 4);
+    setCableType((cab.cableType as any) || 'Signalling');
+    setConductorSize(cab.conductorSize || '1.5 sq mm Armoured Railway Cable');
+    setTrenchDepth(project.segments.find((s) => s.depth > 0)?.depth ?? 1.0);
+    setProtectionCover(project.segments[0]?.coverType || 'Perforated GI Cable Tray');
+
+    setRailwayZone(project.metadata.railwayZone || 'INDIAN RAILWAYS');
+    setDivision(project.metadata.division || 'S&T Division');
+    setDrawingNumber(project.metadata.drawingNumber || 'IR/S&T/SIGNAL-POINTM/2026/21');
+    setRevision(project.metadata.revision || 'R0');
+    setDate(project.metadata.date || '18-11-2026');
+    setDrawnBy(project.metadata.preparedByDesig || 'SSE / SIG / DESIGN');
+    setCheckedBy(project.metadata.checkedByDesig || 'ASTE / S&T');
+    setApprovedBy(project.metadata.approvedByDesig || 'DSTE / SR. DSTE');
+    setNote1(project.settings.customNotes?.[0] || 'Cable Route Markers (C.M.) installed every 50 m & track bends.');
+    setNote2(project.settings.customNotes?.[1] || 'Minimum bending radius of cable shall not be less than 15D.');
+  }, [isOpen, project]);
 
   // Segment helpers
   const handleSegmentChange = (index: number, field: keyof RouteSegment, value: any) => {
@@ -178,6 +222,8 @@ export const DrawingInfoModal: React.FC<DrawingInfoModalProps> = ({
     onSave(updatedProject);
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">

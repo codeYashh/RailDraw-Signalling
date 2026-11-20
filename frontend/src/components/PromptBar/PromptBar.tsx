@@ -36,7 +36,7 @@ export const PromptBar: React.FC<PromptBarProps> = ({
   savedCount,
 }) => {
   const [lang, setLang] = useState<'hi' | 'en'>('en');
-  const [promptText, setPromptText] = useState<string>(ROUTE_PROMPT_EXAMPLES[0].en);
+  const [promptText, setPromptText] = useState<string>('');
   const [isListening, setIsListening] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -189,9 +189,6 @@ export const PromptBar: React.FC<PromptBarProps> = ({
   const switchLanguage = (nextLang: 'en' | 'hi') => {
     setLang(nextLang);
     setErrorMsg(null);
-    setPromptText(
-      nextLang === 'hi' ? ROUTE_PROMPT_EXAMPLES[0].hi : ROUTE_PROMPT_EXAMPLES[0].en
-    );
   };
 
   return (
@@ -271,11 +268,7 @@ export const PromptBar: React.FC<PromptBarProps> = ({
                 handleGenerate();
               }
             }}
-            placeholder={
-              lang === 'hi'
-                ? 'उदाहरण: एल 1 से एल 12 तक 500 मीटर केबल रूट, 20 मीटर ट्रेंचलेस, 50 मीटर जीआई पाइप, 430 मीटर ट्रेंचिंग 7x12 कोर'
-                : 'Example: Cable route from L1 to L12, 500 m: 20 m HDD, 50 m GI pipe, 430 m normal trenching, 7x12 core'
-            }
+            placeholder="Type.."
             className="flex-1 text-sm bg-surface-page border border-line hover:border-line-strong focus:border-primary focus:bg-surface-card rounded-sm p-3 text-ink-primary placeholder:text-ink-muted focus:outline-none resize-none leading-relaxed"
           />
 
