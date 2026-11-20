@@ -14,6 +14,9 @@ class UiAction implements Runnable {
     static final int MODE_TOAST = 3;
     static final int MODE_SHARE = 4;
     static final int MODE_START_VOICE = 5;
+    static final int MODE_EXIT = 6;
+    static final int MODE_HANDLE_BACK = 7;
+    private static long lastBackPressTime = 0;
 
     private final int mode;
     private final MainActivity activity;
@@ -87,6 +90,22 @@ class UiAction implements Runnable {
                 intent.putExtra("android.speech.extra.LANGUAGE", (text != null && !text.isEmpty()) ? text : "en-IN");
                 intent.putExtra("android.speech.extra.PROMPT", "Speak your signalling cable route...");
                 activity.startActivityForResult(intent, MainActivity.REQ_VOICE_INPUT);
+            } else if (mode == MODE_EXIT) {
+                if (activity != null) {
+                    activity.finishAffinity();
+                    System.exit(0);
+                }
+            } else if (mode == MODE_HANDLE_BACK) {
+                if (activity != null) {
+                    long now = System.currentTimeMillis();
+                    if (now - lastBackPressTime < 2000) {
+                        activity.finishAffinity();
+                        System.exit(0);
+                    } else {
+                        lastBackPressTime = now;
+                        Toast.makeText(activity, "Press back again to exit", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         } catch (Throwable t) {
             if (mode == MODE_START_VOICE) {

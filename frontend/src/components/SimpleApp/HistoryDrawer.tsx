@@ -50,7 +50,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
       <aside
         aria-label="Drawing history"
         aria-hidden={!isOpen}
-        className={`fixed top-0 left-0 bottom-0 z-50 w-[86%] max-w-[320px] flex flex-col bg-surface-card text-ink-primary border-r border-line shadow-md transition-transform duration-base ease-out ${
+        className={`fixed top-0 left-0 bottom-0 z-50 w-[86%] max-w-[320px] flex flex-col glass-panel rounded-r-2xl sm:rounded-r-3xl text-ink-primary border-r border-line/60 shadow-2xl transition-transform duration-base ease-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -164,7 +164,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-3 border-t border-line bg-surface-subtle space-y-2">
+        <div className="p-3 border-t border-line/40 bg-surface-subtle/40 backdrop-blur-md space-y-2.5">
           {onOpenUpdates && (
             <Button
               variant="secondary"
@@ -183,9 +183,14 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
             </Button>
           )}
 
-          <p className="text-xs text-center text-ink-muted">
-            Designed by <span className="font-medium text-ink-primary">Yash</span>
-          </p>
+          <div className="text-center pt-1 space-y-0.5">
+            <p className="text-xs font-semibold text-ink-primary">
+              Designed and Crafted by Yash
+            </p>
+            <p className="text-[11px] text-ink-muted">
+              Offline Indian Railways S&amp;T Drafting Tool
+            </p>
+          </div>
         </div>
       </aside>
     </>

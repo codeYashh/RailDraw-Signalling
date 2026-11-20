@@ -26,6 +26,7 @@ import { CadCanvas } from '../Canvas/CadCanvas';
 import { Button } from '../ui/Button';
 import { DrawingVariantPicker } from '../ui/DrawingVariantPicker';
 import { DrawingInfoModal } from './DrawingInfoModal';
+import { DrawingDetailsEditor } from './DrawingDetailsEditor';
 import { SymbolManagerDrawer } from './SymbolManagerDrawer';
 
 interface ResultWorkspaceProps {
@@ -109,7 +110,7 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
     >
       {/* Top Bar */}
       <header
-        className={`px-3 flex items-center justify-between gap-2 border-b border-line bg-surface-card transition-all ${
+        className={`px-3 flex items-center justify-between gap-2 glass-header transition-all ${
           isLandscapeMode ? 'py-1 min-h-[42px]' : 'py-2 min-h-[50px]'
         }`}
       >
@@ -117,7 +118,7 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
           <button
             type="button"
             onClick={onOpenHistory}
-            className="min-h-[38px] min-w-[38px] inline-flex items-center justify-center rounded-sm text-ink-secondary hover:text-ink-primary hover:bg-surface-hover active:bg-surface-active transition-colors duration-fast"
+            className="min-h-[38px] min-w-[38px] inline-flex items-center justify-center rounded-xl text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-all duration-fast"
             aria-label="Open saved drawings"
             title="Saved drawings"
           >
@@ -187,7 +188,7 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
           <button
             type="button"
             onClick={onToggleTheme}
-            className="min-h-[38px] min-w-[38px] inline-flex items-center justify-center rounded-sm text-ink-secondary hover:text-ink-primary hover:bg-surface-hover active:bg-surface-active transition-colors duration-fast"
+            className="min-h-[38px] min-w-[38px] inline-flex items-center justify-center rounded-xl text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-all duration-fast"
             aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
             title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
           >
@@ -220,19 +221,19 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
         </div>
       )}
 
-      {/* Main CAD Drawing Area */}
+      {/* Main CAD Drawing Area & Details Written Down The Pic */}
       <main
-        className={`flex-1 overflow-hidden flex items-center justify-center transition-all ${
+        className={`flex-1 flex flex-col transition-all ${
           isLandscapeMode
-            ? 'p-0 h-[calc(100dvh-44px)] w-full'
-            : 'px-3 sm:px-4 py-1.5'
+            ? 'p-0 h-[calc(100dvh-44px)] w-full overflow-hidden'
+            : 'px-3 sm:px-4 py-2 w-full max-w-5xl mx-auto overflow-y-auto'
         }`}
       >
         <div
-          className={`w-full h-full bg-surface-card overflow-hidden flex flex-col shadow-sm transition-all ${
+          className={`w-full bg-surface-card overflow-hidden flex flex-col shadow-lg transition-all shrink-0 ${
             isLandscapeMode
-              ? 'rounded-none border-0 max-h-none'
-              : 'max-h-[68dvh] rounded-md border border-line'
+              ? 'rounded-none border-0 h-full'
+              : 'h-[52dvh] sm:h-[60dvh] rounded-2xl sm:rounded-3xl border border-line/60'
           }`}
         >
           <CadCanvas
@@ -248,6 +249,16 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
             onOpenSymbolManager={() => setIsSymbolDrawerOpen(true)}
           />
         </div>
+
+        {/* DETAILS WRITTEN DOWN THE PIC - EDITABLE BY USER */}
+        {!isLandscapeMode && (
+          <div className="w-full mt-3 mb-2 shrink-0">
+            <DrawingDetailsEditor
+              project={project}
+              onUpdateProject={onUpdateProject}
+            />
+          </div>
+        )}
       </main>
 
       {/* Contextual Symbol Editor Strip (Appears when any symbol is selected) */}
@@ -345,7 +356,7 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
 
       {/* Bottom Action Bar: Export & Share */}
       <footer
-        className={`border-t border-line bg-surface-card px-3 transition-all shrink-0 ${
+        className={`glass-header border-t border-line/50 px-3 transition-all shrink-0 ${
           isLandscapeMode ? 'py-1.5' : 'py-2.5'
         }`}
       >

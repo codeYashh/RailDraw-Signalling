@@ -146,6 +146,8 @@ public class Activity extends Context {
     public static final int RESULT_OK = -1;
     protected void onCreate(Bundle savedInstanceState) {}
     public void setContentView(View view) {}
+    public void finishAffinity() {}
+    public void finish() {}
     public void onBackPressed() {}
     protected void onDestroy() {}
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {}

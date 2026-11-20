@@ -19,10 +19,10 @@ export const DimensionApprovalCard: React.FC<DimensionApprovalCardProps> = ({
     <div
       role="region"
       aria-label="Dimension reconciliation approval"
-      className="rounded-md border border-status-warning-border bg-surface-card shadow-sm overflow-hidden"
+      className="glass-panel rounded-2xl sm:rounded-3xl shadow-lg border border-status-warning-border/70 overflow-hidden"
     >
       {/* Header */}
-      <div className="px-4 py-3 bg-status-warning-bg border-b border-status-warning-border flex items-start gap-2.5">
+      <div className="px-4 py-3 bg-status-warning-bg/80 border-b border-status-warning-border/60 flex items-start gap-2.5 backdrop-blur-md">
         <AlertTriangle className="w-4 h-4 text-status-warning shrink-0 mt-0.5" aria-hidden="true" />
         <div className="min-w-0">
           <h3 className="text-xs font-semibold text-ink-primary">
@@ -37,7 +37,7 @@ export const DimensionApprovalCard: React.FC<DimensionApprovalCardProps> = ({
       {/* Proposed Reconciled Options */}
       <div className="p-4 space-y-3">
         {/* Option A: Auto-matched to stated total */}
-        <div className="p-3 rounded-sm border border-primary-border bg-primary-subtle/50 space-y-2">
+        <div className="p-3.5 rounded-xl border border-primary-border bg-primary-subtle/50 space-y-2 backdrop-blur-sm">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-semibold text-primary">
               Recommended Auto-Match ({proposal.specifiedTotal} m)
@@ -46,20 +46,20 @@ export const DimensionApprovalCard: React.FC<DimensionApprovalCardProps> = ({
           <p className="text-xs text-ink-secondary leading-relaxed">
             {proposal.adjustedExplanation}
           </p>
-          <div className="text-xs font-mono text-ink-primary bg-surface-card border border-line rounded-sm px-2.5 py-1.5">
+          <div className="text-xs font-mono text-ink-primary glass-input rounded-xl px-3 py-1.5">
             {proposal.adjustedSegmentsSummary} = {proposal.specifiedTotal} m
           </div>
         </div>
 
         {/* Option B: Keep exact segments, update total */}
-        <div className="p-3 rounded-sm border border-line bg-surface-subtle space-y-1.5">
+        <div className="p-3.5 rounded-xl border border-line bg-surface-subtle/60 space-y-1.5 backdrop-blur-sm">
           <span className="text-xs font-semibold text-ink-primary">
             Alternative: Use Segment Sum ({proposal.segmentsSum} m)
           </span>
           <p className="text-xs text-ink-secondary leading-relaxed">
             {proposal.sumMatchedExplanation}
           </p>
-          <div className="text-xs font-mono text-ink-secondary bg-surface-card border border-line rounded-sm px-2.5 py-1.5">
+          <div className="text-xs font-mono text-ink-secondary glass-input rounded-xl px-3 py-1.5">
             {proposal.sumMatchedSegmentsSummary} = {proposal.segmentsSum} m
           </div>
         </div>

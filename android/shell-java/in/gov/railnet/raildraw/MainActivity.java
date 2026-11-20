@@ -61,8 +61,8 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (webView != null && webView.canGoBack()) {
-            webView.goBack();
+        if (webView != null) {
+            webView.loadUrl("javascript:if(window.__onHardwareBack){window.__onHardwareBack();}else{window.history.back();}");
             return;
         }
         super.onBackPressed();

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Menu, Sun, Moon, Mic, MicOff, ArrowRight, AlertCircle, Globe, Radio } from 'lucide-react';
-import { ROUTE_PROMPT_EXAMPLES, UI_LIMITS } from '../../constants/uiConstants';
+import { Menu, Sun, Moon, Mic, MicOff, ArrowRight, AlertCircle, Radio } from 'lucide-react';
+import { UI_LIMITS } from '../../constants/uiConstants';
 import { DimensionProposal } from '../../services/promptParser';
 import { DrawingProject } from '../../types/drawing';
 import { VandeBharatLogo } from '../Brand/VandeBharatLogo';
@@ -16,8 +16,6 @@ interface HomeComposerProps {
   onPromptChange: (value: string) => void;
   isListening: boolean;
   onToggleMic: () => void;
-  voiceLang: 'hi-IN' | 'en-IN';
-  onChangeVoiceLang: (lang: 'hi-IN' | 'en-IN') => void;
   onGenerate: () => void;
   errorMessage: string | null;
   dimensionProposal: DimensionProposal | null;
@@ -34,8 +32,6 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
   onPromptChange,
   isListening,
   onToggleMic,
-  voiceLang,
-  onChangeVoiceLang,
   onGenerate,
   errorMessage,
   dimensionProposal,
@@ -52,16 +48,24 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
     el.style.height = `${Math.min(el.scrollHeight, UI_LIMITS.MAX_COMPOSER_HEIGHT_PX)}px`;
   }, [promptText]);
 
-  const isHindi = voiceLang === 'hi-IN';
-
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-surface-page text-ink-primary">
-      {/* Top Bar */}
-      <header className="sticky top-0 z-20 px-4 py-2 flex items-center justify-between border-b border-line bg-surface-card">
+    <div className="min-h-[100dvh] flex flex-col bg-surface-page text-ink-primary relative overflow-hidden">
+      {/* Ambient Liquid Glow Orbs */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[580px] h-[360px] bg-gradient-to-tr from-primary/20 via-accent/15 to-transparent blur-3xl rounded-full opacity-60"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-40 right-[-10%] w-[420px] h-[320px] bg-gradient-to-tl from-accent/15 via-primary/10 to-transparent blur-3xl rounded-full opacity-50"
+      />
+
+      {/* Top Controls Bar with Frosted Glass Header */}
+      <header className="glass-header sticky top-0 z-20 px-3 sm:px-5 py-2.5 flex items-center justify-between">
         <button
           type="button"
           onClick={onOpenHistory}
-          className="relative min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-sm text-ink-secondary hover:text-ink-primary hover:bg-surface-hover active:bg-surface-active transition-colors duration-fast"
+          className="relative min-h-[42px] min-w-[42px] inline-flex items-center justify-center rounded-xl text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-all duration-fast"
           aria-label="Open saved drawings"
           title="Saved drawings"
         >
@@ -76,16 +80,16 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
 
         <div className="flex items-center gap-2">
           <VandeBharatLogo size={28} />
-          <span className="text-sm font-semibold tracking-tight text-ink-primary">
+          <span className="text-base font-bold tracking-tight text-ink-primary">
             RailDraw
           </span>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={onToggleTheme}
-            className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-sm text-ink-secondary hover:text-ink-primary hover:bg-surface-hover active:bg-surface-active transition-colors duration-fast"
+            className="min-h-[42px] min-w-[42px] inline-flex items-center justify-center rounded-xl text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-all duration-fast"
             aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
             title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
           >
@@ -94,67 +98,24 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
         </div>
       </header>
 
-      {/* Main Drafting Workspace */}
-      <main className="flex-1 flex flex-col justify-center w-full max-w-2xl mx-auto px-4 py-6">
-        <div className="mb-5">
-          <p className="text-xs font-semibold text-primary uppercase tracking-wider">
-            Indian Railways S&amp;T — IRSEM Part II
-          </p>
-          <h1 className="mt-1 text-2xl sm:text-[28px] font-bold tracking-tight text-ink-primary leading-tight">
-            Signalling Cable Route Plan
+      {/* Main Drafting Workspace - Centered with Liquid Glass Styling */}
+      <main className="flex-1 flex flex-col justify-center w-full max-w-xl mx-auto px-4 py-8 relative z-10">
+        {/* Let's Create - Centered in Bigger Fonts with No Emojis */}
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-ink-primary">
+            Let's Create
           </h1>
-          <p className="mt-1.5 text-xs sm:text-sm text-ink-secondary leading-relaxed">
-            {isHindi
-              ? 'सिग्नल, पॉइंट मशीन, पटरी, ब्रिज, कल्वर्ट और केबल ट्रफ का नक्शा हिंदी में बोलकर या लिखकर बनाएं।'
-              : 'Draft cable routes along railway tracks with real-world bridges, culverts, and troughs in Hindi or English.'}
+          <p className="mt-2 text-xs sm:text-sm text-ink-muted font-medium">
+            Speak or type to generate signalling cable route plans
           </p>
         </div>
 
-        {/* Route Specification Composer */}
+        {/* Prompt Giving Area - Liquid Glass Card with Soft Rounded Corners */}
         <section
-          aria-label="Route specification input"
-          className="bg-surface-card border border-line rounded-md shadow-sm overflow-hidden"
+          aria-label="Route specification prompt"
+          className="glass-panel rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden transition-all duration-300"
         >
-          {/* Language Selector Strip */}
-          <div className="px-4 py-2 bg-surface-subtle border-b border-line flex items-center justify-between text-xs">
-            <span className="font-medium text-ink-secondary flex items-center gap-1.5">
-              <Globe className="w-3.5 h-3.5 text-primary" />
-              <span>Voice &amp; Prompt Language:</span>
-            </span>
-
-            <div className="inline-flex rounded-sm p-0.5 bg-surface-card border border-line text-xs">
-              <button
-                type="button"
-                onClick={() => onChangeVoiceLang('hi-IN')}
-                className={`px-2.5 py-1 rounded-xs font-bold transition-colors ${
-                  voiceLang === 'hi-IN'
-                    ? 'bg-primary text-primary-ink shadow-xs'
-                    : 'text-ink-secondary hover:text-ink-primary'
-                }`}
-              >
-                हिंदी (Hindi)
-              </button>
-              <button
-                type="button"
-                onClick={() => onChangeVoiceLang('en-IN')}
-                className={`px-2.5 py-1 rounded-xs font-bold transition-colors ${
-                  voiceLang === 'en-IN'
-                    ? 'bg-primary text-primary-ink shadow-xs'
-                    : 'text-ink-secondary hover:text-ink-primary'
-                }`}
-              >
-                English
-              </button>
-            </div>
-          </div>
-
-          <div className="p-4">
-            <label
-              htmlFor="route-prompt-input"
-              className="block text-xs font-medium text-ink-secondary mb-1.5"
-            >
-              {isHindi ? 'रूट का विवरण (बोलें या लिखें)' : 'Route Specification (Speak or Type)'}
-            </label>
+          <div className="p-4 sm:p-5">
             <textarea
               id="route-prompt-input"
               ref={textareaRef}
@@ -169,25 +130,21 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
               }}
               placeholder="Type.."
               aria-invalid={Boolean(errorMessage)}
-              className="w-full bg-surface-page border border-line rounded-sm p-3 text-sm text-ink-primary placeholder:text-ink-muted resize-none leading-relaxed focus:border-primary focus:bg-surface-card focus:outline-none"
+              className="w-full glass-input rounded-xl sm:rounded-2xl p-3.5 sm:p-4 text-sm sm:text-base text-ink-primary placeholder:text-ink-muted resize-none leading-relaxed focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
             />
 
-            {/* Listening Indicator */}
+            {/* Listening Indicator with Rounded Pulse */}
             {isListening && (
-              <div className="mt-2.5 px-3 py-2 rounded-sm bg-status-error-bg/70 border border-status-error-border text-status-error text-xs font-semibold flex items-center gap-2 animate-pulse">
+              <div className="mt-3 px-3.5 py-2.5 rounded-xl bg-status-error-bg/70 border border-status-error-border text-status-error text-xs font-semibold flex items-center gap-2 animate-pulse backdrop-blur-md">
                 <Radio className="w-4 h-4 shrink-0 animate-spin" />
-                <span>
-                  {isHindi
-                    ? 'सुन रहे हैं... हिंदी में बोलिए: "सिग्नल S12 से पॉइंट मशीन P4 तक 800 मीटर केबल रूट..."'
-                    : 'Listening... speak route details in English or Hindi...'}
-                </span>
+                <span>Listening... speak route details in English or Hindi...</span>
               </div>
             )}
 
             {errorMessage && (
               <div
                 role="alert"
-                className="mt-3 px-3 py-2.5 rounded-sm border border-status-error-border bg-status-error-bg text-status-error text-xs font-medium flex items-start gap-2"
+                className="mt-3 px-3.5 py-2.5 rounded-xl border border-status-error-border bg-status-error-bg/90 text-status-error text-xs font-medium flex items-start gap-2 backdrop-blur-md"
               >
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
                 <span>{errorMessage}</span>
@@ -195,29 +152,31 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
             )}
           </div>
 
-          <div className="px-4 py-3 border-t border-line-subtle bg-surface-subtle flex flex-wrap items-center justify-between gap-2">
+          <div className="px-4 sm:px-5 py-3 border-t border-line/50 bg-surface-subtle/50 backdrop-blur-md flex items-center justify-between gap-3">
             <Button
               variant={isListening ? 'danger' : 'secondary'}
               size="sm"
               onClick={onToggleMic}
               aria-pressed={isListening}
+              className="rounded-xl"
             >
               {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-              <span>{isListening ? (isHindi ? 'रोकें (Stop)' : 'Stop') : (isHindi ? 'बोलकर बताएं (Mic)' : 'Voice Input')}</span>
+              <span>{isListening ? 'Stop' : 'Voice'}</span>
             </Button>
 
             <Button
               variant="primary"
               onClick={onGenerate}
               disabled={!hasPrompt}
+              className="rounded-xl shadow-md"
             >
-              <span>{isHindi ? 'नक्शा बनाएं' : 'Generate Drawing'}</span>
+              <span>Generate</span>
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
         </section>
 
-        {/* Dimension Reconciliation Approval Card */}
+        {/* Dimension Reconciliation Approval Card with Rounded Glass Effect */}
         {dimensionProposal && (
           <div className="mt-4">
             <DimensionApprovalCard
@@ -227,50 +186,16 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
             />
           </div>
         )}
-
-        {/* Quick Reference Examples */}
-        <section className="mt-5" aria-label="Sample route specifications">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xs font-bold text-ink-muted uppercase tracking-wider">
-              {isHindi ? 'उदाहरण (क्लिक करके जांचें)' : 'Sample Specifications'}
-            </h2>
-            <span className="text-[11px] text-primary font-semibold">1-Click Insert</span>
-          </div>
-
-          <div className="divide-y divide-line-subtle border border-line rounded-md bg-surface-card overflow-hidden">
-            {ROUTE_PROMPT_EXAMPLES.map((example) => {
-              const textToUse = isHindi ? example.hi : example.en;
-              const titleToUse = isHindi ? example.hindiLabel : example.label;
-              return (
-                <button
-                  key={example.id}
-                  type="button"
-                  onClick={() => onPromptChange(textToUse)}
-                  className="w-full min-h-[48px] px-3.5 py-2.5 text-left hover:bg-surface-subtle active:bg-surface-active transition-colors duration-fast flex items-center justify-between gap-3"
-                >
-                  <div className="min-w-0">
-                    <div className="text-xs sm:text-sm font-semibold text-ink-primary flex items-center gap-1.5">
-                      <span>{titleToUse}</span>
-                    </div>
-                    <div className="text-xs text-ink-muted truncate mt-0.5">{textToUse}</div>
-                  </div>
-                  <span className="text-xs font-bold text-primary shrink-0 bg-primary-subtle px-2 py-0.5 rounded-sm">
-                    {isHindi ? 'उपयोग करें' : 'Use'}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
       </main>
 
-      <footer className="px-4 py-3 border-t border-line-subtle text-center">
-        <p className="text-xs text-ink-muted">
-          Offline-ready Indian Railways S&amp;T Drafting Tool · Designed by{' '}
-          <span className="font-medium text-ink-primary">Yash</span>
+      <footer className="px-4 py-3.5 border-t border-line/40 text-center relative z-10 flex flex-col items-center justify-center">
+        <p className="text-xs sm:text-sm font-semibold text-ink-primary tracking-wide">
+          Designed and Crafted by Yash
+        </p>
+        <p className="text-[11px] sm:text-xs text-ink-muted mt-0.5">
+          Offline Indian Railways S&amp;T Drafting Tool
         </p>
       </footer>
     </div>
   );
 };
-

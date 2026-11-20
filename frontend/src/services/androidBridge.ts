@@ -8,6 +8,8 @@ interface NativeAndroidBridge {
   startVoiceInput: (langTag: string) => void;
   setThemeMode: (isDark: boolean) => void;
   isNativeAndroid: () => boolean;
+  exitApp?: () => void;
+  handleAppExit?: () => void;
 }
 
 declare global {
@@ -117,3 +119,44 @@ export function syncAndroidSystemBars(isDark: boolean): void {
     // Ignore when not in Android WebView
   }
 }
+
+export function notifyAppExit(): void {
+  try {
+    if (window.AndroidBridge?.handleAppExit) {
+      window.AndroidBridge.handleAppExit();
+      return;
+    }
+  } catch {}
+}
+
+/**
+ * Closes the entire application via native Android finishAffinity/System.exit,
+ * or browser window.close/navigator.app.exitApp.
+ */
+export function closeApplication(): void {
+  try {
+    if (window.AndroidBridge?.exitApp) {
+      window.AndroidBridge.exitApp();
+      return;
+    }
+  } catch {}
+
+  try {
+    (navigator as any).app?.exitApp?.();
+  } catch {}
+
+  try {
+    window.close();
+  } catch {}
+
+  // Fallback for desktop browsers where script cannot close window directly
+  try {
+    document.body.innerHTML = `
+      <div style="height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0A111A;color:#E2E8F0;font-family:sans-serif;text-align:center;padding:24px;">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:8px;">App Closed</h2>
+        <p style="font-size:14px;color:#94A3B8;max-width:320px;">RailDraw has exited. You can safely close this window or return to your desktop.</p>
+      </div>
+    `;
+  } catch {}
+}
+

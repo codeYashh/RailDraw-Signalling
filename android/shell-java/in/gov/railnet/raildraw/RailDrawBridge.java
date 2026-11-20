@@ -237,4 +237,14 @@ public class RailDrawBridge {
     public boolean isNativeAndroid() {
         return true;
     }
+
+    @JavascriptInterface
+    public void handleAppExit() {
+        activity.runOnUiThread(new UiAction(UiAction.MODE_HANDLE_BACK, activity, null, false, null, null, null));
+    }
+
+    @JavascriptInterface
+    public void exitApp() {
+        activity.runOnUiThread(new UiAction(UiAction.MODE_EXIT, activity, null, false, null, null, null));
+    }
 }

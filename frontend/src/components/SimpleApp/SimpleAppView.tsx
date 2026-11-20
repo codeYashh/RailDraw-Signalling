@@ -17,6 +17,7 @@ import {
   sharePdfNatively,
   triggerAndroidVoice,
   syncAndroidSystemBars,
+  notifyAppExit,
 } from '../../services/androidBridge';
 import { CANVAS_CONFIG, STORAGE_KEYS, UI_LIMITS } from '../../constants/uiConstants';
 import { SplashScreen } from '../Brand/SplashScreen';
@@ -65,7 +66,6 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
   const [screen, setScreen] = useState<'home' | 'result'>('home');
   const [promptText, setPromptText] = useState<string>('');
   const [isListening, setIsListening] = useState<boolean>(false);
-  const [voiceLang, setVoiceLang] = useState<'hi-IN' | 'en-IN'>('hi-IN');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [dimensionProposal, setDimensionProposal] = useState<DimensionProposal | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -82,6 +82,95 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
   const [isSymbolPickerOpen, setIsSymbolPickerOpen] = useState<boolean>(false);
   const [isShareSheetOpen, setIsShareSheetOpen] = useState<boolean>(false);
   const [isBusyExport, setIsBusyExport] = useState<boolean>(false);
+
+  // Master single-step back navigation for phone gestures, back buttons, and edge swipes
+  const handleBack = useCallback((): boolean => {
+    // 1. Close symbol picker sheet if open
+    if (isSymbolPickerOpen) {
+      setIsSymbolPickerOpen(false);
+      return true;
+    }
+    // 2. Close share sheet if open
+    if (isShareSheetOpen) {
+      setIsShareSheetOpen(false);
+      return true;
+    }
+    // 3. Close history sidebar if open
+    if (isSidebarOpen) {
+      setIsSidebarOpen(false);
+      return true;
+    }
+    // 4. Deselect symbol or exit edit mode
+    if (selectedSymbolId) {
+      setSelectedSymbolId(null);
+      return true;
+    }
+    if (isEditMode) {
+      setIsEditMode(false);
+      return true;
+    }
+    // 5. If on drawing result workspace, return to home
+    if (screen === 'result') {
+      setIsEditMode(false);
+      setSelectedSymbolId(null);
+      setScreen('home');
+      return true;
+    }
+    // 6. On home screen: ask Android to show "Press back again to exit" (prevents accidental full exit)
+    notifyAppExit();
+    return false;
+  }, [isSymbolPickerOpen, isShareSheetOpen, isSidebarOpen, selectedSymbolId, isEditMode, screen]);
+
+  // Connect to Android native back button & gesture navigation
+  useEffect(() => {
+    (window as any).__onHardwareBack = () => {
+      const handled = handleBack();
+      return handled ? 'HANDLED' : 'FALLTHROUGH';
+    };
+    return () => {
+      delete (window as any).__onHardwareBack;
+    };
+  }, [handleBack]);
+
+  // Listen to browser popstate (system back gesture)
+  useEffect(() => {
+    const onPop = () => {
+      handleBack();
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, [handleBack]);
+
+  // Phone swipe-to-go-back gesture (detects swipe right from left edge of screen)
+  useEffect(() => {
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (e.changedTouches.length === 1) {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        // Edge swipe from left: started in leftmost 50px, swiped right > 60px with minimal vertical drift
+        if (touchStartX < 50 && dx > 60 && Math.abs(dy) < 80) {
+          handleBack();
+        }
+      }
+    };
+
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [handleBack]);
 
   const showToast = useCallback((nextToast: ToastState) => {
     if (toastTimerRef.current) {
@@ -166,19 +255,14 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
   }, [screen, project]);
 
   const toggleMic = () => {
-    const lang = voiceLang;
-    if (triggerAndroidVoice(lang)) {
+    if (triggerAndroidVoice('')) {
       setErrorMessage(null);
       return;
     }
 
     const recog = recognitionRef.current;
     if (!recog) {
-      setErrorMessage(
-        voiceLang === 'hi-IN'
-          ? 'इस ब्राउज़र में वॉइस इनपुट उपलब्ध नहीं है। कृपया लिखकर विवरण दर्ज करें।'
-          : 'Voice recognition is unavailable in this browser. Enter details manually.'
-      );
+      setErrorMessage('Voice recognition is unavailable in this browser. Enter details manually.');
       return;
     }
 
@@ -188,7 +272,7 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
     } else {
       setErrorMessage(null);
       try {
-        recog.lang = lang;
+        recog.lang = navigator.language || 'en-IN';
         recog.start();
         setIsListening(true);
       } catch {
@@ -209,6 +293,9 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
     setActiveHistoryId(rec.id);
     setHistoryItems(getSavedDrawings());
     setScreen('result');
+    try {
+      window.history.pushState({ screen: 'result' }, '');
+    } catch {}
     if (notice) {
       showToast({ message: notice, tone: 'success' });
     }
@@ -468,6 +555,9 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
     setErrorMessage(null);
     setIsSidebarOpen(false);
     setScreen('result');
+    try {
+      window.history.pushState({ screen: 'result' }, '');
+    } catch {}
   };
 
   const handleDeleteHistoryItem = (id: string) => {
@@ -514,8 +604,6 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
           }}
           isListening={isListening}
           onToggleMic={toggleMic}
-          voiceLang={voiceLang}
-          onChangeVoiceLang={setVoiceLang}
           onGenerate={handleGenerate}
           errorMessage={errorMessage}
           dimensionProposal={dimensionProposal}

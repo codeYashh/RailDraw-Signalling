@@ -19,6 +19,7 @@ KEYSTORE_INFO.txt
 # Build Artifacts & Binaries
 # ------------------------------------------
 *.apk
+!RailDraw.apk
 *.aab
 *.idsig
 *.dex

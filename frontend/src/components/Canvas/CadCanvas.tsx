@@ -1352,13 +1352,19 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
             <line x1="720" y1="0" x2="720" y2="38" stroke="#0C2340" strokeWidth="1" />
 
             <text x="12" y="15" fontSize="9" fontWeight="700" fontFamily="sans-serif" fill="#64748B">DRAWN BY:</text>
-            <text x="12" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">SSE / SIG / DESIGN</text>
+            <text x="12" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">
+              {(project.metadata.preparedBy || 'SSE / SIG / DESIGN').slice(0, 20)}
+            </text>
 
             <text x="192" y="15" fontSize="9" fontWeight="700" fontFamily="sans-serif" fill="#64748B">CHECKED BY:</text>
-            <text x="192" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">ASTE / S&amp;T</text>
+            <text x="192" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">
+              {(project.metadata.checkedBy || 'ASTE / S&T').slice(0, 20)}
+            </text>
 
             <text x="372" y="15" fontSize="9" fontWeight="700" fontFamily="sans-serif" fill="#64748B">APPROVED BY:</text>
-            <text x="372" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">DSTE / SR. DSTE</text>
+            <text x="372" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">
+              {(project.metadata.approvedBy || 'DSTE / SR. DSTE').slice(0, 20)}
+            </text>
 
             <text x="552" y="15" fontSize="9" fontWeight="700" fontFamily="sans-serif" fill="#64748B">RAILWAY / DIVISION:</text>
             <text x="552" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">

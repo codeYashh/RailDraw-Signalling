@@ -13,18 +13,18 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary text-primary-ink border border-primary hover:bg-primary-hover active:bg-primary-active shadow-sm',
+    'bg-primary text-primary-ink border border-primary/90 hover:bg-primary-hover active:bg-primary-active shadow-md shadow-primary/20 backdrop-blur-md',
   secondary:
-    'bg-surface-card text-ink-primary border border-line hover:bg-surface-hover active:bg-surface-active shadow-sm',
+    'bg-surface-card/85 text-ink-primary border border-line/80 hover:bg-surface-hover active:bg-surface-active shadow-sm backdrop-blur-md',
   ghost:
-    'bg-transparent text-ink-secondary border border-transparent hover:bg-surface-hover hover:text-ink-primary active:bg-surface-active',
+    'bg-transparent text-ink-secondary border border-transparent hover:bg-surface-hover hover:text-ink-primary active:bg-surface-active rounded-xl',
   danger:
-    'bg-status-error-bg text-status-error border border-status-error-border hover:bg-status-error hover:text-ink-inverse active:opacity-90',
+    'bg-status-error-bg/90 text-status-error border border-status-error-border hover:bg-status-error hover:text-ink-inverse active:opacity-90 shadow-sm backdrop-blur-md',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: 'min-h-[44px] px-3 py-2 text-xs font-medium gap-1.5',
-  md: 'min-h-[44px] px-4 py-2.5 text-sm font-medium gap-2',
+  sm: 'min-h-[42px] px-3.5 py-1.5 text-xs font-semibold gap-1.5',
+  md: 'min-h-[44px] px-4 py-2.5 text-sm font-semibold gap-2',
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -43,11 +43,11 @@ export const Button: React.FC<ButtonProps> = ({
       type={type}
       disabled={disabled || loading}
       className={[
-        'inline-flex items-center justify-center rounded-sm select-none whitespace-nowrap',
-        'transition-colors duration-fast',
+        'inline-flex items-center justify-center rounded-xl select-none whitespace-nowrap',
+        'transition-all duration-fast active:scale-[0.98]',
         'disabled:opacity-45 disabled:cursor-not-allowed disabled:pointer-events-none',
         VARIANT_CLASSES[variant],
-        iconOnly ? 'min-h-[44px] min-w-[44px] p-2' : SIZE_CLASSES[size],
+        iconOnly ? 'min-h-[42px] min-w-[42px] p-2 rounded-xl' : SIZE_CLASSES[size],
         className,
       ].join(' ')}
       {...rest}
