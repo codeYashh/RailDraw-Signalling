@@ -2,14 +2,15 @@ package in.gov.railnet.raildraw;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import java.util.ArrayList;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements DownloadListener {
     public static final int REQ_VOICE_INPUT = 4012;
     private WebView webView;
 
@@ -33,11 +34,27 @@ public class MainActivity extends Activity {
         settings.setAllowUniversalAccessFromFileURLs(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
 
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new AppWebViewClient(this));
         webView.setWebChromeClient(new WebChromeClient());
+        webView.setDownloadListener(this);
         webView.addJavascriptInterface(new RailDrawBridge(this), "AndroidBridge");
 
         webView.loadUrl("file:///android_asset/main.html");
+    }
+
+    public void openUrl(String url) {
+        if (url == null || url.trim().isEmpty()) return;
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    @Override
+    public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+        openUrl(url);
     }
 
     public void applySystemBarTheme(boolean isDark) {
@@ -62,7 +79,8 @@ public class MainActivity extends Activity {
     @Override
     public void onBackPressed() {
         if (webView != null) {
-            webView.loadUrl("javascript:if(window.__onHardwareBack){window.__onHardwareBack();}else{window.history.back();}");
+            // Safely evaluate back hook without navigating WebView or loading about:blank
+            webView.evaluateJavascript("if(window.__onHardwareBack){window.__onHardwareBack();}", null);
             return;
         }
         super.onBackPressed();

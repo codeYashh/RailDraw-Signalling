@@ -44,17 +44,31 @@ export function compareSemver(v1: string, v2: string): number {
 export async function checkForGitHubUpdates(force: boolean = false): Promise<UpdateInfo> {
   const now = new Date().toISOString();
 
+  // Helper with 6-second timeout to avoid any freezing
+  const fetchWithTimeout = async (url: string, options: RequestInit = {}) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 6000);
+    try {
+      const resp = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timer);
+      return resp;
+    } catch (e) {
+      clearTimeout(timer);
+      throw e;
+    }
+  };
+
   // 1. Primary: Direct raw version.json check from GitHub main branch
   // (Always reflects git push instantly with no GitHub API rate limits or auth keys)
   try {
     const rawUrl = `${GITHUB_RAW_VERSION_JSON}?_cb=${Date.now()}`;
-    const rawResp = await fetch(rawUrl, {
+    const rawResp = await fetchWithTimeout(rawUrl, {
       cache: force ? 'no-cache' : 'default',
     });
 
     if (rawResp.ok) {
       const data = await rawResp.json();
-      const remoteVersion = (data.version || APP_VERSION).replace(/^v/, '');
+      const remoteVersion = (data.version || APP_VERSION).replace(/^v/, '').trim();
       const isNewer = compareSemver(remoteVersion, APP_VERSION) > 0;
 
       const updateInfo: UpdateInfo = {
@@ -83,7 +97,7 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
 
   // 2. Secondary: GitHub Releases API
   try {
-    const response = await fetch(GITHUB_API_LATEST_RELEASE, {
+    const response = await fetchWithTimeout(GITHUB_API_LATEST_RELEASE, {
       headers: {
         Accept: 'application/vnd.github+json',
       },
@@ -93,7 +107,7 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
     if (response.ok) {
       const data = await response.json();
       const tagName: string = data.tag_name || data.name || APP_VERSION;
-      const cleanTag = tagName.replace(/^v/, '');
+      const cleanTag = tagName.replace(/^v/, '').trim();
       const isNewer = compareSemver(cleanTag, APP_VERSION) > 0;
 
       let apkAssetUrl: string = GITHUB_RAW_APK_URL;
@@ -142,6 +156,7 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
     isUpdateAvailable: false,
     lastChecked: now,
     checkedVia: 'mock',
+    networkError: force ? true : false,
   };
 
   try {

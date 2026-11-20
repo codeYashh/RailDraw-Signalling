@@ -76,6 +76,7 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
   const recognitionRef = useRef<any>(null);
   const pendingHistoryIdRef = useRef<string | null>(null);
   const toastTimerRef = useRef<number | null>(null);
+  const lastBackTriggerRef = useRef<number>(0);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [selectedSymbolId, setSelectedSymbolId] = useState<string | null>(null);
@@ -85,6 +86,12 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
 
   // Master single-step back navigation for phone gestures, back buttons, and edge swipes
   const handleBack = useCallback((): boolean => {
+    const now = Date.now();
+    if (now - lastBackTriggerRef.current < 350) {
+      return true; // Debounce rapid back triggers
+    }
+    lastBackTriggerRef.current = now;
+
     // 1. Close symbol picker sheet if open
     if (isSymbolPickerOpen) {
       setIsSymbolPickerOpen(false);
@@ -124,21 +131,11 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
   // Connect to Android native back button & gesture navigation
   useEffect(() => {
     (window as any).__onHardwareBack = () => {
-      const handled = handleBack();
-      return handled ? 'HANDLED' : 'FALLTHROUGH';
+      handleBack();
     };
     return () => {
       delete (window as any).__onHardwareBack;
     };
-  }, [handleBack]);
-
-  // Listen to browser popstate (system back gesture)
-  useEffect(() => {
-    const onPop = () => {
-      handleBack();
-    };
-    window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
   }, [handleBack]);
 
   // Phone swipe-to-go-back gesture (detects swipe right from left edge of screen)
@@ -293,9 +290,6 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
     setActiveHistoryId(rec.id);
     setHistoryItems(getSavedDrawings());
     setScreen('result');
-    try {
-      window.history.pushState({ screen: 'result' }, '');
-    } catch {}
     if (notice) {
       showToast({ message: notice, tone: 'success' });
     }
@@ -555,9 +549,6 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
     setErrorMessage(null);
     setIsSidebarOpen(false);
     setScreen('result');
-    try {
-      window.history.pushState({ screen: 'result' }, '');
-    } catch {}
   };
 
   const handleDeleteHistoryItem = (id: string) => {

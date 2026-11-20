@@ -34,6 +34,7 @@ import android.os.Parcelable;
 import java.io.File;
 public abstract class Uri implements Parcelable {
     public static Uri fromFile(File file) { return null; }
+    public static Uri parse(String uriString) { return null; }
 }
 """,
     "android/content/Context.java": """
@@ -71,10 +72,14 @@ public class ClipData {
 """,
     "android/content/Intent.java": """
 package android.content;
+import android.net.Uri;
 import android.os.Parcelable;
 import java.util.ArrayList;
 public class Intent {
+    public static final String ACTION_VIEW = "android.intent.action.VIEW";
+    public static final int FLAG_ACTIVITY_NEW_TASK = 0x10000000;
     public Intent(String action) {}
+    public Intent(String action, Uri uri) {}
     public Intent setType(String type) { return this; }
     public Intent putExtra(String name, String value) { return this; }
     public Intent putExtra(String name, Parcelable value) { return this; }
@@ -196,10 +201,17 @@ public abstract class WebSettings {
     public abstract void setMediaPlaybackRequiresUserGesture(boolean require);
 }
 """,
+    "android/webkit/DownloadListener.java": """
+package android.webkit;
+public interface DownloadListener {
+    void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength);
+}
+""",
     "android/webkit/WebViewClient.java": """
 package android.webkit;
 public class WebViewClient {
     public WebViewClient() {}
+    public boolean shouldOverrideUrlLoading(WebView view, String url) { return false; }
 }
 """,
     "android/webkit/WebChromeClient.java": """
@@ -217,6 +229,7 @@ public class WebView extends View {
     public WebSettings getSettings() { return null; }
     public void setWebViewClient(WebViewClient client) {}
     public void setWebChromeClient(WebChromeClient client) {}
+    public void setDownloadListener(DownloadListener listener) {}
     public void addJavascriptInterface(Object object, String name) {}
     public void loadUrl(String url) {}
     public void evaluateJavascript(String script, ValueCallback<String> resultCallback) {}
@@ -258,6 +271,7 @@ def build_dex(output_dex_path: str):
         # 2. Compile our actual Android shell Java sources
         app_java = [
             os.path.join(src_root, "in", "gov", "railnet", "raildraw", "UiAction.java"),
+            os.path.join(src_root, "in", "gov", "railnet", "raildraw", "AppWebViewClient.java"),
             os.path.join(src_root, "in", "gov", "railnet", "raildraw", "MainActivity.java"),
             os.path.join(src_root, "in", "gov", "railnet", "raildraw", "RailDrawBridge.java"),
         ]

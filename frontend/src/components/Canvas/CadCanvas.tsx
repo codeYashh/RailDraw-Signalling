@@ -210,7 +210,8 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
   const routeStartX = 110;
   const routeEndX = 850;
   const availableWidth = routeEndX - routeStartX; // 740px
-  const routeY = 175;
+  const trackCenterY = 240; // Centered in between so both sides of rail track are open for drawing
+  const routeY = 320;
 
   // Cable & Depth details (fully dynamic from prompt/project)
   const cableInfo = project.cables && project.cables.length > 0 ? project.cables[0] : null;
@@ -513,39 +514,11 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
               <rect x="12" y="12" width={VB_WIDTH - 24} height={VB_HEIGHT - 24} fill="none" stroke="#0C2340" strokeWidth="2" rx="3" />
               <rect x="16" y="16" width={VB_WIDTH - 32} height={VB_HEIGHT - 32} fill="none" stroke="#CBD2DC" strokeWidth="1" rx="2" />
 
-          {/* 2. AUTHENTIC RAILWAY TITLE BLOCK HEADER */}
-          <g transform="translate(30, 16)">
-            <text x="0" y="12" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#475569" letterSpacing="0.8px">
-              {(project.metadata.railwayZone || 'INDIAN RAILWAYS').toUpperCase()} — SIGNAL &amp; TELECOMMUNICATION DEPARTMENT
-            </text>
-            <text x={VB_WIDTH - 60} y="12" fontSize="11" fontWeight="700" fontFamily="sans-serif" fill="#1E3A8A" textAnchor="end">
-              TOTAL: {totalLength} m &nbsp;|&nbsp; {project.metadata.drawingNumber || 'IR/S&T/CAD'}
-            </text>
-            <text
-              x="0"
-              y="28"
-              fontSize="13.5"
-              fontWeight="900"
-              fontFamily="sans-serif"
-              fill="#0C2340"
-              letterSpacing="0.3px"
-              style={{ cursor: isEditMode ? 'pointer' : 'default' }}
-              onClick={(e) => {
-                if (isEditMode && onOpenEditInfo) {
-                  e.stopPropagation();
-                  onOpenEditInfo('titleBlock');
-                }
-              }}
-            >
-              {cableTypeLabel.toUpperCase()} CABLE ROUTE : {project.startNode.id} TO {project.endNode.id}
-            </text>
-            <line x1="0" y1="34" x2={VB_WIDTH - 60} y2="34" stroke="#0C2340" strokeWidth="1.2" />
-          </g>
-
           {/* 3. TOP REFERENCE ROW: START/END BADGES & TRACK C/L DESIGNATION */}
-          {/* Start Location Node Badge (Top Left) */}
+          {/* 2. STATION LOCATION BADGES & TRACK C/L DESIGNATION */}
+          {/* Start Location Node Badge */}
           <g
-            transform={`translate(${routeStartX}, 63)`}
+            transform={`translate(${routeStartX}, ${trackCenterY - 55})`}
             id="badge-start-node"
             style={{ cursor: isEditMode ? 'pointer' : 'default' }}
             onClick={(e) => {
@@ -580,9 +553,9 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
             })()}
           </g>
 
-          {/* End Location Node Badge (Top Right) */}
+          {/* End Location Node Badge */}
           <g
-            transform={`translate(${routeEndX}, 63)`}
+            transform={`translate(${routeEndX}, ${trackCenterY - 55})`}
             id="badge-end-node"
             style={{ cursor: isEditMode ? 'pointer' : 'default' }}
             onClick={(e) => {
@@ -619,33 +592,33 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
 
           {/* Track Reference Designation (Center) */}
           <g id="track-centerline-heading">
-            <line x1="220" y1="63" x2="280" y2="63" stroke="#64748B" strokeWidth="1" strokeDasharray="6,3" />
-            <text x="480" y="66.5" fontSize="9" fontWeight="800" fontFamily="sans-serif" fill="#334155" textAnchor="middle" letterSpacing="0.4px">
-              C/L OF NEAREST RAILWAY TRACK (1676 mm BG पटरी — OFFSET: 3.5 m MIN)
+            <line x1="220" y1={trackCenterY - 55} x2="280" y2={trackCenterY - 55} stroke="#64748B" strokeWidth="1" strokeDasharray="6,3" />
+            <text x="480" y={trackCenterY - 51.5} fontSize="9" fontWeight="800" fontFamily="sans-serif" fill="#334155" textAnchor="middle" letterSpacing="0.4px">
+              C/L OF NEAREST RAILWAY TRACK (1676 mm BG — OFFSET: 3.5 m MIN)
             </text>
-            <line x1="680" y1="63" x2="740" y2="63" stroke="#64748B" strokeWidth="1" strokeDasharray="6,3" />
+            <line x1="680" y1={trackCenterY - 55} x2="740" y2={trackCenterY - 55} stroke="#64748B" strokeWidth="1" strokeDasharray="6,3" />
           </g>
 
-          {/* 3b. REALISTIC BROAD GAUGE RAILWAY TRACK (रेल की पटरी - Rail Patri) */}
+          {/* 3. REALISTIC BROAD GAUGE RAILWAY TRACK (Centered in between) */}
           <g id="layer-rail-track">
-            {/* Ballast Formation Bed (गिट्टी की ढलान) */}
+            {/* Ballast Formation Bed */}
             <polygon
-              points="75,114 885,114 875,82 85,82"
+              points={`75,${trackCenterY + 14} 885,${trackCenterY + 14} 875,${trackCenterY - 18} 85,${trackCenterY - 18}`}
               fill="url(#ballastPattern)"
               stroke="#94A3B8"
               strokeWidth="1.2"
             />
             {/* Ballast shoulder slope shadow line */}
-            <line x1="75" y1="114" x2="885" y2="114" stroke="#64748B" strokeWidth="1.6" />
+            <line x1="75" y1={trackCenterY + 14} x2="885" y2={trackCenterY + 14} stroke="#64748B" strokeWidth="1.6" />
 
-            {/* PSC Sleepers (प्रीस्ट्रेस्ड कंक्रीट स्लीपर) across the ballast */}
+            {/* PSC Sleepers across the ballast */}
             {(() => {
               const sleepers: React.ReactNode[] = [];
               for (let sx = 86; sx <= 874; sx += 15) {
                 // Extended switch ties near Point Machine at the end (X > 820)
                 const isExtendedSwitchTie = sx >= 822 && sx <= 864;
                 const sleeperHeight = isExtendedSwitchTie ? 44 : 22;
-                const sleeperY = 88;
+                const sleeperY = trackCenterY - 12;
 
                 sleepers.push(
                   <g key={sx}>
@@ -661,62 +634,62 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
                       strokeWidth="0.8"
                     />
                     {/* Top rail seat pad */}
-                    <rect x={sx - 3} y={92} width="6" height="4" fill="#334155" />
+                    <rect x={sx - 3} y={trackCenterY - 8} width="6" height="4" fill="#334155" />
                     {/* Bottom rail seat pad */}
-                    <rect x={sx - 3} y={104} width="6" height="4" fill="#334155" />
+                    <rect x={sx - 3} y={trackCenterY + 4} width="6" height="4" fill="#334155" />
                     {/* Pandrol clip marks */}
-                    <circle cx={sx} cy={91.5} r="1.1" fill="#0F172A" />
-                    <circle cx={sx} cy={108.5} r="1.1" fill="#0F172A" />
+                    <circle cx={sx} cy={trackCenterY - 8.5} r="1.1" fill="#0F172A" />
+                    <circle cx={sx} cy={trackCenterY + 8.5} r="1.1" fill="#0F172A" />
                   </g>
                 );
               }
               return sleepers;
             })()}
 
-            {/* TWIN CONTINUOUS STEEL RAILS (दोहरी स्टील रेल पटरी) */}
-            {/* Top Steel Rail (Y = 94) */}
+            {/* TWIN CONTINUOUS STEEL RAILS */}
+            {/* Top Steel Rail */}
             <g id="rail-top">
-              <line x1="76" y1="94" x2="884" y2="94" stroke="#0F172A" strokeWidth="4.2" strokeLinecap="round" />
-              <line x1="76" y1="94" x2="884" y2="94" stroke="#475569" strokeWidth="2.6" strokeLinecap="round" />
-              <line x1="76" y1="93.5" x2="884" y2="93.5" stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round" />
+              <line x1="76" y1={trackCenterY - 6} x2="884" y2={trackCenterY - 6} stroke="#0F172A" strokeWidth="4.2" strokeLinecap="round" />
+              <line x1="76" y1={trackCenterY - 6} x2="884" y2={trackCenterY - 6} stroke="#475569" strokeWidth="2.6" strokeLinecap="round" />
+              <line x1="76" y1={trackCenterY - 6.5} x2="884" y2={trackCenterY - 6.5} stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round" />
             </g>
 
-            {/* Bottom Steel Rail (Y = 106, Broad Gauge 1676mm scale) */}
+            {/* Bottom Steel Rail */}
             <g id="rail-bottom">
-              <line x1="76" y1="106" x2="884" y2="106" stroke="#0F172A" strokeWidth="4.2" strokeLinecap="round" />
-              <line x1="76" y1="106" x2="884" y2="106" stroke="#475569" strokeWidth="2.6" strokeLinecap="round" />
-              <line x1="76" y1="105.5" x2="884" y2="105.5" stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round" />
+              <line x1="76" y1={trackCenterY + 6} x2="884" y2={trackCenterY + 6} stroke="#0F172A" strokeWidth="4.2" strokeLinecap="round" />
+              <line x1="76" y1={trackCenterY + 6} x2="884" y2={trackCenterY + 6} stroke="#475569" strokeWidth="2.6" strokeLinecap="round" />
+              <line x1="76" y1={trackCenterY + 5.5} x2="884" y2={trackCenterY + 5.5} stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round" />
             </g>
 
             {/* Turnout Switch Blades / Tongue Rails near Point Machine (at end node) */}
             <g id="turnout-switch-points">
-              <line x1="822" y1="106" x2="862" y2="120" stroke="#0F172A" strokeWidth="3" />
-              <line x1="822" y1="106" x2="862" y2="120" stroke="#64748B" strokeWidth="1.8" />
+              <line x1="822" y1={trackCenterY + 6} x2="862" y2={trackCenterY + 20} stroke="#0F172A" strokeWidth="3" />
+              <line x1="822" y1={trackCenterY + 6} x2="862" y2={trackCenterY + 20} stroke="#64748B" strokeWidth="1.8" />
               {/* Switch stretcher bar & drive rod connecting Point Machine to rail */}
-              <line x1="840" y1="106" x2="840" y2="132" stroke="#0C2340" strokeWidth="2.4" />
-              <line x1="854" y1="106" x2="854" y2="132" stroke="#0C2340" strokeWidth="2.4" />
-              <rect x="836" y="112" width="22" height="3" fill="#1E293B" />
+              <line x1="840" y1={trackCenterY + 6} x2="840" y2={routeY - 20} stroke="#0C2340" strokeWidth="2.4" />
+              <line x1="854" y1={trackCenterY + 6} x2="854" y2={routeY - 20} stroke="#0C2340" strokeWidth="2.4" />
+              <rect x="836" y={trackCenterY + 12} width="22" height="3" fill="#1E293B" />
             </g>
 
             {/* Glued Insulated Joints (GIJ) on rail */}
-            <line x1="180" y1="89" x2="180" y2="111" stroke="#B91C1C" strokeWidth="2.2" strokeDasharray="3,2" />
-            <line x1="720" y1="89" x2="720" y2="111" stroke="#B91C1C" strokeWidth="2.2" strokeDasharray="3,2" />
+            <line x1="180" y1={trackCenterY - 11} x2="180" y2={trackCenterY + 11} stroke="#B91C1C" strokeWidth="2.2" strokeDasharray="3,2" />
+            <line x1="720" y1={trackCenterY - 11} x2="720" y2={trackCenterY + 11} stroke="#B91C1C" strokeWidth="2.2" strokeDasharray="3,2" />
 
             {/* Track Centerline (C/L) reference */}
             <line
               x1="76"
-              y1="100"
+              y1={trackCenterY}
               x2="884"
-              y2="100"
+              y2={trackCenterY}
               stroke="#64748B"
               strokeWidth="1.2"
               strokeDasharray="14,4,3,4"
             />
 
             {/* Safe Offset Dimension Indicator between Track and Cable Route */}
-            <g transform="translate(64, 106)">
-              <line x1="0" y1="0" x2="0" y2={routeY - 106} stroke="#0284C7" strokeWidth="1.2" markerStart="url(#dimArrowStart)" markerEnd="url(#dimArrowEnd)" />
-              <text x="-5" y={(routeY - 106) / 2 + 3} fontSize="8.5" fontWeight="800" fill="#0284C7" textAnchor="end">
+            <g transform={`translate(64, ${trackCenterY + 6})`}>
+              <line x1="0" y1="0" x2="0" y2={routeY - (trackCenterY + 6)} stroke="#0284C7" strokeWidth="1.2" markerStart="url(#dimArrowStart)" markerEnd="url(#dimArrowEnd)" />
+              <text x="-5" y={(routeY - (trackCenterY + 6)) / 2 + 3} fontSize="8.5" fontWeight="800" fill="#0284C7" textAnchor="end">
                 3.5 m MIN
               </text>
             </g>
@@ -890,7 +863,7 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
                         <rect x={segEndX - 10} y={routeY + 6} width="10" height="24" fill="#475569" stroke="#1E293B" strokeWidth="1" rx="1" />
 
                         {/* Steel Truss Girder Frame carrying track and cable */}
-                        <rect x={curX} y={112} width={segWidth} height="5" fill="#0F766E" rx="1" />
+                        <rect x={curX} y={trackCenterY - 24} width={segWidth} height="5" fill="#0F766E" rx="1" />
                         <rect x={curX} y={routeY + 6} width={segWidth} height="5" fill="#0F766E" rx="1" />
 
                         {/* Diagonal Structural Steel Warren Truss Struts */}
@@ -900,7 +873,7 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
                           return (
                             <path
                               key={bIdx}
-                              d={`M ${x0} ${routeY + 6} L ${(x0 + x1) / 2} 115 L ${x1} ${routeY + 6}`}
+                              d={`M ${x0} ${routeY + 6} L ${(x0 + x1) / 2} ${trackCenterY - 21} L ${x1} ${routeY + 6}`}
                               fill="none"
                               stroke="#0F766E"
                               strokeWidth="1.6"
@@ -937,15 +910,15 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
                       /* 2. REAL-WORLD CULVERT: Embankment Stone/RCC Box Opening + Water Ditch + Pipe Brackets */
                       <g id={`culvert-${idx}`}>
                         {/* Embankment Cut & Culvert Opening under track */}
-                        <rect x={midX - 20} y={112} width="40" height="58" fill="#F1F5F9" stroke="#94A3B8" strokeWidth="1" rx="2" />
+                        <rect x={midX - 20} y={trackCenterY - 24} width="40" height={routeY - (trackCenterY - 24)} fill="#F1F5F9" stroke="#94A3B8" strokeWidth="1" rx="2" />
                         <path
-                          d={`M ${midX - 14} 170 L ${midX - 14} 136 Q ${midX} 124 ${midX + 14} 136 L ${midX + 14} 170 Z`}
+                          d={`M ${midX - 14} ${routeY} L ${midX - 14} ${trackCenterY} Q ${midX} ${trackCenterY - 12} ${midX + 14} ${trackCenterY} L ${midX + 14} ${routeY} Z`}
                           fill="#334155"
                           stroke="#0F172A"
                           strokeWidth="1.5"
                         />
                         {/* Flowing Water Stream underneath */}
-                        <path d={`M ${midX - 20} 170 Q ${midX} 166 ${midX + 20} 170`} stroke="#0284C7" strokeWidth="2.5" />
+                        <path d={`M ${midX - 20} ${routeY} Q ${midX} ${routeY - 4} ${midX + 20} ${routeY}`} stroke="#0284C7" strokeWidth="2.5" />
 
                         {/* Heavy GI Protective Pipe crossing culvert on steel brackets */}
                         <rect
@@ -982,17 +955,17 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
                     ) : isTrackCross ? (
                       /* 4. REAL-WORLD TRACK CROSSING: RCC Casing passing directly under Rails & Sleepers */
                       <g id={`trackcross-${idx}`}>
-                        <rect x={midX - 16} y={82} width="32" height="100" fill="#FEF3C7" stroke="#92400E" strokeWidth="2.2" rx="3" />
-                        <line x1={midX - 9} y1={82} x2={midX - 9} y2={182} stroke="#0F172A" strokeWidth="3" />
-                        <line x1={midX + 9} y1={82} x2={midX + 9} y2={182} stroke="#0F172A" strokeWidth="3" />
+                        <rect x={midX - 16} y={trackCenterY - 54} width="32" height={routeY + 12 - (trackCenterY - 54)} fill="#FEF3C7" stroke="#92400E" strokeWidth="2.2" rx="3" />
+                        <line x1={midX - 9} y1={trackCenterY - 54} x2={midX - 9} y2={routeY + 12} stroke="#0F172A" strokeWidth="3" />
+                        <line x1={midX + 9} y1={trackCenterY - 54} x2={midX + 9} y2={routeY + 12} stroke="#0F172A" strokeWidth="3" />
                         <rect x={curX} y={routeY - 8} width={segWidth} height="16" fill="#FDE68A" stroke="#B45309" strokeWidth="2" />
                       </g>
                     ) : isRoadCross ? (
                       /* 5. REAL-WORLD ROAD CROSSING: Asphalt Road across Track + Barrier Boom */
                       <g id={`roadcross-${idx}`}>
-                        <rect x={midX - 24} y={82} width="48" height="100" fill="#475569" stroke="#1E293B" strokeWidth="1.8" rx="2" />
-                        <line x1={midX} y1={84} x2={midX} y2={182} stroke="#FFFFFF" strokeWidth="2" strokeDasharray="5,4" />
-                        <rect x={midX - 26} y={114} width="52" height="5" fill="#EF4444" stroke="#7F1D1D" strokeWidth="1" />
+                        <rect x={midX - 24} y={trackCenterY - 54} width="48" height={routeY + 12 - (trackCenterY - 54)} fill="#475569" stroke="#1E293B" strokeWidth="1.8" rx="2" />
+                        <line x1={midX} y1={trackCenterY - 52} x2={midX} y2={routeY + 12} stroke="#FFFFFF" strokeWidth="2" strokeDasharray="5,4" />
+                        <rect x={midX - 26} y={trackCenterY - 22} width="52" height="5" fill="#EF4444" stroke="#7F1D1D" strokeWidth="1" />
                         <rect x={curX} y={routeY - 7} width={segWidth} height="14" fill="#DBEAFE" stroke="#1D4ED8" strokeWidth="1.8" />
                       </g>
                     ) : isTrenchless ? (
@@ -1152,251 +1125,6 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
                 TOTAL LENGTH : {totalLength} METRES
               </text>
             </g>
-          </g>
-
-          {/* 5. TWO-PANEL BALANCED ENGINEERING SECTION */}
-          {/* PANEL A: DETAIL 'A' — TRENCH CROSS-SECTION (LEFT) */}
-          <g transform="translate(30, 275)" id="layer-callout-trench">
-            <rect x="0" y="0" width="440" height="230" fill="#F8FAFC" stroke="#0C2340" strokeWidth="1.5" rx="4" />
-            <rect x="0" y="0" width="440" height="28" fill="#0C2340" rx="3" />
-            <text x="14" y="19" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="sans-serif" letterSpacing="0.5px">
-              DETAIL 'A' — CABLE TRENCH CROSS-SECTION
-            </text>
-
-            {/* Realistic Trench Cut Diagram */}
-            <g transform="translate(90, 48)">
-              {/* Ground Level Surface Line */}
-              <line x1="-60" y1="0" x2="60" y2="0" stroke="#334155" strokeWidth="2" />
-              {/* Ground hatching */}
-              <rect x="-60" y="-10" width="120" height="10" fill="url(#earthHatch)" />
-              <text x="-65" y="-3" fontSize="10" fontWeight="800" fill="#475569" textAnchor="end">
-                G.L. ▽
-              </text>
-
-              {/* Trench Walls */}
-              <line x1="-38" y1="0" x2="-35" y2="105" stroke="#0C2340" strokeWidth="2" />
-              <line x1="38" y1="0" x2="35" y2="105" stroke="#0C2340" strokeWidth="2" />
-              <line x1="-35" y1="105" x2="35" y2="105" stroke="#0C2340" strokeWidth="2" />
-
-              {/* Depth Dimension (Dynamic from route!) */}
-              <line x1="50" y1="0" x2="50" y2="105" stroke="#0C2340" strokeWidth="1" markerStart="url(#dimArrowStart)" markerEnd="url(#dimArrowEnd)" />
-              <text x="56" y="56" fontSize="10" fontWeight="800" fill="#0C2340">
-                {primaryDepth.toFixed(1)} m
-              </text>
-
-              {/* Sand Bedding Layer (50 mm) */}
-              <rect x="-34" y="70" width="68" height="35" fill="url(#sandPattern)" stroke="#CBD5E1" strokeWidth="0.8" />
-
-              {/* Protective Bricks laid flat */}
-              <rect x="-32" y="52" width="64" height="16" fill="#B45309" stroke="#78350F" strokeWidth="1" rx="1" />
-              <text x="0" y="63" fontSize="8" fontWeight="800" fill="#FFFFFF" textAnchor="middle">
-                CLASS-II BRICK
-              </text>
-
-              {/* 7 Cable cores in sand bedding */}
-              {(() => {
-                const count = Math.min(Math.max(cableCount, 1), 12);
-                const r = 4.5;
-                if (count === 1) {
-                  return <circle cx="0" cy="88" r="7" fill="#0C2340" />;
-                }
-                const radius = 14;
-                return Array.from({ length: count }).map((_, cIdx) => {
-                  const angle = (cIdx * 2 * Math.PI) / count;
-                  const cx = Math.round(radius * Math.cos(angle));
-                  const cy = Math.round(88 + radius * Math.sin(angle));
-                  return (
-                    <g key={cIdx}>
-                      <circle cx={cx} cy={cy} r={r} fill="#0C2340" stroke="#FFFFFF" strokeWidth="0.8" />
-                      <circle cx={cx} cy={cy} r={r - 2} fill="#B45309" />
-                    </g>
-                  );
-                });
-              })()}
-            </g>
-
-            {/* Technical Trench Notes (Dynamic from actual cable & route specs) */}
-            <g
-              transform="translate(190, 48)"
-              style={{ cursor: isEditMode ? 'pointer' : 'default' }}
-              onClick={(e) => {
-                if (isEditMode && onOpenEditInfo) {
-                  e.stopPropagation();
-                  onOpenEditInfo('cable');
-                }
-              }}
-            >
-              <text x="0" y="16" fontSize="13.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">
-                {cableCount} Nos. x {cableCore} Core {cableTypeLabel}
-              </text>
-              <text x="0" y="34" fontSize="11" fontWeight="700" fontFamily="sans-serif" fill="#1E3A8A">
-                {cableConductor} Armoured Railway Cable
-              </text>
-
-              <line x1="0" y1="46" x2="230" y2="46" stroke="#CBD2DC" strokeWidth="1" />
-
-              <text x="0" y="66" fontSize="11" fontWeight="600" fontFamily="sans-serif" fill="#334155">
-                • Trench Depth: {primaryDepth.toFixed(1)} m below G.L. (Min)
-              </text>
-              <text x="0" y="86" fontSize="11" fontWeight="600" fontFamily="sans-serif" fill="#334155">
-                • Sand Bedding: 50 mm clean river sand layer
-              </text>
-              <text x="0" y="106" fontSize="11" fontWeight="600" fontFamily="sans-serif" fill="#334155">
-                • Protection: {primaryCover.slice(0, 30)}
-              </text>
-              <text x="0" y="126" fontSize="11" fontWeight="600" fontFamily="sans-serif" fill="#334155">
-                • Ref Standard: IRSEM Part-II / RDSO
-              </text>
-            </g>
-          </g>
-
-          {/* PANEL B: GENERAL NOTES & DYNAMIC SYMBOLS LEGEND (RIGHT) */}
-          <g
-            transform="translate(490, 275)"
-            id="layer-legend-notes"
-            style={{ cursor: isEditMode ? 'pointer' : 'default' }}
-            onClick={(e) => {
-              if (isEditMode && onOpenEditInfo) {
-                e.stopPropagation();
-                onOpenEditInfo('titleBlock');
-              }
-            }}
-          >
-            <rect x="0" y="0" width="440" height="230" fill="#F8FAFC" stroke={isEditMode ? '#0284C7' : '#0C2340'} strokeWidth={isEditMode ? '1.8' : '1.5'} rx="4" />
-            <rect x="0" y="0" width="440" height="28" fill="#0C2340" rx="3" />
-            <text x="14" y="19" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="sans-serif" letterSpacing="0.5px">
-              GENERAL NOTES &amp; DRAWING LEGEND {isEditMode && '(CLICK TO EDIT)'}
-            </text>
-
-            {/* Dynamic Graphical Legend based on actual laying methods in THIS drawing */}
-            <g transform="translate(16, 40)">
-              {uniqueMethods.map((m, lIdx) => {
-                const y = lIdx * 20;
-                const descMap: Record<string, string> = {
-                  'Trenchless-HDD': 'Trenchless / HDD bore under crossings (1.5 m)',
-                  'GI Pipe': '100 mm dia GI Pipe Class-B protective casing',
-                  'RCC Pipe': '150 mm dia RCC Pipe NP-2 heavy casing',
-                  'HDPE Pipe': '110 mm dia DWC HDPE corrugated duct',
-                  'Track crossing': 'Railway Track Crossing with RCC pipe (1.2 m)',
-                  'Rail crossing': 'Railway Track Crossing with RCC pipe (1.2 m)',
-                  'Road crossing': 'Road Crossing with GI/HDD protective pipe',
-                  'Along Bridge': 'Along Bridge in galvanized cable tray',
-                  'Culvert crossing': 'Culvert Crossing on GI pipe brackets',
-                  'Cable Trough': 'Precast RCC Cable Trough along formation',
-                  'Cable Tray': 'Hot-dip galvanized metallic Cable Tray',
-                  'Normal Trenching': 'Normal Trenching with Cable Markers (C.M.)',
-                };
-                return (
-                  <g key={m} transform={`translate(0, ${y})`}>
-                    {m === 'Trenchless-HDD' ? (
-                      <rect x="0" y="0" width="26" height="12" fill="url(#hddHatch)" stroke="#B91C1C" strokeWidth="1.5" />
-                    ) : m === 'GI Pipe' ? (
-                      <rect x="0" y="0" width="26" height="12" fill="#DBEAFE" stroke="#1D4ED8" strokeWidth="1.5" />
-                    ) : m === 'RCC Pipe' ? (
-                      <rect x="0" y="0" width="26" height="12" fill="#E2E8F0" stroke="#475569" strokeWidth="1.5" />
-                    ) : m === 'HDPE Pipe' ? (
-                      <rect x="0" y="0" width="26" height="12" fill="#FFEDD5" stroke="#C2410C" strokeWidth="1.5" />
-                    ) : m === 'Track crossing' || m === 'Rail crossing' ? (
-                      <rect x="0" y="0" width="26" height="12" fill="#FEF3C7" stroke="#92400E" strokeWidth="1.5" />
-                    ) : m === 'Road crossing' ? (
-                      <rect x="0" y="0" width="26" height="12" fill="#475569" stroke="#1E293B" strokeWidth="1.5" />
-                    ) : m === 'Along Bridge' || m === 'Culvert crossing' ? (
-                      <rect x="0" y="0" width="26" height="12" fill="#CCFBF1" stroke="#0F766E" strokeWidth="1.5" />
-                    ) : m === 'Cable Trough' || m === 'Cable Tray' ? (
-                      <rect x="0" y="0" width="26" height="12" fill="#EDE9FE" stroke="#6D28D9" strokeWidth="1.5" />
-                    ) : (
-                      <g>
-                        <line x1="0" y1="6" x2="26" y2="6" stroke="#0C2340" strokeWidth="3" />
-                        <circle cx="13" cy="6" r="3" fill="#FFFFFF" stroke="#0C2340" strokeWidth="1.5" />
-                      </g>
-                    )}
-                    <text x="34" y="10" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#1E293B">
-                      {descMap[m] || m}
-                    </text>
-                  </g>
-                );
-              })}
-            </g>
-
-            <line x1="16" y1="124" x2="424" y2="124" stroke="#CBD2DC" strokeWidth="1" />
-
-            {/* General Notes: Live user notes or standard Indian Railways Engineering Rules */}
-            <g transform="translate(16, 136)">
-              {project.settings?.customNotes &&
-              project.settings.customNotes.filter((n) => n.trim().length > 0).length > 0 ? (
-                project.settings.customNotes
-                  .filter((n) => n.trim().length > 0)
-                  .slice(0, 4)
-                  .map((note, nIdx) => (
-                    <text
-                      key={nIdx}
-                      x="0"
-                      y={8 + nIdx * 19}
-                      fontSize="10"
-                      fontWeight="700"
-                      fontFamily="sans-serif"
-                      fill="#0C2340"
-                    >
-                      {nIdx + 1}. {note.length > 58 ? note.slice(0, 56) + '...' : note}
-                    </text>
-                  ))
-              ) : (
-                <>
-                  <text x="0" y="6" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#0C2340">
-                    1. Cable Route Markers (C.M.) installed every 50 m &amp; track bends.
-                  </text>
-                  <text x="0" y="26" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#0C2340">
-                    2. Minimum bending radius of cable shall not be less than 15D.
-                  </text>
-                  <text x="0" y="46" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#0C2340">
-                    3. Route: {project.segments.length} segment(s) • {placedSymbols.length} S&amp;T symbol(s) • IRSEM Part-II.
-                  </text>
-                </>
-              )}
-            </g>
-          </g>
-
-          {/* 6. ENGINEERING STAMP / TITLE BLOCK (BOTTOM — Dynamic!) */}
-          <g
-            transform={`translate(30, ${VB_HEIGHT - 65})`}
-            style={{ cursor: isEditMode ? 'pointer' : 'default' }}
-            onClick={(e) => {
-              if (isEditMode && onOpenEditInfo) {
-                e.stopPropagation();
-                onOpenEditInfo('titleBlock');
-              }
-            }}
-          >
-            <rect x="0" y="0" width={VB_WIDTH - 60} height="38" fill="#F1F5F9" stroke={isEditMode ? '#F59E0B' : '#0C2340'} strokeWidth={isEditMode ? '1.8' : '1.2'} />
-            <line x1="180" y1="0" x2="180" y2="38" stroke="#0C2340" strokeWidth="1" />
-            <line x1="360" y1="0" x2="360" y2="38" stroke="#0C2340" strokeWidth="1" />
-            <line x1="540" y1="0" x2="540" y2="38" stroke="#0C2340" strokeWidth="1" />
-            <line x1="720" y1="0" x2="720" y2="38" stroke="#0C2340" strokeWidth="1" />
-
-            <text x="12" y="15" fontSize="9" fontWeight="700" fontFamily="sans-serif" fill="#64748B">DRAWN BY:</text>
-            <text x="12" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">
-              {(project.metadata.preparedBy || 'SSE / SIG / DESIGN').slice(0, 20)}
-            </text>
-
-            <text x="192" y="15" fontSize="9" fontWeight="700" fontFamily="sans-serif" fill="#64748B">CHECKED BY:</text>
-            <text x="192" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">
-              {(project.metadata.checkedBy || 'ASTE / S&T').slice(0, 20)}
-            </text>
-
-            <text x="372" y="15" fontSize="9" fontWeight="700" fontFamily="sans-serif" fill="#64748B">APPROVED BY:</text>
-            <text x="372" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">
-              {(project.metadata.approvedBy || 'DSTE / SR. DSTE').slice(0, 20)}
-            </text>
-
-            <text x="552" y="15" fontSize="9" fontWeight="700" fontFamily="sans-serif" fill="#64748B">RAILWAY / DIVISION:</text>
-            <text x="552" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">
-              {(project.metadata.railwayZone || 'INDIAN RAILWAYS').slice(0, 18)} / {(project.metadata.division || 'S&T').slice(0, 8)}
-            </text>
-
-            <text x="732" y="15" fontSize="9" fontWeight="700" fontFamily="sans-serif" fill="#64748B">DATE / REV:</text>
-            <text x="732" y="29" fontSize="10.5" fontWeight="800" fontFamily="sans-serif" fill="#0C2340">
-              {project.metadata.date || '2026'} ({project.metadata.revision || 'R0'})
-            </text>
           </g>
             </g>
           )}

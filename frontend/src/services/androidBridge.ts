@@ -10,6 +10,7 @@ interface NativeAndroidBridge {
   isNativeAndroid: () => boolean;
   exitApp?: () => void;
   handleAppExit?: () => void;
+  openExternalUrl?: (url: string) => void;
 }
 
 declare global {
@@ -127,6 +128,22 @@ export function notifyAppExit(): void {
       return;
     }
   } catch {}
+}
+
+export function openExternalUrl(url: string): void {
+  if (!url) return;
+  try {
+    if (window.AndroidBridge?.openExternalUrl) {
+      window.AndroidBridge.openExternalUrl(url);
+      return;
+    }
+  } catch {}
+
+  try {
+    window.open(url, '_blank');
+  } catch {
+    window.location.href = url;
+  }
 }
 
 /**

@@ -244,6 +244,11 @@ public class RailDrawBridge {
     }
 
     @JavascriptInterface
+    public void openExternalUrl(String url) {
+        activity.openUrl(url);
+    }
+
+    @JavascriptInterface
     public void exitApp() {
         activity.runOnUiThread(new UiAction(UiAction.MODE_EXIT, activity, null, false, null, null, null));
     }

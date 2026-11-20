@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Sparkles,
   Download,
   ExternalLink,
   CheckCircle2,
   RefreshCw,
   X,
-  Package,
-  Calendar,
   AlertCircle,
   ArrowUpCircle,
   ShieldCheck,
 } from 'lucide-react';
 import { UpdateInfo, checkForGitHubUpdates } from '../../services/updateService';
+import { openExternalUrl } from '../../services/androidBridge';
 import { VandeBharatLogo } from '../Brand/VandeBharatLogo';
 import { Button } from '../ui/Button';
 
@@ -31,11 +29,10 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
 }) => {
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [hasCheckedThisSession, setHasCheckedThisSession] = useState<boolean>(false);
 
-  // Automatically perform a fresh check when modal opens if not checked recently
+  // Automatically perform a fresh check when modal opens
   useEffect(() => {
-    if (isOpen && !hasCheckedThisSession) {
+    if (isOpen) {
       handleManualCheck();
     }
   }, [isOpen]);
@@ -48,8 +45,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
     try {
       const result = await checkForGitHubUpdates(true);
       onUpdateInfoChange(result);
-      setHasCheckedThisSession(true);
-    } catch (err) {
+    } catch {
       setErrorMessage('Could not connect to GitHub to check for updates. Please check your internet connection.');
     } finally {
       setIsChecking(false);
@@ -59,6 +55,19 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
   const isNewAvailable = updateInfo?.isUpdateAvailable ?? false;
   const currentVer = updateInfo?.currentVersion || '1.4.0';
   const latestVer = updateInfo?.latestVersion || currentVer;
+  const apkDownloadUrl =
+    updateInfo?.apkDownloadUrl ||
+    'https://github.com/codeYashh/RailDraw-Signalling/raw/main/RailDraw.apk';
+  const githubRepoUrl =
+    updateInfo?.htmlUrl || 'https://github.com/codeYashh/RailDraw-Signalling';
+
+  const handleDownloadApk = () => {
+    openExternalUrl(apkDownloadUrl);
+  };
+
+  const handleOpenGitHub = () => {
+    openExternalUrl(githubRepoUrl);
+  };
 
   return (
     <div
@@ -154,14 +163,14 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
               )}
 
               {/* Primary Download Button */}
-              <a
-                href={updateInfo?.apkDownloadUrl || 'https://github.com/codeYashh/RailDraw-Signalling/raw/main/RailDraw.apk'}
-                download="RailDraw.apk"
-                className="w-full min-h-[46px] px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all"
+              <button
+                type="button"
+                onClick={handleDownloadApk}
+                className="w-full min-h-[46px] px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all"
               >
                 <Download className="w-4 h-4" />
                 <span>Download Latest Version (APK)</span>
-              </a>
+              </button>
 
               <p className="text-[11px] text-ink-muted text-center leading-relaxed">
                 Tip: After downloading, tap the APK to install. If your phone shows "App not installed", uninstall previous test builds first.
@@ -198,14 +207,14 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                   <span>OK, Got It</span>
                 </Button>
 
-                <a
-                  href={updateInfo?.apkDownloadUrl || 'https://github.com/codeYashh/RailDraw-Signalling/raw/main/RailDraw.apk'}
-                  download="RailDraw.apk"
+                <button
+                  type="button"
+                  onClick={handleDownloadApk}
                   className="text-xs text-ink-muted hover:text-primary transition-colors py-1 flex items-center justify-center gap-1.5"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download APK again</span>
-                </a>
+                </button>
               </div>
             </div>
           )}
@@ -230,15 +239,14 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
             <span>Check Again</span>
           </button>
 
-          <a
-            href={updateInfo?.htmlUrl || 'https://github.com/codeYashh/RailDraw-Signalling'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 hover:text-ink-primary transition-colors"
+          <button
+            type="button"
+            onClick={handleOpenGitHub}
+            className="inline-flex items-center gap-1 hover:text-ink-primary transition-colors font-semibold"
           >
             <span>GitHub Repository</span>
             <ExternalLink className="w-3 h-3" />
-          </a>
+          </button>
         </div>
       </div>
     </div>
