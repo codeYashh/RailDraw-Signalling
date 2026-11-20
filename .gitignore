@@ -48,6 +48,8 @@ tools/
 local.properties
 captures/
 .externalNativeBuild/
+android/app/src/main/assets/data/
+*.dat
 .cxx/
 
 # ------------------------------------------

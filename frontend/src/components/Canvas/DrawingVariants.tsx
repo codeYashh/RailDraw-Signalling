@@ -489,24 +489,46 @@ export const MonochromeBlueprintSheet: React.FC<VariantSheetProps> = ({
             SPEC: {cableConductor} PVC Armoured (IRS: S 63/2014)
           </text>
           <line x1="0" y1="42" x2="395" y2="42" stroke="#111827" strokeWidth="0.8" />
-          <text x="0" y="64" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
-            1. Minimum burial depth: {primaryDepth.toFixed(1)} m below G.L. (1.2 m at track crossings).
-          </text>
-          <text x="0" y="86" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
-            2. Protective cover: {primaryCover.slice(0, 46)}.
-          </text>
-          <text x="0" y="108" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
-            3. Provide 50 mm clean river sand bedding below and above cables.
-          </text>
-          <text x="0" y="130" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
-            4. Install Cable Route Markers (C.M.) every 50 m and at route bends.
-          </text>
-          <text x="0" y="152" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
-            5. Minimum bending radius shall not be less than 15D.
-          </text>
-          <text x="0" y="174" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
-            6. All dimensions are in metres unless otherwise noted.
-          </text>
+          {project.settings?.customNotes &&
+          project.settings.customNotes.filter((n) => n.trim().length > 0).length > 0 ? (
+            project.settings.customNotes
+              .filter((n) => n.trim().length > 0)
+              .slice(0, 6)
+              .map((note, nIdx) => (
+                <text
+                  key={nIdx}
+                  x="0"
+                  y={64 + nIdx * 20}
+                  fontSize="9.5"
+                  fontWeight="600"
+                  fontFamily="sans-serif"
+                  fill="#111827"
+                >
+                  {nIdx + 1}. {note.length > 55 ? note.slice(0, 52) + '...' : note}
+                </text>
+              ))
+          ) : (
+            <>
+              <text x="0" y="64" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
+                1. Minimum burial depth: {primaryDepth.toFixed(1)} m below G.L. (1.2 m at track crossings).
+              </text>
+              <text x="0" y="86" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
+                2. Protective cover: {primaryCover.slice(0, 46)}.
+              </text>
+              <text x="0" y="108" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
+                3. Provide 50 mm clean river sand bedding below and above cables.
+              </text>
+              <text x="0" y="130" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
+                4. Install Cable Route Markers (C.M.) every 50 m and at route bends.
+              </text>
+              <text x="0" y="152" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
+                5. Minimum bending radius shall not be less than 15D.
+              </text>
+              <text x="0" y="174" fontSize="10" fontWeight="600" fontFamily="sans-serif" fill="#111827">
+                6. All dimensions are in metres unless otherwise noted.
+              </text>
+            </>
+          )}
         </g>
       </g>
 

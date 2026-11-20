@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Menu, Sun, Moon, Mic, MicOff, ArrowRight, AlertCircle, Radio } from 'lucide-react';
+import { Menu, Sun, Moon, Mic, MicOff, ArrowRight, AlertCircle, Radio, Sparkles } from 'lucide-react';
 import { UI_LIMITS } from '../../constants/uiConstants';
 import { DimensionProposal } from '../../services/promptParser';
 import { DrawingProject } from '../../types/drawing';
@@ -21,6 +21,8 @@ interface HomeComposerProps {
   dimensionProposal: DimensionProposal | null;
   onApproveDimensionProposal: (approvedProject: DrawingProject, label: string) => void;
   onDismissDimensionProposal: () => void;
+  onOpenUpdates?: () => void;
+  isUpdateAvailable?: boolean;
 }
 
 export const HomeComposer: React.FC<HomeComposerProps> = ({
@@ -37,6 +39,8 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
   dimensionProposal,
   onApproveDimensionProposal,
   onDismissDimensionProposal,
+  onOpenUpdates,
+  isUpdateAvailable,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const hasPrompt = promptText.trim().length > 0;
@@ -85,11 +89,27 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          {onOpenUpdates && (
+            <button
+              type="button"
+              onClick={onOpenUpdates}
+              className="relative min-h-[40px] px-2.5 py-1.5 inline-flex items-center gap-1.5 rounded-xl text-xs font-semibold text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-all"
+              title="Check for software updates"
+              aria-label="Check for software updates"
+            >
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              <span className="hidden xs:inline">Updates</span>
+              {isUpdateAvailable && (
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping absolute top-2 right-2" />
+              )}
+            </button>
+          )}
+
           <button
             type="button"
             onClick={onToggleTheme}
-            className="min-h-[42px] min-w-[42px] inline-flex items-center justify-center rounded-xl text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-all duration-fast"
+            className="min-h-[40px] min-w-[40px] inline-flex items-center justify-center rounded-xl text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-all duration-fast"
             aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
             title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
           >

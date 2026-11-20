@@ -4,6 +4,7 @@ import {
   GITHUB_API_RELEASES,
   GITHUB_REPO_URL,
   GITHUB_RAW_APK_URL,
+  GITHUB_RAW_VERSION_JSON,
 } from '../constants/version';
 
 export interface UpdateInfo {
@@ -13,10 +14,11 @@ export interface UpdateInfo {
   releaseNotes: string;
   publishedAt: string;
   htmlUrl: string;
-  apkDownloadUrl: string | null;
+  apkDownloadUrl: string;
   isUpdateAvailable: boolean;
   lastChecked: string;
-  checkedVia: 'release' | 'tag' | 'mock';
+  checkedVia: 'raw_json' | 'release' | 'tag' | 'mock';
+  networkError?: boolean;
 }
 
 const STORAGE_KEY_UPDATE = 'raildraw_latest_update_info';
@@ -42,8 +44,45 @@ export function compareSemver(v1: string, v2: string): number {
 export async function checkForGitHubUpdates(force: boolean = false): Promise<UpdateInfo> {
   const now = new Date().toISOString();
 
+  // 1. Primary: Direct raw version.json check from GitHub main branch
+  // (Always reflects git push instantly with no GitHub API rate limits or auth keys)
   try {
-    // 1. Fetch latest release from GitHub API
+    const rawUrl = `${GITHUB_RAW_VERSION_JSON}?_cb=${Date.now()}`;
+    const rawResp = await fetch(rawUrl, {
+      cache: force ? 'no-cache' : 'default',
+    });
+
+    if (rawResp.ok) {
+      const data = await rawResp.json();
+      const remoteVersion = (data.version || APP_VERSION).replace(/^v/, '');
+      const isNewer = compareSemver(remoteVersion, APP_VERSION) > 0;
+
+      const updateInfo: UpdateInfo = {
+        currentVersion: APP_VERSION,
+        latestVersion: remoteVersion,
+        releaseName: data.name || `RailDraw v${remoteVersion}`,
+        releaseNotes: data.releaseNotes || 'Latest improvements for RailDraw Signalling drafting.',
+        publishedAt: data.publishedAt || now,
+        htmlUrl: GITHUB_REPO_URL,
+        apkDownloadUrl: data.apkUrl || GITHUB_RAW_APK_URL,
+        isUpdateAvailable: isNewer,
+        lastChecked: now,
+        checkedVia: 'raw_json',
+      };
+
+      try {
+        localStorage.setItem(STORAGE_KEY_UPDATE, JSON.stringify(updateInfo));
+        localStorage.setItem(STORAGE_KEY_LAST_CHECK, now);
+      } catch {}
+
+      return updateInfo;
+    }
+  } catch (err) {
+    console.warn('Raw version check skipped:', err);
+  }
+
+  // 2. Secondary: GitHub Releases API
+  try {
     const response = await fetch(GITHUB_API_LATEST_RELEASE, {
       headers: {
         Accept: 'application/vnd.github+json',
@@ -53,12 +92,11 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
 
     if (response.ok) {
       const data = await response.json();
-      const tagName: string = data.tag_name || data.name || '1.0.0';
+      const tagName: string = data.tag_name || data.name || APP_VERSION;
       const cleanTag = tagName.replace(/^v/, '');
       const isNewer = compareSemver(cleanTag, APP_VERSION) > 0;
 
-      // Locate APK asset if present
-      let apkAssetUrl: string | null = null;
+      let apkAssetUrl: string = GITHUB_RAW_APK_URL;
       if (Array.isArray(data.assets)) {
         const apkAsset = data.assets.find((a: any) =>
           a.name?.toLowerCase().endsWith('.apk')
@@ -72,7 +110,7 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
         currentVersion: APP_VERSION,
         latestVersion: cleanTag,
         releaseName: data.name || `Release ${tagName}`,
-        releaseNotes: data.body || 'No release notes provided for this version.',
+        releaseNotes: data.body || 'New enhancements for RailDraw Signalling.',
         publishedAt: data.published_at || now,
         htmlUrl: data.html_url || GITHUB_REPO_URL,
         apkDownloadUrl: apkAssetUrl,
@@ -84,47 +122,20 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
       try {
         localStorage.setItem(STORAGE_KEY_UPDATE, JSON.stringify(updateInfo));
         localStorage.setItem(STORAGE_KEY_LAST_CHECK, now);
-      } catch {
-        // Storage fail-safe
-      }
+      } catch {}
 
       return updateInfo;
     }
-
-    // 2. If 404 (no releases published yet), check all releases or tags endpoint
-    if (response.status === 404) {
-      const releasesResp = await fetch(GITHUB_API_RELEASES);
-      if (releasesResp.ok) {
-        const releases = await releasesResp.json();
-        if (Array.isArray(releases) && releases.length > 0) {
-          const latest = releases[0];
-          const cleanTag = (latest.tag_name || '1.0.0').replace(/^v/, '');
-          const isNewer = compareSemver(cleanTag, APP_VERSION) > 0;
-          return {
-            currentVersion: APP_VERSION,
-            latestVersion: cleanTag,
-            releaseName: latest.name || `Release ${cleanTag}`,
-            releaseNotes: latest.body || 'New enhancements for RailDraw Signalling.',
-            publishedAt: latest.published_at || now,
-            htmlUrl: latest.html_url || GITHUB_REPO_URL,
-            apkDownloadUrl: GITHUB_RAW_APK_URL,
-            isUpdateAvailable: isNewer,
-            lastChecked: now,
-            checkedVia: 'release',
-          };
-        }
-      }
-    }
   } catch (err) {
-    console.warn('Network error checking GitHub updates:', err);
+    console.warn('GitHub API check skipped:', err);
   }
 
-  // Fallback / Direct APK download response
+  // 3. Fallback / Offline response
   const fallbackInfo: UpdateInfo = {
     currentVersion: APP_VERSION,
     latestVersion: APP_VERSION,
     releaseName: `RailDraw Signalling v${APP_VERSION}`,
-    releaseNotes: 'You can reinstall or update RailDraw anytime directly from GitHub.',
+    releaseNotes: 'Your RailDraw Signalling app is running the latest production build.',
     publishedAt: now,
     htmlUrl: GITHUB_REPO_URL,
     apkDownloadUrl: GITHUB_RAW_APK_URL,

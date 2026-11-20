@@ -1320,17 +1320,39 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
 
             <line x1="16" y1="124" x2="424" y2="124" stroke="#CBD2DC" strokeWidth="1" />
 
-            {/* 3 Essential Indian Railways Engineering Rules */}
-            <g transform="translate(16, 138)">
-              <text x="0" y="6" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#0C2340">
-                1. Cable Route Markers (C.M.) installed every 50 m &amp; track bends.
-              </text>
-              <text x="0" y="26" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#0C2340">
-                2. Minimum bending radius of cable shall not be less than 15D.
-              </text>
-              <text x="0" y="46" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#0C2340">
-                3. Route: {project.segments.length} segment(s) • {placedSymbols.length} S&amp;T symbol(s) • IRSEM Part-II.
-              </text>
+            {/* General Notes: Live user notes or standard Indian Railways Engineering Rules */}
+            <g transform="translate(16, 136)">
+              {project.settings?.customNotes &&
+              project.settings.customNotes.filter((n) => n.trim().length > 0).length > 0 ? (
+                project.settings.customNotes
+                  .filter((n) => n.trim().length > 0)
+                  .slice(0, 4)
+                  .map((note, nIdx) => (
+                    <text
+                      key={nIdx}
+                      x="0"
+                      y={8 + nIdx * 19}
+                      fontSize="10"
+                      fontWeight="700"
+                      fontFamily="sans-serif"
+                      fill="#0C2340"
+                    >
+                      {nIdx + 1}. {note.length > 58 ? note.slice(0, 56) + '...' : note}
+                    </text>
+                  ))
+              ) : (
+                <>
+                  <text x="0" y="6" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#0C2340">
+                    1. Cable Route Markers (C.M.) installed every 50 m &amp; track bends.
+                  </text>
+                  <text x="0" y="26" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#0C2340">
+                    2. Minimum bending radius of cable shall not be less than 15D.
+                  </text>
+                  <text x="0" y="46" fontSize="10.5" fontWeight="700" fontFamily="sans-serif" fill="#0C2340">
+                    3. Route: {project.segments.length} segment(s) • {placedSymbols.length} S&amp;T symbol(s) • IRSEM Part-II.
+                  </text>
+                </>
+              )}
             </g>
           </g>
 

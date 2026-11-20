@@ -611,6 +611,8 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
             commitGeneratedProject(approvedProject, label)
           }
           onDismissDimensionProposal={() => setDimensionProposal(null)}
+          onOpenUpdates={onOpenUpdates}
+          isUpdateAvailable={isUpdateAvailable}
         />
       ) : (
         <>

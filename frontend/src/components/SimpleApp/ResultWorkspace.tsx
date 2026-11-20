@@ -200,23 +200,22 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
       {/* Drawing Image Options Strip (Hidden in compact landscape to maximize sheet) */}
       {!isLandscapeMode && (
         <div className="px-3 sm:px-4 pt-2 pb-1 bg-surface-page shrink-0">
-          <div className="max-w-4xl mx-auto flex items-center justify-between gap-2">
+          <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
             <DrawingVariantPicker
               value={project.settings.drawingVariant || 'standard'}
               onChange={onChangeDrawingVariant}
             />
 
-            <span className="text-xs text-ink-muted hidden md:inline">
-              {isEditMode ? (
-                <span className="text-accent font-semibold">
-                  Edit Mode Active: Drag symbols or click any text on the drawing to re-write.
-                </span>
-              ) : (
-                <>
-                  Click <b>Edit Mode</b> or <b>Edit Words</b> to customize symbols, lengths, and titles.
-                </>
-              )}
-            </span>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-surface-card border border-line text-[11px] font-bold text-ink-primary shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                RDSO Standard
+              </span>
+              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-surface-card border border-line text-[11px] font-bold text-ink-primary shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                25kV AC Immunized
+              </span>
+            </div>
           </div>
         </div>
       )}
@@ -263,14 +262,14 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
 
       {/* Contextual Symbol Editor Strip (Appears when any symbol is selected) */}
       {selectedSymbol && (
-        <div className="px-3 py-2 border-t border-primary-border bg-primary-subtle shrink-0">
-          <div className="max-w-2xl mx-auto flex flex-wrap items-center justify-between gap-2">
+        <div className="px-3 py-2 border-t border-line/60 bg-surface-subtle/80 backdrop-blur-md shrink-0">
+          <div className="max-w-2xl mx-auto flex flex-wrap items-center justify-between gap-2.5">
             <div className="flex items-center gap-2">
               <label
                 htmlFor="selected-symbol-tag"
-                className="text-xs font-semibold text-ink-secondary"
+                className="text-xs font-bold text-ink-primary"
               >
-                Symbol Label:
+                Symbol:
               </label>
               <input
                 id="selected-symbol-tag"
@@ -279,14 +278,14 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
                 onChange={(e) => onPatchSelectedSymbol({ label: e.target.value })}
                 maxLength={UI_LIMITS.MAX_SYMBOL_LABEL_LENGTH}
                 placeholder="e.g. S12"
-                className="w-28 min-h-[38px] px-2.5 py-1 text-sm font-semibold bg-surface-card text-ink-primary border border-line rounded-sm focus:border-primary focus:outline-none"
+                className="w-28 min-h-[38px] px-3 py-1 text-sm font-bold bg-surface-card text-ink-primary border border-line rounded-xl focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
-            <div className="flex items-center gap-1">
-              <Button
-                variant="secondary"
-                iconOnly
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[11px] font-semibold text-ink-muted mr-1 hidden xs:inline">Size:</span>
+              <button
+                type="button"
                 onClick={() =>
                   onPatchSelectedSymbol({
                     scale: Math.max(
@@ -296,14 +295,14 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
                   })
                 }
                 disabled={selectedSymbol.scale <= CANVAS_CONFIG.SYMBOL_MIN_SCALE}
+                className="min-h-[38px] min-w-[38px] inline-flex items-center justify-center rounded-xl bg-surface-card border border-line text-ink-primary hover:bg-surface-hover active:bg-surface-active disabled:opacity-40 transition-all"
                 aria-label="Decrease symbol size"
-                title="Decrease size"
+                title="Decrease size (-)"
               >
                 <Minus className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="secondary"
-                iconOnly
+              </button>
+              <button
+                type="button"
                 onClick={() =>
                   onPatchSelectedSymbol({
                     scale: Math.min(
@@ -313,42 +312,52 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
                   })
                 }
                 disabled={selectedSymbol.scale >= CANVAS_CONFIG.SYMBOL_MAX_SCALE}
+                className="min-h-[38px] min-w-[38px] inline-flex items-center justify-center rounded-xl bg-surface-card border border-line text-ink-primary hover:bg-surface-hover active:bg-surface-active disabled:opacity-40 transition-all"
                 aria-label="Increase symbol size"
-                title="Increase size"
+                title="Increase size (+)"
               >
                 <Plus className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="secondary"
-                iconOnly
+              </button>
+              <button
+                type="button"
                 onClick={() =>
                   onPatchSelectedSymbol({
                     rotation: (selectedSymbol.rotation + CANVAS_CONFIG.SYMBOL_ROTATION_STEP) % 360,
                   })
                 }
+                className="min-h-[38px] px-2.5 inline-flex items-center gap-1 rounded-xl bg-surface-card border border-line text-ink-primary hover:bg-surface-hover active:bg-surface-active transition-all text-xs font-semibold"
                 aria-label="Rotate symbol 45 degrees"
                 title="Rotate 45°"
               >
-                <RotateCw className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="secondary"
-                iconOnly
+                <RotateCw className="w-3.5 h-3.5" />
+                <span>45°</span>
+              </button>
+              <button
+                type="button"
                 onClick={onDuplicateSelected}
+                className="min-h-[38px] min-w-[38px] inline-flex items-center justify-center rounded-xl bg-surface-card border border-line text-ink-primary hover:bg-surface-hover active:bg-surface-active transition-all"
                 aria-label="Duplicate symbol"
-                title="Duplicate"
+                title="Duplicate symbol"
               >
                 <Copy className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="danger"
-                iconOnly
+              </button>
+              <button
+                type="button"
                 onClick={onDeleteSelected}
+                className="min-h-[38px] min-w-[38px] inline-flex items-center justify-center rounded-xl bg-status-error-bg border border-status-error-border text-status-error hover:bg-status-error hover:text-white active:opacity-90 transition-all"
                 aria-label="Remove symbol"
                 title="Remove symbol"
               >
                 <Trash2 className="w-4 h-4" />
-              </Button>
+              </button>
+              <button
+                type="button"
+                onClick={() => onSelectSymbol(null)}
+                className="min-h-[38px] px-3 inline-flex items-center gap-1 rounded-xl bg-primary text-primary-ink font-bold text-xs hover:bg-primary-hover shadow-sm transition-all"
+              >
+                <Check className="w-3.5 h-3.5" />
+                <span>Done</span>
+              </button>
             </div>
           </div>
         </div>
