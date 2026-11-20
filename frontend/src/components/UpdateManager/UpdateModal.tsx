@@ -181,14 +181,14 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
           </Button>
 
           <div className="flex items-center gap-2">
-            {isNewAvailable && updateInfo?.apkDownloadUrl && (
+            {updateInfo?.apkDownloadUrl && (
               <a
                 href={updateInfo.apkDownloadUrl}
-                download
-                className="min-h-[36px] px-3.5 inline-flex items-center gap-1.5 rounded-md text-xs font-semibold bg-status-success text-white hover:bg-emerald-700 transition-colors shadow-sm"
+                download="RailDraw.apk"
+                className="min-h-[36px] px-3.5 inline-flex items-center gap-1.5 rounded-xl text-xs font-semibold bg-status-success text-white hover:bg-emerald-700 transition-all shadow-sm"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Install APK</span>
+                <span>{isNewAvailable ? 'Install Update' : 'Download Latest APK'}</span>
               </a>
             )}
 
@@ -196,7 +196,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
               href={updateInfo?.htmlUrl || 'https://github.com/codeYashh/RailDraw-Signalling'}
               target="_blank"
               rel="noopener noreferrer"
-              className="min-h-[36px] px-3.5 inline-flex items-center gap-1.5 rounded-md text-xs font-semibold bg-primary text-primary-ink hover:bg-primary-hover transition-colors shadow-sm"
+              className="min-h-[36px] px-3.5 inline-flex items-center gap-1.5 rounded-xl text-xs font-semibold bg-primary text-primary-ink hover:bg-primary-hover transition-colors shadow-sm"
             >
               <span>{isNewAvailable ? 'View Release' : 'View on GitHub'}</span>
               <ExternalLink className="w-3.5 h-3.5" />

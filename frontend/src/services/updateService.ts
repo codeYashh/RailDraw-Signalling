@@ -3,6 +3,7 @@ import {
   GITHUB_API_LATEST_RELEASE,
   GITHUB_API_RELEASES,
   GITHUB_REPO_URL,
+  GITHUB_RAW_APK_URL,
 } from '../constants/version';
 
 export interface UpdateInfo {
@@ -106,7 +107,7 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
             releaseNotes: latest.body || 'New enhancements for RailDraw Signalling.',
             publishedAt: latest.published_at || now,
             htmlUrl: latest.html_url || GITHUB_REPO_URL,
-            apkDownloadUrl: null,
+            apkDownloadUrl: GITHUB_RAW_APK_URL,
             isUpdateAvailable: isNewer,
             lastChecked: now,
             checkedVia: 'release',
@@ -118,15 +119,15 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
     console.warn('Network error checking GitHub updates:', err);
   }
 
-  // Fallback / Up-to-date response
+  // Fallback / Direct APK download response
   const fallbackInfo: UpdateInfo = {
     currentVersion: APP_VERSION,
     latestVersion: APP_VERSION,
     releaseName: `RailDraw Signalling v${APP_VERSION}`,
-    releaseNotes: 'You are on the latest production release.',
+    releaseNotes: 'You can reinstall or update RailDraw anytime directly from GitHub.',
     publishedAt: now,
     htmlUrl: GITHUB_REPO_URL,
-    apkDownloadUrl: null,
+    apkDownloadUrl: GITHUB_RAW_APK_URL,
     isUpdateAvailable: false,
     lastChecked: now,
     checkedVia: 'mock',
