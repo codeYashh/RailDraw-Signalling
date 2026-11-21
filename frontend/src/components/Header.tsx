@@ -62,12 +62,12 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Presets */}
-        <div className="hidden xl:flex items-center gap-1.5 border border-white/15 rounded-sm p-1">
-          <span className="text-xs font-medium text-chrome-muted px-2">Samples:</span>
+        <div className="hidden xl:flex items-center gap-1.5 border border-white/20 rounded-full p-1 bg-white/5 backdrop-blur-md">
+          <span className="text-xs font-medium text-chrome-muted px-2.5">Samples:</span>
           <button
             type="button"
             onClick={() => onLoadPreset(SAMPLE_PROJECT_REFERENCE)}
-            className="min-h-[36px] px-2.5 text-xs font-medium text-chrome-ink hover:bg-white/10 active:bg-white/15 rounded-sm transition-colors duration-fast"
+            className="min-h-[36px] px-3 text-xs font-semibold text-chrome-ink hover:bg-white/15 active:bg-white/25 rounded-full transition-all"
             title="L1 to L12 (500 m: 20 m HDD, 50 m GI pipe, 430 m normal trenching)"
           >
             L1–L12 (500 m)
@@ -75,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => onLoadPreset(SAMPLE_PROJECT_YARD)}
-            className="min-h-[36px] px-2.5 text-xs font-medium text-chrome-ink hover:bg-white/10 active:bg-white/15 rounded-sm transition-colors duration-fast"
+            className="min-h-[36px] px-3 text-xs font-semibold text-chrome-ink hover:bg-white/15 active:bg-white/25 rounded-full transition-all"
             title="Station Relay Hut to LC Gate 34 (1200 m)"
           >
             Yard to LC-34 (1200 m)
@@ -88,7 +88,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={onSwitchToSimple}
-              className="min-h-[44px] px-3 inline-flex items-center gap-1.5 text-xs font-medium text-chrome-ink hover:bg-white/10 active:bg-white/15 rounded-sm border border-white/15 transition-colors duration-fast"
+              className="min-h-[40px] px-3.5 inline-flex items-center gap-1.5 text-xs font-semibold text-chrome-ink hover:bg-white/15 active:bg-white/25 rounded-full border border-white/20 transition-all backdrop-blur-md"
               title="Switch to mobile quick drafter"
             >
               <Smartphone className="w-4 h-4" />
@@ -99,12 +99,12 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenSymbolManager}
-            className="min-h-[44px] px-3 inline-flex items-center gap-1.5 text-xs font-medium text-chrome-ink hover:bg-white/10 active:bg-white/15 rounded-sm border border-white/15 transition-colors duration-fast"
+            className="min-h-[40px] px-3.5 inline-flex items-center gap-1.5 text-xs font-semibold text-chrome-ink hover:bg-white/15 active:bg-white/25 rounded-full border border-white/20 transition-all backdrop-blur-md"
           >
             <Layers className="w-4 h-4" />
             <span>Symbols</span>
             {unverifiedCount > 0 && (
-              <span className="ml-0.5 text-xs font-semibold bg-accent-solid text-white px-1.5 py-0.5 rounded-sm tabular-nums leading-none">
+              <span className="ml-0.5 text-xs font-bold bg-accent-solid text-white px-2 py-0.5 rounded-full tabular-nums leading-none">
                 {unverifiedCount}
               </span>
             )}
@@ -113,7 +113,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenRulePack}
-            className="min-h-[44px] px-3 inline-flex items-center gap-1.5 text-xs font-medium text-chrome-ink hover:bg-white/10 active:bg-white/15 rounded-sm border border-white/15 transition-colors duration-fast"
+            className="min-h-[40px] px-3.5 inline-flex items-center gap-1.5 text-xs font-semibold text-chrome-ink hover:bg-white/15 active:bg-white/25 rounded-full border border-white/20 transition-all backdrop-blur-md"
           >
             <BookOpen className="w-4 h-4" />
             <span>IRSEM Rules</span>
@@ -123,24 +123,24 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={onOpenUpdates}
-              className="relative min-h-[44px] px-3 inline-flex items-center gap-1.5 text-xs font-medium text-chrome-ink hover:bg-white/10 active:bg-white/15 rounded-sm border border-white/15 transition-colors duration-fast"
+              className="relative min-h-[40px] px-3.5 inline-flex items-center gap-1.5 text-xs font-semibold text-chrome-ink hover:bg-white/15 active:bg-white/25 rounded-full border border-white/20 transition-all backdrop-blur-md"
               title="Check for software updates from GitHub"
             >
               <Sparkles className="w-4 h-4 text-amber-300" />
               <span>Updates</span>
               {isUpdateAvailable && (
-                <span className="w-2 h-2 rounded-full bg-status-success animate-ping absolute -top-0.5 -right-0.5" />
+                <span className="w-2.5 h-2.5 rounded-full bg-status-success animate-ping absolute -top-0.5 -right-0.5" />
               )}
             </button>
           )}
 
-          <label className="min-h-[44px] px-2.5 inline-flex items-center gap-1.5 rounded-sm border border-white/15 bg-white/5">
+          <label className="min-h-[40px] px-3 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md">
             <ShieldCheck className="w-4 h-4 text-chrome-muted shrink-0" aria-hidden="true" />
             <span className="sr-only">User role</span>
             <select
               value={currentRole}
               onChange={(e) => onRoleChange(e.target.value as UserRole)}
-              className="bg-transparent text-xs font-medium text-chrome-ink focus:outline-none cursor-pointer min-h-[36px]"
+              className="bg-transparent text-xs font-semibold text-chrome-ink focus:outline-none cursor-pointer min-h-[36px]"
             >
               <option value="Admin" className="bg-chrome-bar text-chrome-ink">
                 Admin

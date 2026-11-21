@@ -299,73 +299,53 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
 
   return (
     <div className="relative w-full h-full bg-canvas-backdrop overflow-hidden flex flex-col">
-      {/* CAD Viewport Toolbar */}
-      <div className="min-h-[52px] px-3 py-1 bg-surface-subtle border-b border-line flex items-center justify-between gap-2 text-ink-primary z-10 shrink-0">
-        <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-          {onToggleEditMode && (
-            <button
-              type="button"
-              onClick={onToggleEditMode}
-              className={`min-h-[40px] px-3 inline-flex items-center gap-1.5 rounded-sm text-xs font-bold border transition-all duration-fast shrink-0 shadow-xs ${
-                isEditMode
-                  ? 'bg-accent text-white border-accent shadow-sm ring-2 ring-accent/30'
-                  : 'bg-surface-card hover:bg-surface-hover active:bg-surface-active text-ink-primary border-line'
-              }`}
-              title="Toggle interactive editing mode for symbols and text"
-            >
-              <Move className="w-3.5 h-3.5" />
-              <span>{isEditMode ? 'Exit Editing' : 'Edit Mode'}</span>
-            </button>
-          )}
-          {onOpenEditInfo && (
-            <button
-              type="button"
-              onClick={() => onOpenEditInfo()}
-              className="min-h-[40px] px-2.5 inline-flex items-center gap-1.5 bg-primary hover:bg-primary-hover active:bg-primary-active text-primary-ink rounded-sm text-xs font-semibold shadow-xs transition-colors duration-fast shrink-0"
-              title="Edit written text, names, lengths, and notes"
-            >
-              <Sliders className="w-3.5 h-3.5" />
-              <span>Edit Words &amp; Text</span>
-            </button>
-          )}
-          {onOpenAddSymbolPicker && (
+      {/* CAD Viewport Floating Liquid Glass Toolbar */}
+      <div className="min-h-[48px] px-3 py-1.5 bg-surface-subtle/80 backdrop-blur-md border-b border-line/60 flex items-center justify-between gap-2 text-ink-primary z-10 shrink-0">
+        <div className="flex items-center gap-2 min-w-0 flex-wrap">
+          {onOpenAddSymbolPicker && isEditMode && (
             <button
               type="button"
               onClick={onOpenAddSymbolPicker}
-              className="min-h-[40px] px-2.5 inline-flex items-center gap-1.5 bg-surface-card hover:bg-surface-hover active:bg-surface-active text-ink-primary border border-line rounded-sm text-xs font-semibold shadow-xs transition-colors duration-fast shrink-0"
+              className="liquid-glass-accent min-h-[38px] px-3.5 inline-flex items-center gap-1.5 text-xs font-bold shadow-sm transition-all"
               title="Add S&T symbol to drawing"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add Symbol</span>
             </button>
           )}
-          {onOpenSymbolManager && (
+          {onOpenSymbolManager && isEditMode && (
             <button
               type="button"
               onClick={onOpenSymbolManager}
-              className="min-h-[40px] px-2.5 inline-flex items-center gap-1.5 bg-surface-card hover:bg-surface-hover active:bg-surface-active text-ink-primary border border-line rounded-sm text-xs font-semibold shadow-xs transition-colors duration-fast shrink-0"
+              className="liquid-glass-secondary min-h-[38px] px-3.5 inline-flex items-center gap-1.5 text-xs font-semibold shadow-xs transition-all"
               title="Manage placed symbols"
             >
-              <Tag className="w-3.5 h-3.5" />
-              <span>Symbols ({placedSymbols.length})</span>
+              <Tag className="w-3.5 h-3.5 text-accent" />
+              <span>Placed ({placedSymbols.length})</span>
             </button>
+          )}
+          {isEditMode && (
+            <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-ink-muted font-medium px-2 py-0.5 rounded-full bg-surface-card border border-line/50">
+              Drag symbols on sheet to reposition
+            </span>
           )}
         </div>
 
-        <div className="flex items-center gap-1">
+        {/* Minimalist Liquid Glass Zoom Pill */}
+        <div className="flex items-center gap-1 bg-surface-card/80 backdrop-blur-md border border-line/70 rounded-full px-1.5 py-0.5 shadow-sm">
           <button
             type="button"
             onClick={() =>
               setZoom((z) => Math.max(z - CANVAS_CONFIG.ZOOM_STEP, CANVAS_CONFIG.MIN_ZOOM))
             }
             disabled={zoom <= CANVAS_CONFIG.MIN_ZOOM}
-            className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-ink-secondary hover:text-ink-primary hover:bg-surface-hover active:bg-surface-active rounded-sm disabled:opacity-40 transition-colors duration-fast"
+            className="w-8 h-8 rounded-full inline-flex items-center justify-center text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active disabled:opacity-30 transition-colors"
             aria-label="Zoom out"
             title="Zoom out"
           >
-            <ZoomOut className="w-4 h-4" />
+            <ZoomOut className="w-3.5 h-3.5" />
           </button>
-          <span className="text-xs text-ink-primary tabular-nums w-11 text-center font-medium">
+          <span className="text-xs text-ink-primary tabular-nums px-1.5 text-center font-bold">
             {Math.round(zoom * 100)}%
           </span>
           <button
@@ -374,33 +354,23 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
               setZoom((z) => Math.min(z + CANVAS_CONFIG.ZOOM_STEP, CANVAS_CONFIG.MAX_ZOOM))
             }
             disabled={zoom >= CANVAS_CONFIG.MAX_ZOOM}
-            className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-ink-secondary hover:text-ink-primary hover:bg-surface-hover active:bg-surface-active rounded-sm disabled:opacity-40 transition-colors duration-fast"
+            className="w-8 h-8 rounded-full inline-flex items-center justify-center text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active disabled:opacity-30 transition-colors"
             aria-label="Zoom in"
             title="Zoom in"
           >
-            <ZoomIn className="w-4 h-4" />
+            <ZoomIn className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
             onClick={resetView}
-            className="min-h-[44px] px-2.5 inline-flex items-center gap-1 bg-surface-card text-ink-primary hover:bg-surface-hover active:bg-surface-active rounded-sm text-xs font-medium border border-line transition-colors duration-fast"
-            title="Reset zoom and pan to fit"
+            className="w-8 h-8 rounded-full inline-flex items-center justify-center text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-colors ml-0.5"
+            aria-label="Reset zoom and center view"
+            title="Reset 100%"
           >
-            <Maximize2 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Fit</span>
+            <Maximize2 className="w-3 h-3" />
           </button>
         </div>
       </div>
-
-      {isEditMode && (
-        <div className="px-3 py-1.5 bg-accent-subtle text-ink-primary text-xs font-semibold flex items-center justify-between border-b border-accent-border shrink-0 animate-in fade-in">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span>Editing Mode Active: Drag symbols to reposition, or click any symbol / words on the drawing to re-write.</span>
-          </span>
-          <span className="tabular-nums text-ink-secondary hidden sm:inline">{placedSymbols.length} placed symbol(s)</span>
-        </div>
-      )}
 
       {/* Main SVG CAD Drawing Area */}
       <div
@@ -1148,20 +1118,26 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
                   {/* Generous invisible touch hit target for effortless finger dragging */}
                   <circle cx="0" cy="0" r={Math.max(28 * sym.scale, 26)} fill="transparent" />
 
-                  {/* Editor-only selection halo (automatically stripped during PNG/PDF export) */}
-                  {(isSelected || isEditMode) && (
-                    <rect
-                      data-editor-ui="true"
-                      x={-26 * sym.scale}
-                      y={-28 * sym.scale}
-                      width={52 * sym.scale}
-                      height={66 * sym.scale}
-                      rx="6"
-                      fill={isSelected ? 'rgba(14, 165, 233, 0.12)' : 'transparent'}
-                      stroke={isSelected ? '#0284C7' : '#94A3B8'}
-                      strokeWidth={isSelected ? '2' : '1'}
-                      strokeDasharray={isSelected ? '4,3' : '3,3'}
-                    />
+                  {/* Refined Liquid Glass Selection Ring - only on selected symbol */}
+                  {isSelected && (
+                    <g data-editor-ui="true">
+                      {/* Soft ambient glow halo */}
+                      <rect
+                        x={-28 * sym.scale}
+                        y={-30 * sym.scale}
+                        width={56 * sym.scale}
+                        height={64 * sym.scale}
+                        rx="12"
+                        fill="rgba(2, 132, 199, 0.12)"
+                        stroke="#0284C7"
+                        strokeWidth="2"
+                      />
+                      {/* 4 Sleek rounded corner grab markers */}
+                      <circle cx={-28 * sym.scale} cy={-30 * sym.scale} r="3.5" fill="#FFFFFF" stroke="#0284C7" strokeWidth="1.5" />
+                      <circle cx={28 * sym.scale} cy={-30 * sym.scale} r="3.5" fill="#FFFFFF" stroke="#0284C7" strokeWidth="1.5" />
+                      <circle cx={-28 * sym.scale} cy={34 * sym.scale} r="3.5" fill="#FFFFFF" stroke="#0284C7" strokeWidth="1.5" />
+                      <circle cx={28 * sym.scale} cy={34 * sym.scale} r="3.5" fill="#FFFFFF" stroke="#0284C7" strokeWidth="1.5" />
+                    </g>
                   )}
 
                   {/* Pure inline SVG vector symbol */}

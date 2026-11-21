@@ -63,9 +63,12 @@
   --chrome-ink-muted: #cbd5e1;
 
   /* Corner Radii - modern smooth rounded curves */
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-xl: 36px;
+  --radius-full: 9999px;
 
   /* Shadows (2 levels only) */
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);

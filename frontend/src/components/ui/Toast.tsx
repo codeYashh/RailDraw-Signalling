@@ -16,9 +16,9 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
   if (!toast) return null;
 
   const toneClasses = {
-    success: 'bg-surface-card border-status-success-border text-ink-primary',
-    error: 'bg-status-error-bg border-status-error-border text-status-error',
-    info: 'bg-surface-card border-line text-ink-primary',
+    success: 'bg-surface-card/90 border-status-success-border text-ink-primary shadow-emerald-500/10',
+    error: 'bg-status-error-bg/95 border-status-error-border text-status-error shadow-red-500/10',
+    info: 'bg-surface-card/90 border-line/80 text-ink-primary shadow-slate-900/10',
   }[toast.tone];
 
   const Icon =
@@ -39,15 +39,15 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
     <div
       role={toast.tone === 'error' ? 'alert' : 'status'}
       aria-live="polite"
-      className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] max-w-md w-[calc(100%-2rem)] px-4 py-2.5 rounded-md border shadow-md flex items-center gap-3 ${toneClasses}`}
+      className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] max-w-md w-[calc(100%-2rem)] px-5 py-3 rounded-full border shadow-xl backdrop-blur-xl flex items-center gap-3 animate-fadeIn ${toneClasses}`}
     >
       <Icon className={`w-4 h-4 shrink-0 ${iconColor}`} aria-hidden="true" />
-      <span className="text-sm font-medium flex-1 leading-snug">{toast.message}</span>
+      <span className="text-xs sm:text-sm font-semibold flex-1 leading-snug">{toast.message}</span>
       {toast.onRetry && (
         <button
           type="button"
           onClick={toast.onRetry}
-          className="min-h-[36px] px-2.5 rounded-sm text-xs font-semibold border border-current/25 hover:bg-surface-hover inline-flex items-center gap-1 shrink-0"
+          className="min-h-[32px] px-3 rounded-full text-xs font-bold border border-current/30 hover:bg-surface-hover/80 inline-flex items-center gap-1 shrink-0 transition-all"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Retry</span>
@@ -56,7 +56,7 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
       <button
         type="button"
         onClick={onDismiss}
-        className="min-h-[36px] min-w-[36px] -mr-1 inline-flex items-center justify-center rounded-sm text-ink-muted hover:text-ink-primary hover:bg-surface-hover shrink-0"
+        className="w-8 h-8 -mr-1 inline-flex items-center justify-center rounded-full text-ink-muted hover:text-ink-primary hover:bg-surface-hover/80 shrink-0 transition-colors"
         aria-label="Dismiss notification"
       >
         <X className="w-4 h-4" />

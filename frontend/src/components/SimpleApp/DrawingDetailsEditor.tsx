@@ -6,10 +6,9 @@ import {
   MapPin,
   Layers,
   FileCheck,
-  Sparkles,
-  Info,
-  Check,
   FileText,
+  Sliders,
+  Check,
 } from 'lucide-react';
 import { DrawingProject } from '../../types/drawing';
 
@@ -17,14 +16,16 @@ interface DrawingDetailsEditorProps {
   project: DrawingProject;
   onUpdateProject: (updated: DrawingProject) => void;
   className?: string;
+  defaultTab?: 'route' | 'cables' | 'notes' | 'title';
 }
 
 export const DrawingDetailsEditor: React.FC<DrawingDetailsEditorProps> = ({
   project,
   onUpdateProject,
   className = '',
+  defaultTab = 'route',
 }) => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<'route' | 'cables' | 'notes' | 'title'>(defaultTab);
 
   // Compute total length from segments
   const totalLength = project.segments.reduce(
@@ -201,128 +202,119 @@ export const DrawingDetailsEditor: React.FC<DrawingDetailsEditorProps> = ({
 
   return (
     <div
-      className={`glass-panel rounded-2xl sm:rounded-3xl shadow-lg border border-line/60 overflow-hidden transition-all ${className}`}
+      className={`glass-panel rounded-3xl shadow-xl border border-line/60 overflow-hidden transition-all ${className}`}
     >
-      {/* Header Bar */}
-      <div className="px-4 sm:px-5 py-3 border-b border-line/40 bg-surface-subtle/40 backdrop-blur-md flex items-center justify-between">
+      {/* Header Bar with Live Sync Badge */}
+      <div className="px-5 py-3.5 border-b border-line/40 bg-surface-subtle/40 backdrop-blur-md flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <Pencil className="w-4 h-4 text-primary" />
-          <h2 className="text-xs sm:text-sm font-bold text-ink-primary">
-            Details Written Down The Pic
-          </h2>
-          <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Live drawing sync
-          </span>
+          <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+            <Sliders className="w-4 h-4" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-ink-primary">
+              Drawing Specifications &amp; Notes
+            </h2>
+            <p className="text-[11px] text-ink-muted">
+              Live two-way synchronization with CAD sheet
+            </p>
+          </div>
         </div>
+
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          Sync Active
+        </span>
+      </div>
+
+      {/* Modern Liquid Glass Segmented Tab Bar */}
+      <div className="p-2.5 bg-surface-subtle/30 border-b border-line/30 flex items-center gap-1.5 overflow-x-auto">
+        <button
+          type="button"
+          onClick={() => setActiveTab('route')}
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === 'route'
+              ? 'liquid-glass-primary shadow-sm'
+              : 'text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/70'
+          }`}
+        >
+          <MapPin className="w-3.5 h-3.5" />
+          <span>Route &amp; Stations</span>
+        </button>
 
         <button
           type="button"
-          onClick={() => setIsExpanded((prev) => !prev)}
-          className="text-xs font-semibold text-primary hover:text-primary-hover flex items-center gap-1 min-h-[36px] px-2.5 rounded-xl hover:bg-surface-hover/60 transition-colors"
-          aria-expanded={isExpanded}
+          onClick={() => setActiveTab('cables')}
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === 'cables'
+              ? 'liquid-glass-primary shadow-sm'
+              : 'text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/70'
+          }`}
         >
-          <span>{isExpanded ? 'Hide Details' : 'Edit Details'}</span>
-          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          <Layers className="w-3.5 h-3.5" />
+          <span>Cable &amp; Trench</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('notes')}
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === 'notes'
+              ? 'liquid-glass-primary shadow-sm'
+              : 'text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/70'
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          <span>Notes &amp; Description</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('title')}
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === 'title'
+              ? 'liquid-glass-primary shadow-sm'
+              : 'text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/70'
+          }`}
+        >
+          <FileCheck className="w-3.5 h-3.5" />
+          <span>Title Block</span>
         </button>
       </div>
 
-      {isExpanded && (
-        <div className="p-4 sm:p-5 space-y-4">
-          {/* SECTION 1: FREELY WRITE NOTES / DESCRIPTION IN DETAILS BOX */}
-          <div className="p-3.5 sm:p-4 rounded-2xl bg-surface-subtle/60 border border-line/60 space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <label
-                htmlFor="drawing-notes-textarea"
-                className="text-xs font-bold text-ink-primary flex items-center gap-1.5"
-              >
-                <FileText className="w-3.5 h-3.5 text-primary" />
-                <span>Write Notes &amp; Description (Shows live on drawing):</span>
-              </label>
-              <span className="text-[11px] text-ink-muted">
-                1 note per line
-              </span>
-            </div>
-
-            <textarea
-              id="drawing-notes-textarea"
-              rows={3}
-              value={customNotesText}
-              onChange={(e) => handleUpdateNotes(e.target.value)}
-              placeholder="Write anything here... e.g.&#10;Cable laid 2.5m from track centre&#10;All track crossings in 150mm NP2 RCC pipe&#10;RDSO/SPN/TC/72/2007 compliant armoured cable"
-              className="w-full glass-input rounded-xl p-3 text-xs sm:text-sm text-ink-primary placeholder:text-ink-muted leading-relaxed focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all resize-none font-medium"
-            />
-
-            {/* Quick helper suggestion chips */}
-            <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="text-[10px] font-semibold text-ink-muted">Quick add:</span>
-              <button
-                type="button"
-                onClick={() => handleAppendQuickNote('Cable route offset: 2.5m from track centre')}
-                className="text-[11px] px-2 py-0.5 rounded-lg bg-surface-card hover:bg-surface-hover border border-line text-ink-secondary hover:text-ink-primary transition-all font-medium"
-              >
-                + 2.5m track offset
-              </button>
-              <button
-                type="button"
-                onClick={() => handleAppendQuickNote('Track crossings in 150mm RCC NP2 pipe')}
-                className="text-[11px] px-2 py-0.5 rounded-lg bg-surface-card hover:bg-surface-hover border border-line text-ink-secondary hover:text-ink-primary transition-all font-medium"
-              >
-                + RCC track crossing
-              </button>
-              <button
-                type="button"
-                onClick={() => handleAppendQuickNote('Cable Route Markers installed every 50m')}
-                className="text-[11px] px-2 py-0.5 rounded-lg bg-surface-card hover:bg-surface-hover border border-line text-ink-secondary hover:text-ink-primary transition-all font-medium"
-              >
-                + Markers every 50m
-              </button>
-              <button
-                type="button"
-                onClick={() => handleAppendQuickNote('Work to be executed under S&T supervision')}
-                className="text-[11px] px-2 py-0.5 rounded-lg bg-surface-card hover:bg-surface-hover border border-line text-ink-secondary hover:text-ink-primary transition-all font-medium"
-              >
-                + S&T supervision
-              </button>
-            </div>
-          </div>
-
-          {/* SECTION 2: ROUTE STATIONS & LENGTH */}
-          <div>
-            <div className="text-[11px] font-bold text-ink-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-primary" />
-              <span>Route &amp; Stations</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* Tab Panels */}
+      <div className="p-5">
+        {/* TAB 1: ROUTE & STATIONS */}
+        {activeTab === 'route' && (
+          <div className="space-y-4 animate-fadeIn">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
-                  From (Start Station / Point)
+                <label className="block text-xs font-bold text-ink-secondary mb-1.5">
+                  From (Start Point / Station)
                 </label>
                 <input
                   type="text"
                   value={project.startNode.id}
                   onChange={(e) => handleUpdateStartNode(e.target.value)}
                   placeholder="e.g. Signal S12"
-                  className="w-full min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-medium glass-input rounded-xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full min-h-[44px] px-4 py-2 text-sm font-semibold glass-input rounded-2xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
-                  To (End Station / Point)
+                <label className="block text-xs font-bold text-ink-secondary mb-1.5">
+                  To (End Point / Station)
                 </label>
                 <input
                   type="text"
                   value={project.endNode.id}
                   onChange={(e) => handleUpdateEndNode(e.target.value)}
                   placeholder="e.g. Point Machine P4"
-                  className="w-full min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-medium glass-input rounded-xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full min-h-[44px] px-4 py-2 text-sm font-semibold glass-input rounded-2xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                <label className="block text-xs font-bold text-ink-secondary mb-1.5">
                   Total Route Length (m)
                 </label>
                 <div className="relative">
@@ -333,32 +325,33 @@ export const DrawingDetailsEditor: React.FC<DrawingDetailsEditorProps> = ({
                     step="1"
                     value={totalLength}
                     onChange={(e) => handleUpdateTotalLength(e.target.value)}
-                    className="w-full min-h-[40px] px-3.5 py-1.5 pr-8 text-xs sm:text-sm font-bold glass-input rounded-xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                    className="w-full min-h-[44px] px-4 py-2 pr-10 text-sm font-bold glass-input rounded-2xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                   />
-                  <span className="absolute right-3.5 top-2.5 text-xs font-bold text-ink-muted">
+                  <span className="absolute right-4 top-3 text-xs font-extrabold text-ink-muted">
                     m
                   </span>
                 </div>
               </div>
             </div>
+
+            <p className="text-xs text-ink-muted leading-relaxed">
+              Updates station banners, chainage markers, and horizontal scale across the drawing automatically.
+            </p>
           </div>
+        )}
 
-          {/* SECTION 3: CABLE & TRENCH SPECIFICATIONS */}
-          <div>
-            <div className="text-[11px] font-bold text-ink-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-primary" />
-              <span>Cable &amp; Trench Specifications</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* TAB 2: CABLE & TRENCH SPECIFICATIONS */}
+        {activeTab === 'cables' && (
+          <div className="space-y-4 animate-fadeIn">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                <label className="block text-xs font-bold text-ink-secondary mb-1.5">
                   Cable Cores
                 </label>
                 <select
                   value={primaryCable.coreCount}
                   onChange={(e) => handleUpdateCableCores(parseInt(e.target.value, 10))}
-                  className="w-full min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-medium glass-input rounded-xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full min-h-[44px] px-4 py-2 text-sm font-semibold glass-input rounded-2xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                 >
                   <option value="2">2 Core</option>
                   <option value="4">4 Core</option>
@@ -372,13 +365,13 @@ export const DrawingDetailsEditor: React.FC<DrawingDetailsEditorProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                <label className="block text-xs font-bold text-ink-secondary mb-1.5">
                   Trench Depth
                 </label>
                 <select
                   value={currentDepth}
                   onChange={(e) => handleUpdateTrenchDepth(parseFloat(e.target.value))}
-                  className="w-full min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-medium glass-input rounded-xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full min-h-[44px] px-4 py-2 text-sm font-semibold glass-input rounded-2xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                 >
                   <option value="1.0">1.0 m (Standard Normal Trenching)</option>
                   <option value="1.2">1.2 m (Track Crossings)</option>
@@ -389,7 +382,7 @@ export const DrawingDetailsEditor: React.FC<DrawingDetailsEditorProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                <label className="block text-xs font-bold text-ink-secondary mb-1.5">
                   Protective Layer
                 </label>
                 <input
@@ -397,22 +390,81 @@ export const DrawingDetailsEditor: React.FC<DrawingDetailsEditorProps> = ({
                   value={currentCover}
                   onChange={(e) => handleUpdateCover(e.target.value)}
                   placeholder="e.g. Class-II Brick with sand"
-                  className="w-full min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-medium glass-input rounded-xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full min-h-[44px] px-4 py-2 text-sm font-semibold glass-input rounded-2xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                 />
               </div>
             </div>
-          </div>
 
-          {/* SECTION 4: DRAWN & APPROVED BY */}
-          <div>
-            <div className="text-[11px] font-bold text-ink-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <FileCheck className="w-3.5 h-3.5 text-primary" />
-              <span>Title Block &amp; Signatures</span>
+            <p className="text-xs text-ink-muted leading-relaxed">
+              Updates the cross-sectional Detail 'A' leader diagram and legend specifications on the sheet.
+            </p>
+          </div>
+        )}
+
+        {/* TAB 3: NOTES & DESCRIPTION */}
+        {activeTab === 'notes' && (
+          <div className="space-y-3 animate-fadeIn">
+            <div className="flex items-center justify-between gap-2">
+              <label
+                htmlFor="drawing-notes-textarea"
+                className="text-xs font-bold text-ink-primary flex items-center gap-1.5"
+              >
+                <FileText className="w-3.5 h-3.5 text-primary" />
+                <span>Notes Written on Drawing (1 note per line):</span>
+              </label>
+              <span className="text-[11px] text-ink-muted">Live update</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <textarea
+              id="drawing-notes-textarea"
+              rows={3}
+              value={customNotesText}
+              onChange={(e) => handleUpdateNotes(e.target.value)}
+              placeholder="Write anything here... e.g.&#10;Cable laid 2.5m from track centre&#10;All track crossings in 150mm NP2 RCC pipe&#10;RDSO/SPN/TC/72/2007 compliant armoured cable"
+              className="w-full glass-input rounded-2xl p-4 text-sm text-ink-primary placeholder:text-ink-muted leading-relaxed focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all resize-none font-medium"
+            />
+
+            {/* Quick helper suggestion chips */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">Quick Add:</span>
+              <button
+                type="button"
+                onClick={() => handleAppendQuickNote('Cable route offset: 2.5m from track centre')}
+                className="text-xs px-3 py-1 rounded-full bg-surface-card hover:bg-surface-hover border border-line text-ink-secondary hover:text-ink-primary transition-all font-semibold"
+              >
+                + 2.5m track offset
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAppendQuickNote('Track crossings in 150mm RCC NP2 pipe')}
+                className="text-xs px-3 py-1 rounded-full bg-surface-card hover:bg-surface-hover border border-line text-ink-secondary hover:text-ink-primary transition-all font-semibold"
+              >
+                + RCC track crossing
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAppendQuickNote('Cable Route Markers installed every 50m')}
+                className="text-xs px-3 py-1 rounded-full bg-surface-card hover:bg-surface-hover border border-line text-ink-secondary hover:text-ink-primary transition-all font-semibold"
+              >
+                + Markers every 50m
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAppendQuickNote('Work to be executed under S&T supervision')}
+                className="text-xs px-3 py-1 rounded-full bg-surface-card hover:bg-surface-hover border border-line text-ink-secondary hover:text-ink-primary transition-all font-semibold"
+              >
+                + S&T supervision
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: TITLE BLOCK & SIGNATURES */}
+        {activeTab === 'title' && (
+          <div className="space-y-4 animate-fadeIn">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                <label className="block text-xs font-bold text-ink-secondary mb-1.5">
                   Drawn By
                 </label>
                 <input
@@ -420,12 +472,12 @@ export const DrawingDetailsEditor: React.FC<DrawingDetailsEditorProps> = ({
                   value={project.metadata.preparedBy || 'SSE / SIG / DESIGN'}
                   onChange={(e) => handleUpdateMetadata('preparedBy', e.target.value)}
                   placeholder="e.g. SSE / SIG / DESIGN"
-                  className="w-full min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-medium glass-input rounded-xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full min-h-[44px] px-4 py-2 text-sm font-semibold glass-input rounded-2xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                <label className="block text-xs font-bold text-ink-secondary mb-1.5">
                   Approved By
                 </label>
                 <input
@@ -433,12 +485,12 @@ export const DrawingDetailsEditor: React.FC<DrawingDetailsEditorProps> = ({
                   value={project.metadata.approvedBy || 'Sr. DSTE / S&T'}
                   onChange={(e) => handleUpdateMetadata('approvedBy', e.target.value)}
                   placeholder="e.g. Sr. DSTE / S&T"
-                  className="w-full min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-medium glass-input rounded-xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full min-h-[44px] px-4 py-2 text-sm font-semibold glass-input rounded-2xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                <label className="block text-xs font-bold text-ink-secondary mb-1.5">
                   Railway Zone / Division
                 </label>
                 <input
@@ -446,13 +498,17 @@ export const DrawingDetailsEditor: React.FC<DrawingDetailsEditorProps> = ({
                   value={project.metadata.railwayZone || 'Northern Railway'}
                   onChange={(e) => handleUpdateMetadata('railwayZone', e.target.value)}
                   placeholder="e.g. Northern Railway"
-                  className="w-full min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-medium glass-input rounded-xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
+                  className="w-full min-h-[44px] px-4 py-2 text-sm font-semibold glass-input rounded-2xl text-ink-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all"
                 />
               </div>
             </div>
+
+            <p className="text-xs text-ink-muted leading-relaxed">
+              Updates the official Indian Railways title block in the bottom-right corner of the CAD sheet.
+            </p>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

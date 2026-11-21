@@ -48,10 +48,10 @@ export const SymbolManagerDrawer: React.FC<SymbolManagerDrawerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="w-full max-w-md h-full bg-surface-card border-l border-line shadow-2xl flex flex-col text-ink-primary overflow-hidden">
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-md animate-fadeIn">
+      <div className="w-full max-w-md h-full bg-surface-card border-l border-line/60 shadow-2xl flex flex-col text-ink-primary overflow-hidden">
         {/* Drawer Header */}
-        <div className="p-4 border-b border-line flex items-center justify-between bg-surface-subtle">
+        <div className="px-5 py-4 border-b border-line/50 flex items-center justify-between bg-surface-subtle/50 backdrop-blur-md">
           <div>
             <h2 className="text-sm font-bold text-ink-primary flex items-center gap-1.5">
               <Tag className="w-4 h-4 text-primary" />
@@ -64,15 +64,15 @@ export const SymbolManagerDrawer: React.FC<SymbolManagerDrawerProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-md text-ink-secondary hover:text-ink-primary hover:bg-surface-hover"
+            className="liquid-glass-icon-btn min-h-[36px] min-w-[36px]"
             aria-label="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Action Button: Add New Symbol */}
-        <div className="p-3 border-b border-line bg-surface-page flex items-center justify-between">
+        <div className="px-5 py-3 border-b border-line/40 bg-surface-subtle/30 flex items-center justify-between">
           <span className="text-xs font-semibold text-ink-secondary">
             {symbols.length} Symbol{symbols.length === 1 ? '' : 's'} on Drawing
           </span>
@@ -83,10 +83,10 @@ export const SymbolManagerDrawer: React.FC<SymbolManagerDrawerProps> = ({
         </div>
 
         {/* Symbols List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-3">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {symbols.length === 0 ? (
-            <div className="text-center py-12 px-4 border border-dashed border-line rounded-lg">
-              <p className="text-sm font-medium text-ink-muted">No symbols placed yet.</p>
+            <div className="text-center py-12 px-4 border border-dashed border-line/70 rounded-3xl bg-surface-subtle/30">
+              <p className="text-sm font-semibold text-ink-muted">No symbols placed yet.</p>
               <p className="text-xs text-ink-muted mt-1">
                 Click "Add Symbol" above to insert signals, point machines, or route markers.
               </p>
@@ -96,7 +96,7 @@ export const SymbolManagerDrawer: React.FC<SymbolManagerDrawerProps> = ({
               </Button>
             </div>
           ) : (
-            symbols.map((sym, index) => {
+            symbols.map((sym) => {
               const isSelected = selectedSymbolId === sym.id;
               const def = INTERACTIVE_SYMBOLS.find((d) => d.type === sym.symbolType);
 
@@ -104,15 +104,15 @@ export const SymbolManagerDrawer: React.FC<SymbolManagerDrawerProps> = ({
                 <div
                   key={sym.id}
                   onClick={() => onSelectSymbol(sym.id)}
-                  className={`p-3 rounded-md border transition-colors cursor-pointer ${
+                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-primary bg-primary-subtle/40 shadow-xs'
-                      : 'border-line bg-surface-subtle hover:bg-surface-hover'
+                      ? 'border-primary bg-primary/10 shadow-sm ring-1 ring-primary/30'
+                      : 'border-line/70 bg-surface-card hover:bg-surface-subtle/80'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-10 h-10 rounded-md bg-white border border-line flex items-center justify-center shrink-0 shadow-xs">
+                      <div className="w-11 h-11 rounded-xl bg-white border border-line/70 flex items-center justify-center shrink-0 shadow-xs">
                         <svg viewBox="-26 -26 52 52" className="w-8 h-8">
                           <g transform={`scale(${Math.min(sym.scale, 1.1)}) rotate(${sym.rotation})`}>
                             <RenderInteractiveSymbol type={sym.symbolType} />
@@ -127,14 +127,14 @@ export const SymbolManagerDrawer: React.FC<SymbolManagerDrawerProps> = ({
                             value={sym.label}
                             onClick={(e) => e.stopPropagation()}
                             onChange={(e) => handleUpdate(sym.id, { label: e.target.value })}
-                            className="px-2 py-0.5 text-xs font-bold bg-surface-card border border-line rounded-sm text-ink-primary w-24 focus:border-primary"
+                            className="px-2.5 py-0.5 text-xs font-bold glass-input rounded-full text-ink-primary w-24 focus:border-primary"
                           />
-                          <span className="text-[10px] text-ink-muted truncate">
+                          <span className="text-[10px] text-ink-muted truncate font-semibold">
                             ({def?.shortName || sym.symbolType})
                           </span>
                         </div>
-                        <div className="text-[10px] text-ink-muted mt-0.5 tabular-nums">
-                          Position: X {sym.x}, Y {sym.y} · Scale: {sym.scale}x
+                        <div className="text-[10px] text-ink-muted mt-0.5 tabular-nums font-medium">
+                          X: {sym.x}, Y: {sym.y} · {sym.scale}x
                         </div>
                       </div>
                     </div>
@@ -143,7 +143,7 @@ export const SymbolManagerDrawer: React.FC<SymbolManagerDrawerProps> = ({
                       <button
                         type="button"
                         onClick={() => handleDuplicate(sym)}
-                        className="p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-surface-hover rounded-sm"
+                        className="w-8 h-8 rounded-full inline-flex items-center justify-center text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 transition-colors"
                         title="Duplicate"
                       >
                         <Copy className="w-3.5 h-3.5" />
@@ -151,7 +151,7 @@ export const SymbolManagerDrawer: React.FC<SymbolManagerDrawerProps> = ({
                       <button
                         type="button"
                         onClick={() => handleDelete(sym.id)}
-                        className="p-1.5 text-status-error hover:bg-status-error-bg rounded-sm"
+                        className="w-8 h-8 rounded-full inline-flex items-center justify-center text-status-error hover:bg-status-error-bg/80 transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="w-3.5 h-3.5" />

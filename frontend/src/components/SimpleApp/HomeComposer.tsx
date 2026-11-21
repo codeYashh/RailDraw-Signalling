@@ -69,14 +69,14 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
         <button
           type="button"
           onClick={onOpenHistory}
-          className="relative min-h-[42px] min-w-[42px] inline-flex items-center justify-center rounded-xl text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-all duration-fast"
+          className="relative liquid-glass-icon-btn min-h-[42px] min-w-[42px]"
           aria-label="Open saved drawings"
           title="Saved drawings"
         >
           <Menu className="w-5 h-5" />
           {historyCount > 0 && (
             <span
-              className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-accent-solid"
+              className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-accent-solid ring-2 ring-white dark:ring-gray-900"
               aria-hidden="true"
             />
           )}
@@ -84,24 +84,24 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
 
         <div className="flex items-center gap-2">
           <VandeBharatLogo size={28} />
-          <span className="text-base font-bold tracking-tight text-ink-primary">
+          <span className="text-base font-extrabold tracking-tight text-ink-primary">
             RailDraw
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           {onOpenUpdates && (
             <button
               type="button"
               onClick={onOpenUpdates}
-              className="relative min-h-[40px] px-2.5 py-1.5 inline-flex items-center gap-1.5 rounded-xl text-xs font-semibold text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-all"
+              className="relative liquid-glass-secondary px-3.5 py-1.5 inline-flex items-center gap-1.5 text-xs font-bold"
               title="Check for software updates"
               aria-label="Check for software updates"
             >
               <Sparkles className="w-4 h-4 text-amber-500" />
               <span className="hidden xs:inline">Updates</span>
               {isUpdateAvailable && (
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping absolute top-2 right-2" />
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping absolute -top-0.5 -right-0.5" />
               )}
             </button>
           )}
@@ -109,11 +109,11 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
           <button
             type="button"
             onClick={onToggleTheme}
-            className="min-h-[40px] min-w-[40px] inline-flex items-center justify-center rounded-xl text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/80 active:bg-surface-active transition-all duration-fast"
+            className="liquid-glass-icon-btn min-h-[40px] min-w-[40px]"
             aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
             title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
           >
-            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-sky-600" />}
           </button>
         </div>
       </header>
@@ -133,7 +133,7 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
         {/* Prompt Giving Area - Liquid Glass Card with Soft Rounded Corners */}
         <section
           aria-label="Route specification prompt"
-          className="glass-panel rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden transition-all duration-300"
+          className="glass-panel rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 border border-line/60"
         >
           <div className="p-4 sm:p-5">
             <textarea
@@ -150,12 +150,12 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
               }}
               placeholder="Type.."
               aria-invalid={Boolean(errorMessage)}
-              className="w-full glass-input rounded-xl sm:rounded-2xl p-3.5 sm:p-4 text-sm sm:text-base text-ink-primary placeholder:text-ink-muted resize-none leading-relaxed focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+              className="w-full glass-input rounded-2xl p-4 sm:p-5 text-sm sm:text-base text-ink-primary placeholder:text-ink-muted resize-none leading-relaxed focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all font-medium"
             />
 
             {/* Listening Indicator with Rounded Pulse */}
             {isListening && (
-              <div className="mt-3 px-3.5 py-2.5 rounded-xl bg-status-error-bg/70 border border-status-error-border text-status-error text-xs font-semibold flex items-center gap-2 animate-pulse backdrop-blur-md">
+              <div className="mt-3 px-4 py-2.5 rounded-full bg-status-error-bg/80 border border-status-error-border text-status-error text-xs font-semibold flex items-center gap-2 animate-pulse backdrop-blur-md">
                 <Radio className="w-4 h-4 shrink-0 animate-spin" />
                 <span>Listening... speak route details in English or Hindi...</span>
               </div>
@@ -164,7 +164,7 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
             {errorMessage && (
               <div
                 role="alert"
-                className="mt-3 px-3.5 py-2.5 rounded-xl border border-status-error-border bg-status-error-bg/90 text-status-error text-xs font-medium flex items-start gap-2 backdrop-blur-md"
+                className="mt-3 px-4 py-2.5 rounded-2xl border border-status-error-border bg-status-error-bg/90 text-status-error text-xs font-medium flex items-start gap-2 backdrop-blur-md"
               >
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
                 <span>{errorMessage}</span>
@@ -172,15 +172,14 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
             )}
           </div>
 
-          <div className="px-4 sm:px-5 py-3 border-t border-line/50 bg-surface-subtle/50 backdrop-blur-md flex items-center justify-between gap-3">
+          <div className="px-5 py-3.5 border-t border-line/50 bg-surface-subtle/50 backdrop-blur-md flex items-center justify-between gap-3">
             <Button
               variant={isListening ? 'danger' : 'secondary'}
               size="sm"
               onClick={onToggleMic}
               aria-pressed={isListening}
-              className="rounded-xl"
             >
-              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4 text-primary" />}
               <span>{isListening ? 'Stop' : 'Voice'}</span>
             </Button>
 
@@ -188,7 +187,7 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
               variant="primary"
               onClick={onGenerate}
               disabled={!hasPrompt}
-              className="rounded-xl shadow-md"
+              className="shadow-md"
             >
               <span>Generate</span>
               <ArrowRight className="w-4 h-4" />

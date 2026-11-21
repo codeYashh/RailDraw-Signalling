@@ -1,8 +1,8 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
-export type ButtonSize = 'sm' | 'md';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'accent' | 'glass';
+export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -13,18 +13,23 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary text-primary-ink border border-primary/90 hover:bg-primary-hover active:bg-primary-active shadow-md shadow-primary/20 backdrop-blur-md',
+    'liquid-glass-primary font-bold shadow-lg shadow-primary/25 active:scale-[0.97]',
   secondary:
-    'bg-surface-card/85 text-ink-primary border border-line/80 hover:bg-surface-hover active:bg-surface-active shadow-sm backdrop-blur-md',
+    'liquid-glass-secondary font-semibold active:scale-[0.97]',
+  glass:
+    'glass-button font-semibold text-ink-primary active:scale-[0.97]',
+  accent:
+    'liquid-glass-accent font-bold active:scale-[0.97]',
   ghost:
-    'bg-transparent text-ink-secondary border border-transparent hover:bg-surface-hover hover:text-ink-primary active:bg-surface-active rounded-xl',
+    'bg-transparent text-ink-secondary border border-transparent hover:bg-surface-hover/80 hover:text-ink-primary active:bg-surface-active rounded-full transition-all',
   danger:
-    'bg-status-error-bg/90 text-status-error border border-status-error-border hover:bg-status-error hover:text-ink-inverse active:opacity-90 shadow-sm backdrop-blur-md',
+    'liquid-glass-danger font-bold active:scale-[0.97]',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: 'min-h-[42px] px-3.5 py-1.5 text-xs font-semibold gap-1.5',
-  md: 'min-h-[44px] px-4 py-2.5 text-sm font-semibold gap-2',
+  sm: 'min-h-[38px] px-3.5 py-1.5 text-xs rounded-full gap-1.5',
+  md: 'min-h-[44px] px-5 py-2 text-sm rounded-full gap-2',
+  lg: 'min-h-[50px] px-6 py-2.5 text-base rounded-full gap-2.5',
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -43,11 +48,13 @@ export const Button: React.FC<ButtonProps> = ({
       type={type}
       disabled={disabled || loading}
       className={[
-        'inline-flex items-center justify-center rounded-xl select-none whitespace-nowrap',
-        'transition-all duration-fast active:scale-[0.98]',
-        'disabled:opacity-45 disabled:cursor-not-allowed disabled:pointer-events-none',
+        'inline-flex items-center justify-center select-none whitespace-nowrap',
+        'transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40',
+        'disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none',
         VARIANT_CLASSES[variant],
-        iconOnly ? 'min-h-[42px] min-w-[42px] p-2 rounded-xl' : SIZE_CLASSES[size],
+        iconOnly
+          ? 'min-h-[42px] min-w-[42px] p-2.5 rounded-full'
+          : SIZE_CLASSES[size],
         className,
       ].join(' ')}
       {...rest}

@@ -1,11 +1,11 @@
 import {
   APP_VERSION,
   GITHUB_API_LATEST_RELEASE,
-  GITHUB_API_RELEASES,
   GITHUB_REPO_URL,
   GITHUB_RAW_APK_URL,
   GITHUB_RAW_VERSION_JSON,
 } from '../constants/version';
+import { openExternalUrl } from './androidBridge';
 
 export interface UpdateInfo {
   currentVersion: string;
@@ -17,7 +17,7 @@ export interface UpdateInfo {
   apkDownloadUrl: string;
   isUpdateAvailable: boolean;
   lastChecked: string;
-  checkedVia: 'raw_json' | 'release' | 'tag' | 'mock';
+  checkedVia: 'raw_json' | 'release' | 'local_api' | 'mock';
   networkError?: boolean;
 }
 
@@ -25,8 +25,8 @@ const STORAGE_KEY_UPDATE = 'raildraw_latest_update_info';
 const STORAGE_KEY_LAST_CHECK = 'raildraw_update_last_check_time';
 
 export function compareSemver(v1: string, v2: string): number {
-  const clean1 = v1.replace(/^v/, '').trim();
-  const clean2 = v2.replace(/^v/, '').trim();
+  const clean1 = (v1 || '').replace(/^v/, '').trim();
+  const clean2 = (v2 || '').replace(/^v/, '').trim();
 
   const parts1 = clean1.split('.').map((p) => parseInt(p, 10) || 0);
   const parts2 = clean2.split('.').map((p) => parseInt(p, 10) || 0);
@@ -41,30 +41,61 @@ export function compareSemver(v1: string, v2: string): number {
   return 0;
 }
 
+const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeoutMs: number = 6000) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const resp = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timer);
+    return resp;
+  } catch (e) {
+    clearTimeout(timer);
+    throw e;
+  }
+};
+
 export async function checkForGitHubUpdates(force: boolean = false): Promise<UpdateInfo> {
   const now = new Date().toISOString();
 
-  // Helper with 6-second timeout to avoid any freezing
-  const fetchWithTimeout = async (url: string, options: RequestInit = {}) => {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 6000);
-    try {
-      const resp = await fetch(url, { ...options, signal: controller.signal });
-      clearTimeout(timer);
-      return resp;
-    } catch (e) {
-      clearTimeout(timer);
-      throw e;
-    }
-  };
+  // 1. Try local version endpoint (fast & reliable when app is connected or served locally)
+  try {
+    const localUrl = `/version.json?_t=${Date.now()}`;
+    const localResp = await fetchWithTimeout(localUrl, { cache: 'no-cache' }, 2500);
+    if (localResp.ok) {
+      const data = await localResp.json();
+      const remoteVersion = (data.version || APP_VERSION).replace(/^v/, '').trim();
+      const isNewer = compareSemver(remoteVersion, APP_VERSION) > 0;
 
-  // 1. Primary: Direct raw version.json check from GitHub main branch
-  // (Always reflects git push instantly with no GitHub API rate limits or auth keys)
+      const updateInfo: UpdateInfo = {
+        currentVersion: APP_VERSION,
+        latestVersion: remoteVersion,
+        releaseName: data.name || `RailDraw v${remoteVersion}`,
+        releaseNotes: data.releaseNotes || 'Latest improvements for RailDraw Signalling drafting.',
+        publishedAt: data.publishedAt || now,
+        htmlUrl: GITHUB_REPO_URL,
+        apkDownloadUrl: data.apkUrl || '/RailDraw.apk',
+        isUpdateAvailable: isNewer,
+        lastChecked: now,
+        checkedVia: 'local_api',
+      };
+
+      try {
+        localStorage.setItem(STORAGE_KEY_UPDATE, JSON.stringify(updateInfo));
+        localStorage.setItem(STORAGE_KEY_LAST_CHECK, now);
+      } catch {}
+
+      return updateInfo;
+    }
+  } catch {
+    // Continue to remote GitHub checks
+  }
+
+  // 2. Primary Remote: Direct raw version.json from GitHub main
   try {
     const rawUrl = `${GITHUB_RAW_VERSION_JSON}?_cb=${Date.now()}`;
     const rawResp = await fetchWithTimeout(rawUrl, {
       cache: force ? 'no-cache' : 'default',
-    });
+    }, 5000);
 
     if (rawResp.ok) {
       const data = await rawResp.json();
@@ -95,14 +126,12 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
     console.warn('Raw version check skipped:', err);
   }
 
-  // 2. Secondary: GitHub Releases API
+  // 3. Secondary: GitHub Releases API
   try {
     const response = await fetchWithTimeout(GITHUB_API_LATEST_RELEASE, {
-      headers: {
-        Accept: 'application/vnd.github+json',
-      },
+      headers: { Accept: 'application/vnd.github+json' },
       cache: force ? 'no-cache' : 'default',
-    });
+    }, 5000);
 
     if (response.ok) {
       const data = await response.json();
@@ -144,7 +173,7 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
     console.warn('GitHub API check skipped:', err);
   }
 
-  // 3. Fallback / Offline response
+  // 4. Stable Fallback: Latest verified build state
   const fallbackInfo: UpdateInfo = {
     currentVersion: APP_VERSION,
     latestVersion: APP_VERSION,
@@ -173,5 +202,45 @@ export function getCachedUpdateInfo(): UpdateInfo | null {
     return JSON.parse(raw);
   } catch {
     return null;
+  }
+}
+
+/**
+ * Triggers an actual file download of the APK.
+ * Works seamlessly across both Android native WebView and desktop/mobile web browsers.
+ */
+export async function downloadUpdateApk(
+  apkUrl: string,
+  onProgress?: (percent: number, statusText: string) => void
+): Promise<{ ok: boolean; message: string }> {
+  const safeUrl = apkUrl || GITHUB_RAW_APK_URL;
+  const targetFilename = 'RailDraw.apk';
+
+  // Check if running inside Android WebView bridge
+  if (typeof window !== 'undefined' && (window as any).AndroidBridge?.openExternalUrl) {
+    onProgress?.(50, 'Opening Android Package Installer...');
+    (window as any).AndroidBridge.openExternalUrl(safeUrl);
+    onProgress?.(100, 'Update started in Android download manager.');
+    return { ok: true, message: 'Downloading update in Android Package Manager' };
+  }
+
+  // Browser: Initiate real download
+  onProgress?.(20, 'Connecting to update binary server...');
+  try {
+    // First try direct link download to trigger native browser download manager
+    const link = document.createElement('a');
+    link.href = safeUrl;
+    link.download = targetFilename;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    onProgress?.(100, 'APK download initialized.');
+    return { ok: true, message: `Downloading ${targetFilename}` };
+  } catch (err: any) {
+    openExternalUrl(safeUrl);
+    return { ok: true, message: 'Opening download link in browser' };
   }
 }

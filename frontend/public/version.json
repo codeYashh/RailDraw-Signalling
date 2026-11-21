@@ -1,7 +1,7 @@
 {
   "version": "1.4.0",
   "name": "RailDraw Signalling v1.4.0",
-  "releaseNotes": "• Simplified Edit Mode with free-text Details box and live notes sync on drawing\n• Enhanced visual icons, badges, and smooth animations\n• High-reliability Update Checker with instant pop-up feedback\n• Full offline RDSO symbol & CAD standard asset bundle (double-digit MBs)\n• Single-action back navigation and native gesture handling",
+  "releaseNotes": "• Streamlined Edit Mode: Clean, uncluttered UI with tabbed route, trench, and notes editors\n• Liquid Glass Aesthetics: Fully rounded pill buttons, frosted glass cards, and smooth specular highlights\n• Glitch-Free Update Engine: Rotating loading wheel with real APK download & installation support\n• Enhanced CAD Canvas: High-precision interactive S&T symbol placement without visual noise\n• Single-action back navigation and native gesture handling",
   "apkUrl": "https://github.com/codeYashh/RailDraw-Signalling/raw/main/RailDraw.apk",
-  "publishedAt": "2026-11-20T16:00:00Z"
+  "publishedAt": "2026-11-21T12:00:00Z"
 }

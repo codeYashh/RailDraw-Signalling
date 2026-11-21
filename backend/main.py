@@ -43,7 +43,21 @@ def on_startup():
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "ok", "app": "RailDraw Signalling", "version": "1.0.0"}
+    return {"status": "ok", "app": "RailDraw Signalling", "version": "1.4.0"}
+
+@app.get("/api/version")
+@app.get("/version.json")
+def get_version_info():
+    v_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "version.json"))
+    if os.path.exists(v_path):
+        with open(v_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {
+        "version": "1.4.0",
+        "name": "RailDraw Signalling v1.4.0",
+        "releaseNotes": "Production release with liquid glass UI, streamlined Edit Mode, and reliable update system.",
+        "apkUrl": "/RailDraw.apk"
+    }
 
 @app.get("/")
 def index():

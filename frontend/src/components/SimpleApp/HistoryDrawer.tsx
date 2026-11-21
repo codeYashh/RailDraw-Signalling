@@ -109,10 +109,10 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                 return (
                   <li key={item.id}>
                     <div
-                      className={`flex items-center gap-3 p-2.5 transition-colors duration-fast ${
+                      className={`flex items-center gap-3 p-2.5 rounded-2xl transition-all duration-fast ${
                         isActive
-                          ? 'bg-primary-subtle'
-                          : 'hover:bg-surface-subtle'
+                          ? 'bg-primary/10 border border-primary/30 shadow-xs'
+                          : 'hover:bg-surface-subtle/80'
                       }`}
                     >
                       <button
@@ -120,7 +120,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                         onClick={() => onSelect(item)}
                         className="flex-1 min-w-0 flex items-center gap-3 text-left min-h-[44px]"
                       >
-                        <div className="w-16 h-11 rounded-sm border border-line bg-white overflow-hidden flex items-center justify-center shrink-0">
+                        <div className="w-16 h-11 rounded-xl border border-line/70 bg-white overflow-hidden flex items-center justify-center shrink-0 shadow-xs">
                           {item.thumbnailUrl ? (
                             <img
                               src={item.thumbnailUrl}
@@ -132,7 +132,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                           )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-xs font-semibold text-ink-primary truncate">
+                          <div className="text-xs font-bold text-ink-primary truncate">
                             {item.title}
                           </div>
                           {item.promptText && (
@@ -140,7 +140,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                               {item.promptText}
                             </div>
                           )}
-                          <div className="text-xs text-ink-muted mt-0.5 tabular-nums">
+                          <div className="text-xs text-ink-muted mt-0.5 tabular-nums font-medium">
                             {item.dateStr}
                           </div>
                         </div>
@@ -149,7 +149,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                       <button
                         type="button"
                         onClick={() => onDelete(item.id)}
-                        className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-sm text-ink-muted hover:text-status-error hover:bg-status-error-bg transition-colors duration-fast shrink-0"
+                        className="w-8 h-8 rounded-full inline-flex items-center justify-center text-ink-muted hover:text-status-error hover:bg-status-error-bg/80 transition-colors shrink-0"
                         title="Delete drawing from history"
                         aria-label={`Delete ${item.title}`}
                       >

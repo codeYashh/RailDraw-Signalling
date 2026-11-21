@@ -226,15 +226,15 @@ export const DrawingInfoModal: React.FC<DrawingInfoModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md animate-fadeIn">
       <div
-        className="w-full max-w-3xl max-h-[90vh] bg-surface-card border border-line rounded-lg shadow-xl flex flex-col overflow-hidden text-ink-primary"
+        className="w-full max-w-3xl max-h-[90vh] bg-surface-card border border-line/60 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-ink-primary"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="px-5 py-3.5 border-b border-line flex items-center justify-between bg-surface-subtle">
+        <div className="px-5 py-4 border-b border-line/50 flex items-center justify-between bg-surface-subtle/50 backdrop-blur-md">
           <div>
             <h2 id="modal-title" className="text-base font-bold text-ink-primary flex items-center gap-2">
               <Sliders className="w-5 h-5 text-primary" />
@@ -247,22 +247,22 @@ export const DrawingInfoModal: React.FC<DrawingInfoModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-md text-ink-secondary hover:text-ink-primary hover:bg-surface-hover active:bg-surface-active"
+            className="liquid-glass-icon-btn min-h-[36px] min-w-[36px]"
             aria-label="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-line bg-surface-page px-4 gap-2 overflow-x-auto text-xs font-semibold">
+        <div className="flex border-b border-line/40 bg-surface-subtle/30 px-4 py-2 gap-2 overflow-x-auto text-xs font-semibold">
           <button
             type="button"
             onClick={() => setActiveTab('route')}
-            className={`py-2.5 px-3 border-b-2 transition-colors whitespace-nowrap ${
+            className={`py-1.5 px-3.5 rounded-full transition-all whitespace-nowrap ${
               activeTab === 'route'
-                ? 'border-primary text-primary font-bold'
-                : 'border-transparent text-ink-secondary hover:text-ink-primary'
+                ? 'liquid-glass-primary shadow-xs'
+                : 'text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/70'
             }`}
           >
             1. Route &amp; Endpoints
@@ -270,24 +270,24 @@ export const DrawingInfoModal: React.FC<DrawingInfoModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('segments')}
-            className={`py-2.5 px-3 border-b-2 transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+            className={`py-1.5 px-3.5 rounded-full transition-all whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'segments'
-                ? 'border-primary text-primary font-bold'
-                : 'border-transparent text-ink-secondary hover:text-ink-primary'
+                ? 'liquid-glass-primary shadow-xs'
+                : 'text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/70'
             }`}
           >
             <span>2. Segments ({segments.length})</span>
-            <span className="px-1.5 py-0.2 bg-primary-subtle text-primary rounded-full text-[10px]">
+            <span className="px-2 py-0.5 bg-primary/20 text-white rounded-full text-[10px]">
               {totalLength}m
             </span>
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('cable')}
-            className={`py-2.5 px-3 border-b-2 transition-colors whitespace-nowrap ${
+            className={`py-1.5 px-3.5 rounded-full transition-all whitespace-nowrap ${
               activeTab === 'cable'
-                ? 'border-primary text-primary font-bold'
-                : 'border-transparent text-ink-secondary hover:text-ink-primary'
+                ? 'liquid-glass-primary shadow-xs'
+                : 'text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/70'
             }`}
           >
             3. Cable &amp; Trench (Detail A)
@@ -295,10 +295,10 @@ export const DrawingInfoModal: React.FC<DrawingInfoModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('titleBlock')}
-            className={`py-2.5 px-3 border-b-2 transition-colors whitespace-nowrap ${
+            className={`py-1.5 px-3.5 rounded-full transition-all whitespace-nowrap ${
               activeTab === 'titleBlock'
-                ? 'border-primary text-primary font-bold'
-                : 'border-transparent text-ink-secondary hover:text-ink-primary'
+                ? 'liquid-glass-primary shadow-xs'
+                : 'text-ink-secondary hover:text-ink-primary hover:bg-surface-hover/70'
             }`}
           >
             4. Signatures &amp; Notes
@@ -724,7 +724,7 @@ export const DrawingInfoModal: React.FC<DrawingInfoModalProps> = ({
         </div>
 
         {/* Footer Buttons */}
-        <div className="px-5 py-3 border-t border-line flex items-center justify-between bg-surface-subtle">
+        <div className="px-5 py-3.5 border-t border-line/40 flex items-center justify-between bg-surface-subtle/50 backdrop-blur-md">
           <Button variant="secondary" size="sm" onClick={onClose}>
             Cancel
           </Button>
