@@ -4,6 +4,8 @@ import {
   GITHUB_REPO_URL,
   GITHUB_RAW_APK_URL,
   GITHUB_RAW_VERSION_JSON,
+  GITHUB_REPO_OWNER,
+  GITHUB_REPO_NAME,
 } from '../constants/version';
 import { openExternalUrl } from './androidBridge';
 
@@ -17,7 +19,7 @@ export interface UpdateInfo {
   apkDownloadUrl: string;
   isUpdateAvailable: boolean;
   lastChecked: string;
-  checkedVia: 'raw_json' | 'release' | 'local_api' | 'mock';
+  checkedVia: 'raw_json' | 'release' | 'contents_api' | 'tags_api' | 'local_api' | 'mock';
   networkError?: boolean;
 }
 
@@ -56,46 +58,22 @@ const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeoutM
 
 export async function checkForGitHubUpdates(force: boolean = false): Promise<UpdateInfo> {
   const now = new Date().toISOString();
+  const isFileProtocol = typeof window !== 'undefined' && window.location.protocol === 'file:';
 
-  // 1. Try local version endpoint (fast & reliable when app is connected or served locally)
-  try {
-    const localUrl = `/version.json?_t=${Date.now()}`;
-    const localResp = await fetchWithTimeout(localUrl, { cache: 'no-cache' }, 2500);
-    if (localResp.ok) {
-      const data = await localResp.json();
-      const remoteVersion = (data.version || APP_VERSION).replace(/^v/, '').trim();
-      const isNewer = compareSemver(remoteVersion, APP_VERSION) > 0;
-
-      const updateInfo: UpdateInfo = {
-        currentVersion: APP_VERSION,
-        latestVersion: remoteVersion,
-        releaseName: data.name || `RailDraw v${remoteVersion}`,
-        releaseNotes: data.releaseNotes || 'Latest improvements for RailDraw Signalling drafting.',
-        publishedAt: data.publishedAt || now,
-        htmlUrl: GITHUB_REPO_URL,
-        apkDownloadUrl: data.apkUrl || '/RailDraw.apk',
-        isUpdateAvailable: isNewer,
-        lastChecked: now,
-        checkedVia: 'local_api',
-      };
-
-      try {
-        localStorage.setItem(STORAGE_KEY_UPDATE, JSON.stringify(updateInfo));
-        localStorage.setItem(STORAGE_KEY_LAST_CHECK, now);
-      } catch {}
-
-      return updateInfo;
-    }
-  } catch {
-    // Continue to remote GitHub checks
-  }
-
-  // 2. Primary Remote: Direct raw version.json from GitHub main
+  // 1. Primary Remote: Direct raw version.json from GitHub main with strict cache-busting
   try {
     const rawUrl = `${GITHUB_RAW_VERSION_JSON}?_cb=${Date.now()}`;
-    const rawResp = await fetchWithTimeout(rawUrl, {
-      cache: force ? 'no-cache' : 'default',
-    }, 5000);
+    const rawResp = await fetchWithTimeout(
+      rawUrl,
+      {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache',
+        },
+        cache: 'no-store',
+      },
+      5000
+    );
 
     if (rawResp.ok) {
       const data = await rawResp.json();
@@ -123,15 +101,115 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
       return updateInfo;
     }
   } catch (err) {
-    console.warn('Raw version check skipped:', err);
+    console.warn('Raw GitHub version check skipped:', err);
   }
 
-  // 3. Secondary: GitHub Releases API
+  // 2. Secondary Remote: GitHub Contents API for version.json (bypasses raw CDN cache)
   try {
-    const response = await fetchWithTimeout(GITHUB_API_LATEST_RELEASE, {
-      headers: { Accept: 'application/vnd.github+json' },
-      cache: force ? 'no-cache' : 'default',
-    }, 5000);
+    const contentsUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/version.json?_t=${Date.now()}`;
+    const contentsResp = await fetchWithTimeout(
+      contentsUrl,
+      {
+        headers: {
+          Accept: 'application/vnd.github+json',
+          'Cache-Control': 'no-cache',
+        },
+        cache: 'no-store',
+      },
+      5000
+    );
+
+    if (contentsResp.ok) {
+      const resJson = await contentsResp.json();
+      if (resJson.content) {
+        const decoded = atob(resJson.content.replace(/\s/g, ''));
+        const data = JSON.parse(decoded);
+        const remoteVersion = (data.version || APP_VERSION).replace(/^v/, '').trim();
+        const isNewer = compareSemver(remoteVersion, APP_VERSION) > 0;
+
+        const updateInfo: UpdateInfo = {
+          currentVersion: APP_VERSION,
+          latestVersion: remoteVersion,
+          releaseName: data.name || `RailDraw v${remoteVersion}`,
+          releaseNotes: data.releaseNotes || 'Latest improvements for RailDraw Signalling drafting.',
+          publishedAt: data.publishedAt || now,
+          htmlUrl: GITHUB_REPO_URL,
+          apkDownloadUrl: data.apkUrl || GITHUB_RAW_APK_URL,
+          isUpdateAvailable: isNewer,
+          lastChecked: now,
+          checkedVia: 'contents_api',
+        };
+
+        try {
+          localStorage.setItem(STORAGE_KEY_UPDATE, JSON.stringify(updateInfo));
+          localStorage.setItem(STORAGE_KEY_LAST_CHECK, now);
+        } catch {}
+
+        return updateInfo;
+      }
+    }
+  } catch (err) {
+    console.warn('GitHub Contents API check skipped:', err);
+  }
+
+  // 3. Tertiary Remote: GitHub Tags API (always returns latest git tags like v1.5.0)
+  try {
+    const tagsUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/tags?_t=${Date.now()}`;
+    const tagsResp = await fetchWithTimeout(
+      tagsUrl,
+      {
+        headers: {
+          Accept: 'application/vnd.github+json',
+          'Cache-Control': 'no-cache',
+        },
+        cache: 'no-store',
+      },
+      5000
+    );
+
+    if (tagsResp.ok) {
+      const tags = await tagsResp.json();
+      if (Array.isArray(tags) && tags.length > 0) {
+        const latestTagName: string = tags[0].name || '';
+        const cleanTag = latestTagName.replace(/^v/, '').trim();
+        const isNewer = compareSemver(cleanTag, APP_VERSION) > 0;
+
+        const updateInfo: UpdateInfo = {
+          currentVersion: APP_VERSION,
+          latestVersion: cleanTag || APP_VERSION,
+          releaseName: `RailDraw Signalling v${cleanTag || APP_VERSION}`,
+          releaseNotes:
+            '• Dynamic Theme-Matching Load Screen (Light/Dark)\n• 25 New Official Indian Railways Symbols (70 Total)\n• Direct In-App OTA Update Engine\n• Full AutoCAD DXF & Vector CAD Integration',
+          publishedAt: now,
+          htmlUrl: GITHUB_REPO_URL,
+          apkDownloadUrl: GITHUB_RAW_APK_URL,
+          isUpdateAvailable: isNewer,
+          lastChecked: now,
+          checkedVia: 'tags_api',
+        };
+
+        try {
+          localStorage.setItem(STORAGE_KEY_UPDATE, JSON.stringify(updateInfo));
+          localStorage.setItem(STORAGE_KEY_LAST_CHECK, now);
+        } catch {}
+
+        return updateInfo;
+      }
+    }
+  } catch (err) {
+    console.warn('GitHub Tags API check skipped:', err);
+  }
+
+  // 4. Quaternary Remote: GitHub Releases API
+  try {
+    const response = await fetchWithTimeout(
+      GITHUB_API_LATEST_RELEASE,
+      {
+        headers: { Accept: 'application/vnd.github+json' },
+        cache: force ? 'no-cache' : 'default',
+      },
+      5000
+    );
 
     if (response.ok) {
       const data = await response.json();
@@ -173,7 +251,36 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
     console.warn('GitHub API check skipped:', err);
   }
 
-  // 4. Stable Fallback: Latest verified build state
+  // 5. Local endpoint check ONLY when running on local development server AND isNewer is true
+  if (!isFileProtocol) {
+    try {
+      const localUrl = `/version.json?_t=${Date.now()}`;
+      const localResp = await fetchWithTimeout(localUrl, { cache: 'no-cache' }, 2000);
+      if (localResp.ok) {
+        const data = await localResp.json();
+        const remoteVersion = (data.version || APP_VERSION).replace(/^v/, '').trim();
+        const isNewer = compareSemver(remoteVersion, APP_VERSION) > 0;
+
+        if (isNewer) {
+          const updateInfo: UpdateInfo = {
+            currentVersion: APP_VERSION,
+            latestVersion: remoteVersion,
+            releaseName: data.name || `RailDraw v${remoteVersion}`,
+            releaseNotes: data.releaseNotes || 'Latest improvements for RailDraw Signalling drafting.',
+            publishedAt: data.publishedAt || now,
+            htmlUrl: GITHUB_REPO_URL,
+            apkDownloadUrl: data.apkUrl || '/RailDraw.apk',
+            isUpdateAvailable: true,
+            lastChecked: now,
+            checkedVia: 'local_api',
+          };
+          return updateInfo;
+        }
+      }
+    } catch {}
+  }
+
+  // 6. Stable Fallback: Latest verified build state
   const fallbackInfo: UpdateInfo = {
     currentVersion: APP_VERSION,
     latestVersion: APP_VERSION,

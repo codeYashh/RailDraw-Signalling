@@ -366,7 +366,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                   className="w-full"
                 >
                   <Download className="w-4 h-4" />
-                  <span>Re-download Full APK Package (v{currentVer})</span>
+                  <span>Download / Re-install Latest APK (GitHub)</span>
                 </Button>
               </div>
             </div>
