@@ -81,4 +81,6 @@ export const SYMBOL_PICKER_CATEGORIES = [
   'Track & Points',
   'Housing',
   'Markers',
+  'Boards & Signs',
+  'Power & Telecom',
 ] as const;

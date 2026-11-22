@@ -216,6 +216,20 @@ def create_dxf_drawing(project_data: Dict[str, Any]) -> bytes:
     msp.add_line((route_end_x, dim_line_y - 4), (route_end_x, overall_dim_y - 4), dxfattribs={"layer": "DIM"})
     draw_dimension_segment_dxf(msp, route_start_x, route_end_x, overall_dim_y, f"TOTAL LENGTH = {total_len:g} m")
 
+    # Placed S&T Symbols on DXF sheet
+    placed_symbols = project_data.get("placedSymbols", [])
+    for sym in placed_symbols:
+        sx = float(sym.get("x", 480))
+        sy = float(sym.get("y", 300))
+        dxf_x = margin_left + (sx / 960.0) * (W - margin_left - margin_right)
+        dxf_y = H - margin_top - (sy / 600.0) * (H - margin_top - margin_bottom)
+        scale = float(sym.get("scale", 1.0))
+        r = 3.5 * scale
+        msp.add_circle((dxf_x, dxf_y), radius=r, dxfattribs={"layer": "SYMBOLS"})
+        lbl = sym.get("label") or sym.get("symbolType", "")
+        if lbl:
+            msp.add_text(lbl, dxfattribs={"layer": "TEXT", "height": 1.8}).set_placement((dxf_x - len(lbl) * 0.5, dxf_y - r - 2.8))
+
     # 5. ZOOMED DETAIL CALLOUT (Cables cross-section & trench profile)
     callout_src_x = route_start_x + total_screen_w * 0.45
     callout_src_y = route_y

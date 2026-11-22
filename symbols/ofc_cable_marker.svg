@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 46" width="28" height="46">
+  <line x1="6" y1="44" x2="22" y2="44" stroke="#475569" stroke-width="3"/>
+  <rect x="8" y="16" width="12" height="28" rx="2" fill="#fb923c" stroke="#c2410c" stroke-width="2"/>
+  <path d="M 8,16 C 8,10 20,10 20,16 Z" fill="#ea580c" stroke="#c2410c" stroke-width="1.8"/>
+  <text x="14" y="32" font-size="6.5" font-family="sans-serif" font-weight="900" text-anchor="middle" fill="#ffffff">OFC</text>
+</svg>

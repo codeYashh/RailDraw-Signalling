@@ -34,6 +34,8 @@ interface SimpleAppViewProps {
   onUpdateProject: (newProject: DrawingProject) => void;
   onOpenUpdates?: () => void;
   isUpdateAvailable?: boolean;
+  isDark?: boolean;
+  onToggleTheme?: () => void;
 }
 
 export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
@@ -42,26 +44,33 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
   onUpdateProject,
   onOpenUpdates,
   isUpdateAvailable,
+  isDark: propIsDark,
+  onToggleTheme: propOnToggleTheme,
 }) => {
-
-  const [isDark, setIsDark] = useState<boolean>(() => {
+  const [internalDark, setInternalDark] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.THEME_MODE);
       if (saved === 'dark') return true;
-      return false;
+      if (saved === 'light') return false;
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     } catch {
       return false;
     }
   });
 
+  const isDark = propIsDark !== undefined ? propIsDark : internalDark;
+  const toggleTheme = propOnToggleTheme || (() => setInternalDark((prev) => !prev));
+
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.THEME_MODE, isDark ? 'dark' : 'light');
-    } catch {
-      // Ignore storage failures in restricted contexts
+    if (propIsDark === undefined) {
+      try {
+        localStorage.setItem(STORAGE_KEYS.THEME_MODE, isDark ? 'dark' : 'light');
+      } catch {
+        // Ignore storage failures in restricted contexts
+      }
+      syncAndroidSystemBars(isDark);
     }
-    syncAndroidSystemBars(isDark);
-  }, [isDark]);
+  }, [isDark, propIsDark]);
 
   const [screen, setScreen] = useState<'home' | 'result'>('home');
   const [promptText, setPromptText] = useState<string>('');
@@ -581,7 +590,7 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
       {screen === 'home' ? (
         <HomeComposer
           isDark={isDark}
-          onToggleTheme={() => setIsDark((prev) => !prev)}
+          onToggleTheme={toggleTheme}
           onOpenHistory={() => {
             setHistoryItems(getSavedDrawings());
             setIsSidebarOpen(true);
@@ -611,7 +620,7 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
             project={project}
             symbols={symbols}
             isDark={isDark}
-            onToggleTheme={() => setIsDark((prev) => !prev)}
+            onToggleTheme={toggleTheme}
             onOpenHistory={() => {
               setHistoryItems(getSavedDrawings());
               setIsSidebarOpen(true);

@@ -1,7 +1,7 @@
 {
-  "version": "1.4.0",
-  "name": "RailDraw Signalling v1.4.0",
-  "releaseNotes": "• Streamlined Edit Mode: Clean, uncluttered UI with tabbed route, trench, and notes editors\n• Liquid Glass Aesthetics: Fully rounded pill buttons, frosted glass cards, and smooth specular highlights\n• Glitch-Free Update Engine: Rotating loading wheel with real APK download & installation support\n• Enhanced CAD Canvas: High-precision interactive S&T symbol placement without visual noise\n• Single-action back navigation and native gesture handling",
+  "version": "1.5.0",
+  "name": "RailDraw Signalling v1.5.0",
+  "releaseNotes": "• Dynamic Theme-Matching Load Screen: Splash screen and native Android views now seamlessly adapt to Light and Dark modes with zero load-time flicker\n• 25 New Official Indian Railways S&T Symbols (70 Total): Route Indicators (feather type), Automatic Signals ('A' marker), Semi-Automatic ('A' illuminated), Inner Distant ('ID' marker), Intermediate Starter, Co-acting Signals, Banner Repeaters, Position Light Shunts, Calling-On on CLS mast, Gate Signals ('G' marker), Semaphore Warner, Fouling Marks, Track Lead Junction Boxes (TLJB), MSDAC Wheel Sensors, Point Machines with Clamp Locks, Shunting Limit Boards (SLB), Block Section Limit Boards (BSLB), Whistle Boards (W/L), Warning Boards, Speed/Termination Boards (T/P, T/G), Emergency Telephone Sockets (EC), IPS Rooms, Solar PV Arrays, OFC Markers, and SPD Cabinets\n• Direct In-App OTA Update Engine: Download and install new releases directly from GitHub with zero manual sharing\n• Layered AutoCAD DXF & Vector CAD Integration for all placed equipment",
   "apkUrl": "https://github.com/codeYashh/RailDraw-Signalling/raw/main/RailDraw.apk",
-  "publishedAt": "2026-11-21T12:00:00Z"
+  "publishedAt": "2026-11-22T14:20:00Z"
 }

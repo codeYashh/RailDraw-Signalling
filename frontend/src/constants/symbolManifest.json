@@ -1,8 +1,8 @@
 {
   "standard": "Indian Railways Signal Engineering Manual (IRSEM) & RDSO Standard S&T Symbols",
   "version": "1.0.0",
-  "updatedAt": "2026-11-15T20:41:00Z",
-  "totalSymbols": 45,
+  "updatedAt": "2026-11-22T01:00:00Z",
+  "totalSymbols": 70,
   "symbols": [
     {
       "id": "cls_2aspect",
@@ -1183,6 +1183,714 @@
         "terminal"
       ],
       "svgFile": "buffer_stop.svg"
+    },
+    {
+      "id": "signal_route_indicator",
+      "name": "Route Indicator / Junction Indicator (Feather Type)",
+      "category": "Signals",
+      "description": "RDSO standard Junction Type Route Indicator with 5 lunar white lamps in a feather arm at 45\u00b0 angle mounted above CLS for turnout route indication.",
+      "sourceReference": "IRSEM Part II Chapter 15 / RDSO Drawing SD-10041",
+      "defaultSize": {
+        "width": 36,
+        "height": 60
+      },
+      "anchorPoint": {
+        "x": 18,
+        "y": 60
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "route indicator",
+        "junction",
+        "feather",
+        "turnout",
+        "cls"
+      ],
+      "svgFile": "signal_route_indicator.svg"
+    },
+    {
+      "id": "signal_automatic",
+      "name": "Automatic Stop Signal ('A' Marker)",
+      "category": "Signals",
+      "description": "Multiple Aspect Colour Light Signal fitted with circular white disc and black letter 'A' marker for Automatic Block Signalling sections.",
+      "sourceReference": "IRSEM Part II 15.3 / RDSO Drawing SD-10025",
+      "defaultSize": {
+        "width": 34,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "automatic",
+        "a marker",
+        "abs",
+        "running signal",
+        "cls"
+      ],
+      "svgFile": "signal_automatic.svg"
+    },
+    {
+      "id": "signal_semi_automatic",
+      "name": "Semi-Automatic Stop Signal (Illuminated 'A' Marker)",
+      "category": "Signals",
+      "description": "Controlled colour light signal with illuminated 'A' marker box that illuminates when working in automatic mode and extinguishes when manually interlocked.",
+      "sourceReference": "IRSEM Part II 15.3.4 / RDSO SD-10026",
+      "defaultSize": {
+        "width": 38,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "semi-automatic",
+        "illuminated a marker",
+        "king lever",
+        "cls"
+      ],
+      "svgFile": "signal_semi_automatic.svg"
+    },
+    {
+      "id": "signal_inner_distant",
+      "name": "Inner Distant Signal ('ID' Marker)",
+      "category": "Signals",
+      "description": "Distant signal with circular disc 'ID' marker used in Double Distant territory for high-speed routes (130-160 km/h) under RDSO guidelines.",
+      "sourceReference": "RDSO Drawing SD-10028 / IRSEM Part II 15.2",
+      "defaultSize": {
+        "width": 36,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "inner distant",
+        "id marker",
+        "double distant",
+        "macls"
+      ],
+      "svgFile": "signal_inner_distant.svg"
+    },
+    {
+      "id": "signal_intermediate_starter",
+      "name": "Intermediate Starter Signal",
+      "category": "Signals",
+      "description": "Intermediate Starter signal installed between Starter and Advanced Starter in large yards or long loop sidings.",
+      "sourceReference": "IRSEM Part II 15.4 / RDSO SD-10029",
+      "defaultSize": {
+        "width": 36,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "intermediate starter",
+        "is",
+        "starter",
+        "yard",
+        "cls"
+      ],
+      "svgFile": "signal_intermediate_starter.svg"
+    },
+    {
+      "id": "signal_coacting",
+      "name": "Co-acting Signal (Duplicate Signal)",
+      "category": "Signals",
+      "description": "Duplicate signal units on the same tubular post (upper and lower heads) to ensure visibility when obstructed by FOB, ROB, or overline structure.",
+      "sourceReference": "IRSEM Part II 15.5 / RDSO SD-10030",
+      "defaultSize": {
+        "width": 34,
+        "height": 68
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 68
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "co-acting",
+        "duplicate",
+        "fob",
+        "sighting",
+        "cls"
+      ],
+      "svgFile": "signal_coacting.svg"
+    },
+    {
+      "id": "signal_banner_repeater",
+      "name": "Banner Type Repeater Signal",
+      "category": "Signals",
+      "description": "Standard Indian Railways banner type visual repeater with circular yellow disc and horizontal revolving black bar indicating 'ON' or 45\u00b0 'OFF'.",
+      "sourceReference": "IRSEM Part II Chapter 15 / RDSO Drawing SD-10035",
+      "defaultSize": {
+        "width": 34,
+        "height": 48
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 48
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "repeater",
+        "banner",
+        "visual",
+        "caution",
+        "sighting"
+      ],
+      "svgFile": "signal_banner_repeater.svg"
+    },
+    {
+      "id": "signal_shunt_position",
+      "name": "Position Light Shunt Signal (Ground Disc)",
+      "category": "Signals",
+      "description": "Standard ground mounted position light shunt signal with two white lunar lights horizontally (Stop) or diagonally at 45\u00b0 (Proceed).",
+      "sourceReference": "IRSEM Part II 15.8 / RDSO Drawing SD-10045",
+      "defaultSize": {
+        "width": 32,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 36
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "shunt",
+        "position light",
+        "ground shunt",
+        "shunting"
+      ],
+      "svgFile": "signal_shunt_position.svg"
+    },
+    {
+      "id": "signal_calling_on_cls",
+      "name": "Calling-On Signal on CLS Mast",
+      "category": "Signals",
+      "description": "Calling-on unit with circular 'C' marker mounted beneath main CLS Home signal displaying miniature yellow aspect for receiving train on obstructed line.",
+      "sourceReference": "IRSEM Part II 15.9 / RDSO Drawing SD-10048",
+      "defaultSize": {
+        "width": 34,
+        "height": 62
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 62
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "calling-on",
+        "c marker",
+        "subsidiary",
+        "stop signal"
+      ],
+      "svgFile": "signal_calling_on_cls.svg"
+    },
+    {
+      "id": "signal_gate_cls",
+      "name": "Gate Signal with 'G' Marker",
+      "category": "Signals",
+      "description": "Colour light signal protecting a level crossing gate equipped with standard circular yellow disc and black letter 'G'.",
+      "sourceReference": "IRSEM Part II 15.10 / RDSO Drawing SD-10050",
+      "defaultSize": {
+        "width": 34,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "gate signal",
+        "g marker",
+        "level crossing",
+        "cls"
+      ],
+      "svgFile": "signal_gate_cls.svg"
+    },
+    {
+      "id": "signal_warner",
+      "name": "Semaphore Warner / Distant Signal",
+      "category": "Signals",
+      "description": "Semaphore warning arm with fishtail end (yellow with black chevron) on lattice post.",
+      "sourceReference": "IRSEM Part II Chapter 14 / RDSO SD-10012",
+      "defaultSize": {
+        "width": 44,
+        "height": 52
+      },
+      "anchorPoint": {
+        "x": 24,
+        "y": 52
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "signal",
+        "semaphore",
+        "warner",
+        "distant",
+        "fishtail"
+      ],
+      "svgFile": "signal_warner.svg"
+    },
+    {
+      "id": "fouling_mark",
+      "name": "Fouling Mark (FM Post)",
+      "category": "Civil & Track Infrastructure",
+      "description": "Standard Indian Railways painted concrete post with black crown placed between converging tracks where standard clearance is reached.",
+      "sourceReference": "IRSEM Part II Chapter 15 / Indian Railways Permanent Way Manual",
+      "defaultSize": {
+        "width": 28,
+        "height": 32
+      },
+      "anchorPoint": {
+        "x": 14,
+        "y": 32
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "track",
+        "fouling mark",
+        "fm",
+        "clearance",
+        "turnout",
+        "pway"
+      ],
+      "svgFile": "fouling_mark.svg"
+    },
+    {
+      "id": "track_lead_junction_box",
+      "name": "Track Lead Junction Box (TLJB)",
+      "category": "Track Circuits & Axle Counters",
+      "description": "Dedicated trackside junction box with bootleg connection for track circuit feed and relay cables connecting to rail web.",
+      "sourceReference": "RDSO Drawing RDSO/S-3500 / IRSEM Chapter 17",
+      "defaultSize": {
+        "width": 34,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 17,
+        "y": 36
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "track circuit",
+        "tljb",
+        "track lead",
+        "bootleg",
+        "junction box"
+      ],
+      "svgFile": "track_lead_junction_box.svg"
+    },
+    {
+      "id": "axle_counter_wheel_sensor",
+      "name": "MSDAC Wheel Sensor (Web Mounted)",
+      "category": "Track Circuits & Axle Counters",
+      "description": "High-frequency dual coil wheel sensor clamped to rail web with deflector plates (RDSO/SPN/177 compliant).",
+      "sourceReference": "RDSO/SPN/177/2012 / IRISET S-23",
+      "defaultSize": {
+        "width": 38,
+        "height": 30
+      },
+      "anchorPoint": {
+        "x": 19,
+        "y": 15
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "axle counter",
+        "wheel sensor",
+        "msdac",
+        "ssdac",
+        "detection"
+      ],
+      "svgFile": "axle_counter_wheel_sensor.svg"
+    },
+    {
+      "id": "point_machine_clamp",
+      "name": "Point Machine with Clamp Lock (IRS/RDSO)",
+      "category": "Points & Machines",
+      "description": "Heavy duty electric point machine with integrated clamp point lock mechanism for thick web switches.",
+      "sourceReference": "RDSO Drawing S-10880 / IRSEM Chapter 19",
+      "defaultSize": {
+        "width": 46,
+        "height": 30
+      },
+      "anchorPoint": {
+        "x": 23,
+        "y": 15
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "point machine",
+        "clamp lock",
+        "turnout",
+        "switch",
+        "facing point"
+      ],
+      "svgFile": "point_machine_clamp.svg"
+    },
+    {
+      "id": "board_shunting_limit",
+      "name": "Shunting Limit Board (SLB)",
+      "category": "Civil & Track Infrastructure",
+      "description": "Yellow rectangular board with black letters 'SHUNTING LIMIT' and cross, marking the boundary for shunting operations towards block section.",
+      "sourceReference": "General & Subsidiary Rules (G&SR) / IRSEM Part II",
+      "defaultSize": {
+        "width": 40,
+        "height": 44
+      },
+      "anchorPoint": {
+        "x": 20,
+        "y": 44
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "board",
+        "shunting limit",
+        "slb",
+        "trackside",
+        "yard",
+        "boundary"
+      ],
+      "svgFile": "board_shunting_limit.svg"
+    },
+    {
+      "id": "board_block_section_limit",
+      "name": "Block Section Limit Board (BSLB)",
+      "category": "Civil & Track Infrastructure",
+      "description": "Yellow board with black border and 'BLOCK SECTION LIMIT', installed on double line MACLS territory.",
+      "sourceReference": "G&SR Rule 3.32 / IRSEM Part II",
+      "defaultSize": {
+        "width": 40,
+        "height": 44
+      },
+      "anchorPoint": {
+        "x": 20,
+        "y": 44
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "board",
+        "bslb",
+        "block section limit",
+        "macls",
+        "double line"
+      ],
+      "svgFile": "board_block_section_limit.svg"
+    },
+    {
+      "id": "board_whistle",
+      "name": "Whistle Board ('W' / 'W/L')",
+      "category": "Civil & Track Infrastructure",
+      "description": "Trackside yellow board with black 'W' or 'W/L' directing loco pilots to sound horn when approaching LC gate or curve.",
+      "sourceReference": "Indian Railways G&SR / Engineering Manual",
+      "defaultSize": {
+        "width": 34,
+        "height": 44
+      },
+      "anchorPoint": {
+        "x": 17,
+        "y": 44
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "board",
+        "whistle",
+        "w/l",
+        "level crossing",
+        "trackside",
+        "sign"
+      ],
+      "svgFile": "board_whistle.svg"
+    },
+    {
+      "id": "board_warning",
+      "name": "Passenger / Goods Warning Board",
+      "category": "Civil & Track Infrastructure",
+      "description": "High-visibility board with alternating black and yellow diagonal stripes placed at braking distance ahead of first stop signal.",
+      "sourceReference": "IRSEM Part II Chapter 15 / RDSO Drawing SD-10065",
+      "defaultSize": {
+        "width": 36,
+        "height": 44
+      },
+      "anchorPoint": {
+        "x": 18,
+        "y": 44
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "board",
+        "warning board",
+        "sighting",
+        "braking distance",
+        "stripes"
+      ],
+      "svgFile": "board_warning.svg"
+    },
+    {
+      "id": "board_speed_indicator",
+      "name": "Speed Restriction Board & Termination Indicator (T/P & T/G)",
+      "category": "Civil & Track Infrastructure",
+      "description": "Yellow triangular speed indicator with black numerals and circular Termination indicators for Passenger (T/P) and Goods (T/G).",
+      "sourceReference": "Indian Railways Engineering Code / IRSEM",
+      "defaultSize": {
+        "width": 38,
+        "height": 44
+      },
+      "anchorPoint": {
+        "x": 19,
+        "y": 44
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "board",
+        "speed restriction",
+        "t/p",
+        "t/g",
+        "caution indicator"
+      ],
+      "svgFile": "board_speed_indicator.svg"
+    },
+    {
+      "id": "emergency_socket_pillar",
+      "name": "Emergency Telephone Socket Pillar (EC Socket)",
+      "category": "Location Boxes & Housing",
+      "description": "Standard trackside 4-pin/6-pin telephone pillar located every 1 km along track for emergency driver-guard-control communication.",
+      "sourceReference": "IR Telecom Manual Chapter 7 / RDSO Specification",
+      "defaultSize": {
+        "width": 28,
+        "height": 44
+      },
+      "anchorPoint": {
+        "x": 14,
+        "y": 44
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "telecom",
+        "emergency socket",
+        "ec socket",
+        "pillar",
+        "communication"
+      ],
+      "svgFile": "emergency_socket_pillar.svg"
+    },
+    {
+      "id": "ips_room",
+      "name": "Integrated Power Supply (IPS) Room",
+      "category": "Location Boxes & Housing",
+      "description": "Central signalling power equipment room housing SMPS-based IPS system (RDSO/SPN/165) providing AC/DC power for signals, points, and EI.",
+      "sourceReference": "RDSO/SPN/165/2012 / IRSEM Part II",
+      "defaultSize": {
+        "width": 44,
+        "height": 42
+      },
+      "anchorPoint": {
+        "x": 22,
+        "y": 42
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "power",
+        "ips",
+        "integrated power supply",
+        "relay room",
+        "housing"
+      ],
+      "svgFile": "ips_room.svg"
+    },
+    {
+      "id": "solar_panel_array",
+      "name": "Solar PV Power Array for Signalling",
+      "category": "Protection & Grounding",
+      "description": "Photovoltaic solar array installed at LC gates and intermediate huts for uninterrupted clean power backup.",
+      "sourceReference": "RDSO/SPN/164/2004 / Indian Railways Solar Policy",
+      "defaultSize": {
+        "width": 42,
+        "height": 42
+      },
+      "anchorPoint": {
+        "x": 21,
+        "y": 42
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "power",
+        "solar",
+        "photovoltaic",
+        "green energy",
+        "backup"
+      ],
+      "svgFile": "solar_panel_array.svg"
+    },
+    {
+      "id": "ofc_cable_marker",
+      "name": "Optical Fibre Cable (OFC) Route Marker Post",
+      "category": "Cable Markers & Joints",
+      "description": "Triangular/cylindrical high-visibility orange/yellow post embossed with 'OFC S&T' for telecom fibre route demarcation.",
+      "sourceReference": "IR Telecom Manual Chapter 10 / RDSO Specification",
+      "defaultSize": {
+        "width": 28,
+        "height": 46
+      },
+      "anchorPoint": {
+        "x": 14,
+        "y": 46
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "telecom",
+        "ofc",
+        "optical fibre",
+        "marker",
+        "cable route"
+      ],
+      "svgFile": "ofc_cable_marker.svg"
+    },
+    {
+      "id": "spd_cabinet",
+      "name": "Surge Protection Device (SPD) Panel",
+      "category": "Protection & Grounding",
+      "description": "Class B & Class C surge arrestor cabinet protecting electronic interlocking (EI) and power cables from lightning surges.",
+      "sourceReference": "RDSO/SPN/144/2006 / IRSEM Part II",
+      "defaultSize": {
+        "width": 34,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 17,
+        "y": 36
+      },
+      "version": "1.0.0",
+      "verificationStatus": "NEEDS VERIFICATION",
+      "verifiedBy": null,
+      "verificationDate": null,
+      "verificationNotes": "Awaiting official review against current RDSO / IRSEM Part II amendment",
+      "tags": [
+        "protection",
+        "spd",
+        "surge protection",
+        "lightning arrestor",
+        "grounding"
+      ],
+      "svgFile": "spd_cabinet.svg"
     }
   ]
 }

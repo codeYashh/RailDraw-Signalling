@@ -448,32 +448,125 @@ function extractAutoPlacedSymbols(lower: string, segments: RouteSegment[]): Plac
     return m[1] ? Math.min(parseInt(m[1], 10) || 1, 4) : 1;
   };
 
+  const cRouteInd = matchCount(/(?:(\d+)\s+)?(?:route\s*indicators?|junction\s*indicators?|feather\s*signals?)/i);
+  if (cRouteInd > 0) addBatch('signal_route_indicator', 'RI', cRouteInd, 122);
+
+  const cAuto = matchCount(/(?:(\d+)\s+)?(?:automatic\s*(?:stop\s*)?signals?|a[\s-]?marker\s*signals?)/i);
+  if (cAuto > 0) addBatch('signal_automatic', 'AS', cAuto, 124);
+
+  const cSemiAuto = matchCount(/(?:(\d+)\s+)?(?:semi[\s-]?automatic\s*(?:stop\s*)?signals?)/i);
+  if (cSemiAuto > 0) addBatch('signal_semi_automatic', 'SAS', cSemiAuto, 124);
+
+  const cInnerDist = matchCount(/(?:(\d+)\s+)?(?:inner\s*distant\s*signals?|id\s*signals?)/i);
+  if (cInnerDist > 0) addBatch('signal_inner_distant', 'ID', cInnerDist, 124);
+
+  const cInterStarter = matchCount(/(?:(\d+)\s+)?(?:intermediate\s*starters?)/i);
+  if (cInterStarter > 0) addBatch('signal_intermediate_starter', 'IS', cInterStarter, 124);
+
+  const cCoacting = matchCount(/(?:(\d+)\s+)?(?:co[\s-]?acting\s*signals?|duplicate\s*signals?)/i);
+  if (cCoacting > 0) addBatch('signal_coacting', 'CS', cCoacting, 120);
+
+  const cBannerRep = matchCount(/(?:(\d+)\s+)?(?:banner\s*(?:repeater\s*)?signals?|repeater\s*signals?)/i);
+  if (cBannerRep > 0) addBatch('signal_banner_repeater', 'BR', cBannerRep, 126);
+
+  const cCallingOn = matchCount(/(?:(\d+)\s+)?(?:calling[\s-]?on\s*signals?)/i);
+  if (cCallingOn > 0) addBatch('signal_calling_on_cls', 'CO', cCallingOn, 120);
+
+  const cPosShunt = matchCount(/(?:(\d+)\s+)?(?:position\s*light\s*(?:shunt)?)/i);
+  if (cPosShunt > 0) addBatch('signal_shunt_position', 'SH', cPosShunt, 130);
+
+  const cGateSig = matchCount(/(?:(\d+)\s+)?(?:gate\s*signals?|g[\s-]?marker\s*signals?)/i);
+  if (cGateSig > 0) addBatch('signal_gate_cls', 'G', cGateSig, 124);
+
+  const cWarner = matchCount(/(?:(\d+)\s+)?(?:warner\s*signals?|semaphore\s*warners?)/i);
+  if (cWarner > 0) addBatch('signal_warner', 'W', cWarner, 126);
+
   const c4 = matchCount(/(?:(\d+)\s+)?(?:4[\s-]?aspect|four[\s-]?aspect|home\s+signal|starter\s+signal|main\s+signal)/i);
   if (c4 > 0) addBatch('cls_4aspect', lower.includes('home') ? 'H' : lower.includes('starter') ? 'ST' : 'S', c4, 124);
 
   const c3 = matchCount(/(?:(\d+)\s+)?(?:3[\s-]?aspect|three[\s-]?aspect|distant\s+signal|ib\s+signal)/i);
   if (c3 > 0) addBatch('cls_3aspect', lower.includes('distant') ? 'D' : 'S', c3, 124);
 
-  const c2 = matchCount(/(?:(\d+)\s+)?(?:2[\s-]?aspect|two[\s-]?aspect|gate\s+signal|calling[\s-]?on)/i);
-  if (c2 > 0) addBatch('cls_2aspect', 'G', c2, 124);
+  const c2 = matchCount(/(?:(\d+)\s+)?(?:2[\s-]?aspect|two[\s-]?aspect)/i);
+  if (c2 > 0 && cGateSig === 0 && cCallingOn === 0) addBatch('cls_2aspect', 'S', c2, 124);
 
   const cShunt = matchCount(/(?:(\d+)\s+)?shunt(?:\s+signal)?/i);
-  if (cShunt > 0) addBatch('shunt_signal', 'SH', cShunt, 128);
+  if (cShunt > 0 && cPosShunt === 0) addBatch('shunt_signal', 'SH', cShunt, 128);
 
   // Generic "signal" / "signals" if no specific aspect matched
-  if (c4 === 0 && c3 === 0 && c2 === 0 && cShunt === 0) {
+  if (
+    cRouteInd === 0 &&
+    cAuto === 0 &&
+    cSemiAuto === 0 &&
+    cInnerDist === 0 &&
+    cInterStarter === 0 &&
+    cCoacting === 0 &&
+    cBannerRep === 0 &&
+    cCallingOn === 0 &&
+    cPosShunt === 0 &&
+    cGateSig === 0 &&
+    cWarner === 0 &&
+    c4 === 0 &&
+    c3 === 0 &&
+    c2 === 0 &&
+    cShunt === 0
+  ) {
     const cGenSig = matchCount(/(?:(\d+)\s+)?(?:cls\s+)?signals?\b(?!\s*(?:cabin|cable|route|room|engineering|department|ling))/i);
     if (cGenSig > 0) addBatch('cls_4aspect', 'S', cGenSig, 124);
   }
 
+  const cPmClamp = matchCount(/(?:(\d+)\s+)?(?:clamp\s*locks?|pm\s*with\s*clamp\s*lock)/i);
+  if (cPmClamp > 0) addBatch('point_machine_clamp', 'PM', cPmClamp, 134);
+
   const cPm = matchCount(/(?:(\d+)\s+)?(?:electric\s+)?point\s*machines?|(\d+)\s+points?\b/i);
-  if (cPm > 0) addBatch('point_machine', 'PM', cPm, 134);
+  if (cPm > 0 && cPmClamp === 0) addBatch('point_machine', 'PM', cPm, 134);
+
+  const cWheelSensor = matchCount(/(?:(\d+)\s+)?(?:wheel\s*sensors?|msdac\s*sensors?)/i);
+  if (cWheelSensor > 0) addBatch('axle_counter_wheel_sensor', 'WS', cWheelSensor, 132);
 
   const cAc = matchCount(/(?:(\d+)\s+)?(?:axle\s*counters?|ssdac|msdac)/i);
-  if (cAc > 0) addBatch('axle_counter', 'AC', cAc, 130);
+  if (cAc > 0 && cWheelSensor === 0) addBatch('axle_counter', 'AC', cAc, 130);
+
+  const cTljb = matchCount(/(?:(\d+)\s+)?(?:tljb|track\s*lead\s*(?:junction\s*)?box(?:es)?)/i);
+  if (cTljb > 0) addBatch('track_lead_junction_box', 'TLJB', cTljb, 132);
+
+  const cFm = matchCount(/(?:(\d+)\s+)?(?:fouling\s*marks?|\bfm\b)/i);
+  if (cFm > 0) addBatch('fouling_mark', 'FM', cFm, 134);
 
   const cGj = matchCount(/(?:(\d+)\s+)?(?:glued\s*(?:insulated\s*)?joints?|track\s*circuits?)/i);
   if (cGj > 0) addBatch('glued_joint', 'GJ', cGj, 132);
+
+  // Boards & Signs
+  const cSlb = matchCount(/(?:(\d+)\s+)?(?:shunting\s*limit(?:\s*boards?)?|\bslb\b)/i);
+  if (cSlb > 0) addBatch('board_shunting_limit', 'SLB', cSlb, 126);
+
+  const cBslb = matchCount(/(?:(\d+)\s+)?(?:block\s*section\s*limit(?:\s*boards?)?|\bbslb\b)/i);
+  if (cBslb > 0) addBatch('board_block_section_limit', 'BSLB', cBslb, 126);
+
+  const cWhistle = matchCount(/(?:(\d+)\s+)?(?:whistle\s*boards?|whistle\s*signs?|\bw\/l\b)/i);
+  if (cWhistle > 0) addBatch('board_whistle', 'WB', cWhistle, 126);
+
+  const cWarning = matchCount(/(?:(\d+)\s+)?(?:warning\s*boards?|goods\s*warning\s*boards?)/i);
+  if (cWarning > 0) addBatch('board_warning', 'WRN', cWarning, 126);
+
+  const cSpeed = matchCount(/(?:(\d+)\s+)?(?:speed\s*indicators?|speed\s*boards?|termination\s*boards?)/i);
+  if (cSpeed > 0) addBatch('board_speed_indicator', 'SR', cSpeed, 126);
+
+  // Power & Telecom
+  const cIps = matchCount(/(?:(\d+)\s+)?(?:ips\s*rooms?|integrated\s*power\s*supply)/i);
+  if (cIps > 0) addBatch('ips_room', 'IPS', cIps, 130);
+
+  const cSolar = matchCount(/(?:(\d+)\s+)?(?:solar\s*panels?|solar\s*arrays?|solar\s*pv)/i);
+  if (cSolar > 0) addBatch('solar_panel_array', 'SP', cSolar, 206);
+
+  const cOfc = matchCount(/(?:(\d+)\s+)?(?:ofc\s*markers?|optical\s*fibre\s*(?:cable\s*)?markers?)/i);
+  if (cOfc > 0) addBatch('ofc_cable_marker', 'OFC', cOfc, 208);
+
+  const cSpd = matchCount(/(?:(\d+)\s+)?(?:spd\s*cabinets?|surge\s*protections?)/i);
+  if (cSpd > 0) addBatch('spd_cabinet', 'SPD', cSpd, 208);
+
+  const cEc = matchCount(/(?:(\d+)\s+)?(?:emergency\s*(?:telephone\s*)?sockets?|ec\s*sockets?|telephone\s*pillars?)/i);
+  if (cEc > 0) addBatch('emergency_socket_pillar', 'EC', cEc, 132);
 
   const cEp = matchCount(/(?:(\d+)\s+)?(?:earth\s*pits?|earthing)/i);
   if (cEp > 0) addBatch('earth_pit', 'EP', cEp, 208);

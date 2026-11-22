@@ -9,7 +9,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Android](https://img.shields.io/badge/Android-Jetpack%20Compose-3ddc84.svg?logo=android&logoColor=white)](https://developer.android.com/)
 [![Offline First](https://img.shields.io/badge/Deployment-Air--Gapped%20%2F%20Offline%20Ready-success.svg)]()
-[![Download APK](https://img.shields.io/badge/Download%20APK-RailDraw.apk%20(v1.3.0)-brightgreen?logo=android&style=for-the-badge)](https://github.com/codeYashh/RailDraw-Signalling/raw/main/RailDraw.apk)
+[![Download APK](https://img.shields.io/badge/Download%20APK-RailDraw.apk%20(v1.5.0)-brightgreen?logo=android&style=for-the-badge)](https://github.com/codeYashh/RailDraw-Signalling/raw/main/RailDraw.apk)
 
 > 📲 **Download on Android**: [Click here to download RailDraw.apk](https://github.com/codeYashh/RailDraw-Signalling/raw/main/RailDraw.apk) directly to install on your Android device!
 

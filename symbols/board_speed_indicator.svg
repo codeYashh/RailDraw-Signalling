@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 44" width="38" height="44">
+  <line x1="19" y1="44" x2="19" y2="22" stroke="#0f172a" stroke-width="2.5"/>
+  <line x1="12" y1="44" x2="26" y2="44" stroke="#0f172a" stroke-width="3"/>
+  <!-- Triangular speed board -->
+  <polygon points="19,3 32,22 6,22" fill="#facc15" stroke="#0f172a" stroke-width="1.8"/>
+  <text x="19" y="18" font-size="8.5" font-family="sans-serif" font-weight="900" text-anchor="middle" fill="#0f172a">30</text>
+  <!-- Attached T/P indicator -->
+  <circle cx="31" cy="10" r="5" fill="#ffffff" stroke="#0f172a" stroke-width="1"/>
+  <text x="31" y="12" font-size="4" font-family="sans-serif" font-weight="900" text-anchor="middle" fill="#0f172a">T/P</text>
+</svg>

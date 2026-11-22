@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 42" width="44" height="42">
+  <line x1="4" y1="40" x2="40" y2="40" stroke="#475569" stroke-width="3"/>
+  <rect x="6" y="15" width="32" height="25" rx="2" fill="#fef3c7" stroke="#0f172a" stroke-width="2"/>
+  <!-- Pitched roof -->
+  <polygon points="4,15 22,5 40,15" fill="#b45309" stroke="#0f172a" stroke-width="1.5"/>
+  <!-- Lightning flash -->
+  <path d="M 22,18 L 18,25 L 23,25 L 21,31 L 27,24 L 22,24 Z" fill="#dc2626"/>
+  <text x="22" y="38" font-size="6.5" font-family="sans-serif" font-weight="900" text-anchor="middle" fill="#78350f">IPS</text>
+</svg>

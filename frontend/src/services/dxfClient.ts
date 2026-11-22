@@ -230,6 +230,23 @@ export function generateClientDxf(project: DrawingProject): string {
   drawLine(endX, dimLineY - 4, endX, overallY - 4, 'DIM');
   drawDimArrow(startX, endX, overallY, `TOTAL ROUTE LENGTH = ${totalLen} m`);
 
+  // Placed S&T Symbols on DXF sheet
+  if (project.placedSymbols && project.placedSymbols.length > 0) {
+    const marginLeft = 20.0;
+    const marginRight = 10.0;
+    const marginTop = 10.0;
+    const marginBottom = 10.0;
+    project.placedSymbols.forEach((sym) => {
+      const dxfX = marginLeft + (sym.x / 960) * (W - marginLeft - marginRight);
+      const dxfY = H - marginTop - (sym.y / 600) * (H - marginTop - marginBottom);
+      const r = 3.5 * (sym.scale || 1.0);
+      drawCircle(dxfX, dxfY, r, 'SYMBOLS');
+      if (sym.label) {
+        drawText(sym.label, dxfX - sym.label.length * 0.6, dxfY - r - 2.8, 1.8, 'TEXT');
+      }
+    });
+  }
+
   // 5. DETAIL CALLOUT
   const calloutSrcX = startX + totalW * 0.45;
   drawCircle(calloutSrcX, routeY, 6.0, 'CALLOUT');

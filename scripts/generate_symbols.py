@@ -858,15 +858,25 @@ SYMBOLS = [
 ]
 
 def generate():
+    import sys
+    sys.path.insert(0, os.path.dirname(__file__))
+    from add_railway_symbols import NEW_SYMBOLS
+    ALL_SYMBOLS = list(SYMBOLS)
+    existing_ids = {s["id"] for s in ALL_SYMBOLS}
+    for item in NEW_SYMBOLS:
+        if item["id"] not in existing_ids:
+            ALL_SYMBOLS.append(item)
+
     symbols_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "symbols"))
     frontend_symbols_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "public", "symbols"))
+    bundled_manifest_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "src", "constants", "symbolManifest.json"))
     
     os.makedirs(symbols_dir, exist_ok=True)
     os.makedirs(frontend_symbols_dir, exist_ok=True)
 
     manifest_entries = []
 
-    for item in SYMBOLS:
+    for item in ALL_SYMBOLS:
         svg_filename = f"{item['id']}.svg"
         svg_path = os.path.join(symbols_dir, svg_filename)
         
@@ -899,7 +909,7 @@ def generate():
     manifest_data = {
         "standard": "Indian Railways Signal Engineering Manual (IRSEM) & RDSO Standard S&T Symbols",
         "version": "1.0.0",
-        "updatedAt": "2026-11-15T20:41:00Z",
+        "updatedAt": "2026-11-22T01:00:00Z",
         "totalSymbols": len(manifest_entries),
         "symbols": manifest_entries
     }
@@ -909,6 +919,9 @@ def generate():
         json.dump(manifest_data, f, indent=2)
 
     shutil.copy(manifest_path, os.path.join(frontend_symbols_dir, "manifest.json"))
+    with open(bundled_manifest_path, "w", encoding="utf-8") as f:
+        json.dump(manifest_data, f, indent=2)
+
     print(f"Generated {len(manifest_entries)} symbols in {symbols_dir} and frontend/public/symbols/")
 
 if __name__ == "__main__":

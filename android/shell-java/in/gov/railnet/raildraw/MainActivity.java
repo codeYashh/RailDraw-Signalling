@@ -18,10 +18,15 @@ public class MainActivity extends Activity implements DownloadListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        applySystemBarTheme(true);
+        boolean isDark = false;
+        try {
+            isDark = getSharedPreferences("raildraw_prefs", 0).getBoolean("is_dark", false);
+        } catch (Throwable ignored) {}
+
+        applySystemBarTheme(isDark);
 
         webView = new WebView(this);
-        webView.setBackgroundColor(0xFF07111F);
+        webView.setBackgroundColor(isDark ? 0xFF07111F : 0xFFF8FAFC);
         setContentView(webView);
 
         WebSettings settings = webView.getSettings();

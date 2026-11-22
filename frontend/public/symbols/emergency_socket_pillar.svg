@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 44" width="28" height="44">
+  <line x1="6" y1="42" x2="22" y2="42" stroke="#475569" stroke-width="3"/>
+  <!-- Concrete pedestal -->
+  <rect x="7" y="16" width="14" height="26" rx="2" fill="#e2e8f0" stroke="#0f172a" stroke-width="1.8"/>
+  <!-- Red cylindrical domed cap -->
+  <path d="M 7,16 C 7,8 21,8 21,16 Z" fill="#dc2626" stroke="#0f172a" stroke-width="1.8"/>
+  <!-- Blue socket plate -->
+  <rect x="10" y="22" width="8" height="8" rx="1" fill="#0284c7"/>
+  <text x="14" y="37" font-size="6.5" font-family="sans-serif" font-weight="900" text-anchor="middle" fill="#0f172a">EC</text>
+</svg>

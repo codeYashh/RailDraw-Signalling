@@ -40,6 +40,9 @@ class UiAction implements Runnable {
     public void run() {
         try {
             if (mode == MODE_THEME) {
+                if (webView != null) {
+                    webView.setBackgroundColor(flag ? 0xFF07111F : 0xFFF8FAFC);
+                }
                 Window w = activity.getWindow();
                 if (w == null) return;
                 if (flag) {

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 30" width="38" height="30">
+  <!-- Rail crown and base -->
+  <line x1="2" y1="8" x2="36" y2="8" stroke="#475569" stroke-width="4"/>
+  <!-- Clamped sensor housing -->
+  <rect x="10" y="8" width="18" height="14" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="1.8"/>
+  <circle cx="15" cy="15" r="2.5" fill="#d97706"/>
+  <circle cx="23" cy="15" r="2.5" fill="#d97706"/>
+  <!-- Deflector skids -->
+  <polygon points="4,10 10,14 10,16 4,14" fill="#64748b"/>
+  <polygon points="34,10 28,14 28,16 34,14" fill="#64748b"/>
+  <text x="19" y="27" font-size="5.5" font-family="sans-serif" font-weight="800" text-anchor="middle" fill="#92400e">MSDAC</text>
+</svg>

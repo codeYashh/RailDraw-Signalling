@@ -230,6 +230,12 @@ public class RailDrawBridge {
 
     @JavascriptInterface
     public void setThemeMode(boolean isDark) {
+        try {
+            activity.getSharedPreferences("raildraw_prefs", 0)
+                .edit()
+                .putBoolean("is_dark", isDark)
+                .apply();
+        } catch (Throwable ignored) {}
         activity.applySystemBarTheme(isDark);
     }
 

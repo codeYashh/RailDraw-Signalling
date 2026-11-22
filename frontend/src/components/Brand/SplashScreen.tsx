@@ -43,13 +43,25 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ isDark = false, onFi
           : 'opacity-100 scale-100'
       }`}
       style={{
-        background: 'radial-gradient(circle at 50% 42%, #121E2E 0%, #0A111A 75%, #05080D 100%)',
+        background: isDark
+          ? 'radial-gradient(circle at 50% 42%, #121E2E 0%, #0A111A 75%, #05080D 100%)'
+          : 'radial-gradient(circle at 50% 42%, #FFFFFF 0%, #F1F5F9 55%, #E2E8F0 100%)',
       }}
     >
       {/* Top Bar with Minimal Skip Action */}
-      <div className="w-full max-w-sm flex justify-between items-center text-xs text-white/40">
-        <div className="flex items-center gap-1.5 font-mono text-[11px] tracking-wider">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+      <div
+        className={`w-full max-w-sm flex justify-between items-center text-xs transition-colors duration-300 ${
+          isDark ? 'text-white/50' : 'text-slate-500'
+        }`}
+      >
+        <div
+          className={`flex items-center gap-1.5 font-mono text-[11px] tracking-wider px-2 py-0.5 rounded-full ${
+            isDark
+              ? 'bg-white/5 border border-white/10 text-white/70'
+              : 'bg-slate-200/80 border border-slate-300/70 text-slate-700 font-medium'
+          }`}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
           <span>RDSO S&amp;T CAD</span>
         </div>
         <button
@@ -58,19 +70,26 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ isDark = false, onFi
             e.stopPropagation();
             onFinish();
           }}
-          className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-all text-[11px] font-medium"
+          className={`px-2.5 py-1 rounded-full transition-all text-[11px] font-medium ${
+            isDark
+              ? 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white'
+              : 'bg-slate-200/90 hover:bg-slate-300 text-slate-800 border border-slate-300/70 shadow-xs'
+          }`}
         >
           Skip &rarr;
         </button>
       </div>
 
-      {/* Main Center Stage: Spotify-Like Pulsing Insignia & Brand */}
+      {/* Main Center Stage: Pulsing Insignia & Brand */}
       <div className="flex flex-col items-center text-center max-w-sm w-full relative my-auto">
         {/* Soft Ambient Radial Glow (Saffron & Emerald Halo) */}
         <div
-          className="absolute -top-12 w-64 h-64 rounded-full blur-3xl opacity-30 pointer-events-none transition-transform duration-1000"
+          className="absolute -top-12 w-64 h-64 rounded-full blur-3xl pointer-events-none transition-transform duration-1000"
           style={{
-            background: 'radial-gradient(circle, rgba(255,153,51,0.5) 0%, rgba(19,136,8,0.3) 50%, transparent 70%)',
+            background: isDark
+              ? 'radial-gradient(circle, rgba(255,153,51,0.5) 0%, rgba(19,136,8,0.3) 50%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(255,153,51,0.22) 0%, rgba(19,136,8,0.16) 50%, transparent 70%)',
+            opacity: isDark ? 0.35 : 0.45,
             transform: stage === 'active' ? 'scale(1.15)' : 'scale(0.85)',
           }}
         />
@@ -88,7 +107,13 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ isDark = false, onFi
             opacity: stage === 'enter' ? 0 : 1,
           }}
         >
-          <div className="p-4 rounded-3xl bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+          <div
+            className={`p-4 rounded-3xl backdrop-blur-xl transition-all duration-300 ${
+              isDark
+                ? 'bg-white/[0.08] border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.6)]'
+                : 'bg-white/95 border border-slate-200/90 shadow-[0_20px_45px_rgba(15,23,42,0.12)]'
+            }`}
+          >
             <VandeBharatLogo size={88} showFrame={true} />
           </div>
 
@@ -105,32 +130,73 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ isDark = false, onFi
             opacity: stage === 'enter' ? 0 : 1,
           }}
         >
-          <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-md">
-            RailDraw <span className="font-light text-sky-300">Signalling</span>
+          <h1
+            className={`text-3xl font-extrabold tracking-tight transition-colors duration-300 ${
+              isDark
+                ? 'text-white drop-shadow-md'
+                : 'text-slate-900 drop-shadow-xs'
+            }`}
+          >
+            RailDraw{' '}
+            <span
+              className={
+                isDark
+                  ? 'font-light text-sky-300'
+                  : 'font-bold text-sky-700'
+              }
+            >
+              Signalling
+            </span>
           </h1>
 
           {/* Hindi + English Subtitle */}
-          <p className="mt-1 text-sm font-medium text-amber-300/90 tracking-wide">
+          <p
+            className={`mt-1 text-sm tracking-wide transition-colors duration-300 ${
+              isDark
+                ? 'font-medium text-amber-300/90'
+                : 'font-semibold text-amber-800'
+            }`}
+          >
             भारतीय रेल · Indian Railways S&amp;T CAD
           </p>
         </div>
 
-        {/* Minimalist Spotify-style Audio/Rail Rhythm Bars */}
+        {/* Minimalist Audio/Rail Rhythm Bars */}
         <div
           className="mt-6 flex items-center justify-center gap-1.5 transition-all duration-700 delay-200"
           style={{
             opacity: stage === 'enter' ? 0 : 1,
           }}
         >
-          <span className="w-1 h-3 rounded-full bg-[#FF9933] animate-[bounce_0.8s_ease-in-out_infinite]" />
-          <span className="w-1 h-5 rounded-full bg-white animate-[bounce_0.8s_ease-in-out_0.15s_infinite]" />
-          <span className="w-1 h-7 rounded-full bg-sky-400 animate-[bounce_0.8s_ease-in-out_0.3s_infinite]" />
-          <span className="w-1 h-5 rounded-full bg-white animate-[bounce_0.8s_ease-in-out_0.45s_infinite]" />
-          <span className="w-1 h-3 rounded-full bg-[#138808] animate-[bounce_0.8s_ease-in-out_0.6s_infinite]" />
+          <span
+            className={`w-1 h-3 rounded-full animate-[bounce_0.8s_ease-in-out_infinite] ${
+              isDark ? 'bg-[#FF9933]' : 'bg-[#EA580C]'
+            }`}
+          />
+          <span
+            className={`w-1 h-5 rounded-full animate-[bounce_0.8s_ease-in-out_0.15s_infinite] ${
+              isDark ? 'bg-white' : 'bg-slate-800'
+            }`}
+          />
+          <span
+            className={`w-1 h-7 rounded-full animate-[bounce_0.8s_ease-in-out_0.3s_infinite] ${
+              isDark ? 'bg-sky-400' : 'bg-sky-600'
+            }`}
+          />
+          <span
+            className={`w-1 h-5 rounded-full animate-[bounce_0.8s_ease-in-out_0.45s_infinite] ${
+              isDark ? 'bg-white' : 'bg-slate-800'
+            }`}
+          />
+          <span
+            className={`w-1 h-3 rounded-full animate-[bounce_0.8s_ease-in-out_0.6s_infinite] ${
+              isDark ? 'bg-[#138808]' : 'bg-[#16A34A]'
+            }`}
+          />
         </div>
 
         {/* Sleek Tricolour Accent Line */}
-        <div className="mt-4 w-36 h-1 rounded-full overflow-hidden flex shadow-lg shadow-black/40 opacity-80">
+        <div className="mt-4 w-36 h-1 rounded-full overflow-hidden flex shadow-lg shadow-black/20 opacity-85">
           <div className="h-full flex-1 bg-[#FF9933]" />
           <div className="h-full flex-1 bg-white" />
           <div className="h-full flex-1 bg-[#138808]" />
@@ -138,9 +204,22 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ isDark = false, onFi
       </div>
 
       {/* Footer Info */}
-      <div className="flex flex-col items-center text-center space-y-1 text-xs text-white/40">
+      <div
+        className={`flex flex-col items-center text-center space-y-1 text-xs transition-colors duration-300 ${
+          isDark ? 'text-white/40' : 'text-slate-500'
+        }`}
+      >
         <p className="text-[11px] tracking-wide">
-          Designed for <span className="text-white/70 font-medium">Indian Railways S&amp;T Engineers</span>
+          Designed for{' '}
+          <span
+            className={
+              isDark
+                ? 'text-white/70 font-medium'
+                : 'text-slate-800 font-semibold'
+            }
+          >
+            Indian Railways S&amp;T Engineers
+          </span>
         </p>
       </div>
     </div>

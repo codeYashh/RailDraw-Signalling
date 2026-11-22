@@ -41,6 +41,18 @@ public abstract class Uri implements Parcelable {
 package android.content;
 public class Context {
     public ContentResolver getContentResolver() { return null; }
+    public SharedPreferences getSharedPreferences(String name, int mode) { return null; }
+}
+""",
+    "android/content/SharedPreferences.java": """
+package android.content;
+public interface SharedPreferences {
+    public interface Editor {
+        Editor putBoolean(String key, boolean value);
+        void apply();
+    }
+    Editor edit();
+    boolean getBoolean(String key, boolean defValue);
 }
 """,
     "android/content/ContentValues.java": """

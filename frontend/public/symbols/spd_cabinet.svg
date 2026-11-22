@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 36" width="34" height="36">
+  <line x1="6" y1="34" x2="28" y2="34" stroke="#475569" stroke-width="2.5"/>
+  <rect x="7" y="6" width="20" height="28" rx="2" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.8"/>
+  <!-- Louvered vents -->
+  <line x1="11" y1="12" x2="23" y2="12" stroke="#64748b" stroke-width="1.2"/>
+  <line x1="11" y1="16" x2="23" y2="16" stroke="#64748b" stroke-width="1.2"/>
+  <!-- Yellow lightning symbol -->
+  <path d="M 17,19 L 14,24 L 17.5,24 L 16,29 L 20,22.5 L 17,22.5 Z" fill="#eab308" stroke="#713f12" stroke-width="0.6"/>
+  <text x="17" y="33" font-size="5.5" font-family="sans-serif" font-weight="900" text-anchor="middle" fill="#0f172a">SPD</text>
+</svg>
