@@ -84,32 +84,21 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
     updateInfo?.htmlUrl || 'https://github.com/codeYashh/RailDraw-Signalling';
 
   const handleStartUpdate = async () => {
+    setErrorMessage(null);
+    setDownloadSuccess(false);
     setIsDownloading(true);
-    setDownloadProgress(10);
-    setDownloadStatusText('Connecting to update repository...');
-
-    // Progress simulation while downloading real file
-    const pTimer = setInterval(() => {
-      setDownloadProgress((prev) => {
-        if (prev >= 85) {
-          clearInterval(pTimer);
-          return 85;
-        }
-        return prev + 15;
-      });
-    }, 250);
+    setDownloadProgress(2);
+    setDownloadStatusText('Connecting to update server...');
 
     try {
       await downloadUpdateApk(apkDownloadUrl, (percent, text) => {
         setDownloadProgress(percent);
         setDownloadStatusText(text);
       });
-      clearInterval(pTimer);
       setDownloadProgress(100);
-      setDownloadStatusText('Download complete! Installing update...');
+      setDownloadStatusText('Ready to install! Tap Install on the system prompt.');
       setDownloadSuccess(true);
     } catch (err: any) {
-      clearInterval(pTimer);
       setIsDownloading(false);
       setErrorMessage(err?.message || 'Failed to download update APK.');
     }
@@ -307,7 +296,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                   {downloadSuccess && (
                     <div className="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-2">
                       <Check className="w-4 h-4 shrink-0" />
-                      <span>Update file downloaded! Tap below to install if needed.</span>
+                      <span>Update ready! Follow the system Install prompt to complete.</span>
                     </div>
                   )}
                 </div>
@@ -320,12 +309,12 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                   className="w-full shadow-lg"
                 >
                   <Download className="w-5 h-5" />
-                  <span>Update Now (Download APK)</span>
+                  <span>Update</span>
                 </Button>
               )}
 
               <p className="text-[11px] text-ink-muted text-center leading-relaxed">
-                Direct signed package: Tap Update to download the production APK. You can install it directly over your current build.
+                Downloads directly inside RailDraw and opens the Android installer automatically — your saved drawings stay intact.
               </p>
             </div>
           ) : (
@@ -362,11 +351,12 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => downloadUpdateApk(apkDownloadUrl)}
+                  onClick={handleStartUpdate}
+                  disabled={isDownloading}
                   className="w-full"
                 >
                   <Download className="w-4 h-4" />
-                  <span>Download / Re-install Latest APK (GitHub)</span>
+                  <span>{isDownloading ? `Downloading (${downloadProgress}%)` : 'Re-install Latest Version'}</span>
                 </Button>
               </div>
             </div>

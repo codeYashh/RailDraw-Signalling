@@ -3,16 +3,19 @@ package in.gov.railnet.raildraw;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivity extends Activity implements DownloadListener {
     public static final int REQ_VOICE_INPUT = 4012;
     private WebView webView;
+    private File pendingInstallApk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,30 @@ public class MainActivity extends Activity implements DownloadListener {
 
     public void dispatchVoiceResult(String text) {
         runOnUiThread(new UiAction(UiAction.MODE_VOICE_RESULT, this, webView, false, text, null, null));
+    }
+
+    public void setPendingInstallApk(File apkFile) {
+        this.pendingInstallApk = apkFile;
+    }
+
+    public WebView getWebViewInstance() {
+        return this.webView;
+    }
+
+    public void startInAppApkDownload(String apkUrl) {
+        UpdateInstaller.startDownload(this, webView, apkUrl);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (pendingInstallApk != null && pendingInstallApk.exists()) {
+            if (Build.VERSION.SDK_INT < 26 || getPackageManager().canRequestPackageInstalls()) {
+                File toInstall = pendingInstallApk;
+                pendingInstallApk = null;
+                UpdateInstaller.installApk(this, webView, toInstall);
+            }
+        }
     }
 
     @Override

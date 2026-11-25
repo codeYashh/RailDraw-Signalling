@@ -5,7 +5,14 @@ export interface InteractiveSymbolDef {
   name: string;
   shortName: string;
   defaultPrefix: string;
-  category: 'Signals' | 'Track & Points' | 'Housing' | 'Markers' | 'Boards & Signs' | 'Power & Telecom';
+  category:
+    | 'Signals'
+    | 'Underground Cables'
+    | 'Track & Points'
+    | 'Housing'
+    | 'Markers'
+    | 'Boards & Signs'
+    | 'Power & Telecom';
 }
 
 export const INTERACTIVE_SYMBOLS: InteractiveSymbolDef[] = [
@@ -25,6 +32,24 @@ export const INTERACTIVE_SYMBOLS: InteractiveSymbolDef[] = [
   { type: 'signal_gate_cls', name: 'Gate Signal (G Marker)', shortName: 'Gate Sig', defaultPrefix: 'GS', category: 'Signals' },
   { type: 'signal_warner', name: 'Semaphore Warner / Distant', shortName: 'Warner', defaultPrefix: 'W', category: 'Signals' },
   { type: 'shunt_signal', name: 'Shunt Disc Signal', shortName: 'Shunt Disc', defaultPrefix: 'SH', category: 'Signals' },
+  { type: 'signal_theatre_route', name: 'Theatre Route Indicator Signal', shortName: 'Theatre Rt', defaultPrefix: 'TR', category: 'Signals' },
+  { type: 'signal_distant_p', name: 'Distant Signal (P Marker)', shortName: 'Distant P', defaultPrefix: 'DS', category: 'Signals' },
+  { type: 'signal_ibs_marker', name: 'Intermediate Block Signal (IBS)', shortName: 'IBS', defaultPrefix: 'IBS', category: 'Signals' },
+  { type: 'signal_repeater_r', name: 'CLS Repeater Signal (R Marker)', shortName: 'CLS Rep', defaultPrefix: 'RP', category: 'Signals' },
+  { type: 'signal_gantry_portal', name: 'Signal Gantry / Cantilever Mast', shortName: 'Gantry', defaultPrefix: 'SG', category: 'Signals' },
+  { type: 'signal_stop_board', name: 'Fixed Stop Board Signal', shortName: 'Stop Board', defaultPrefix: 'SB', category: 'Signals' },
+
+  // --- UNDERGROUND CABLES ---
+  { type: 'underground_cable_trench', name: 'Underground Cable Trench (1.0m)', shortName: 'UG Trench', defaultPrefix: 'UGT', category: 'Underground Cables' },
+  { type: 'underground_hdd_bore', name: 'Underground HDD / Trenchless Bore', shortName: 'HDD Bore', defaultPrefix: 'HDD', category: 'Underground Cables' },
+  { type: 'underground_cable_duct', name: 'Underground HDPE / RCC Duct Bank', shortName: 'Duct Bank', defaultPrefix: 'DB', category: 'Underground Cables' },
+  { type: 'cable_draw_pit', name: 'Underground Cable Draw Pit', shortName: 'Draw Pit', defaultPrefix: 'DP', category: 'Underground Cables' },
+  { type: 'cable_joint_pit', name: 'Underground Cable Joint Pit', shortName: 'Joint Pit', defaultPrefix: 'JP', category: 'Underground Cables' },
+  { type: 'cable_trough_concrete', name: 'Concrete Cable Troughing', shortName: 'RCC Trough', defaultPrefix: 'CT', category: 'Underground Cables' },
+  { type: 'under_track_crossing', name: 'Under-Track Cable Crossing (UTX)', shortName: 'UTX Pipe', defaultPrefix: 'UTX', category: 'Underground Cables' },
+  { type: 'ofc_splice_pit', name: 'Underground OFC Splice Chamber', shortName: 'OFC Pit', defaultPrefix: 'OFP', category: 'Underground Cables' },
+  { type: 'cable_termination_rack', name: 'Cable Termination Rack (CT)', shortName: 'CT Rack', defaultPrefix: 'CTR', category: 'Housing' },
+  { type: 'underground_earth_grid', name: 'Underground Chemical Earth Pit', shortName: 'UG Earth', defaultPrefix: 'UEP', category: 'Power & Telecom' },
 
   // --- TRACK & POINTS ---
   { type: 'point_machine', name: 'Electric Point Machine', shortName: 'Point M/C', defaultPrefix: 'PM', category: 'Track & Points' },
@@ -609,6 +634,213 @@ export const RenderInteractiveSymbol: React.FC<{ type: string }> = ({ type }) =>
           <text x="0" y="12" fontSize="5.5" fontWeight="900" fontFamily="sans-serif" textAnchor="middle" fill="#0C2340">
             SPD
           </text>
+        </g>
+      );
+
+    case 'signal_theatre_route':
+      return (
+        <g>
+          <line x1="0" y1="8" x2="0" y2="24" stroke="#0C2340" strokeWidth="2.4" />
+          <line x1="-8" y1="24" x2="8" y2="24" stroke="#0C2340" strokeWidth="2.6" />
+          <rect x="-10" y="-27" width="20" height="12" rx="2" fill="#0F172A" stroke="#334155" strokeWidth="1.3" />
+          <text x="0" y="-18.5" fontSize="7.5" fontWeight="900" fontFamily="monospace" textAnchor="middle" fill="#FACC15">
+            2L
+          </text>
+          <rect x="-7" y="-13" width="14" height="24" rx="4" fill="#0F172A" stroke="#0C2340" strokeWidth="1.4" />
+          <circle cx="0" cy="-7.5" r="2.5" fill="#22C55E" />
+          <circle cx="0" cy="-1" r="2.5" fill="#FACC15" />
+          <circle cx="0" cy="5.5" r="2.5" fill="#EF4444" />
+        </g>
+      );
+
+    case 'signal_distant_p':
+      return (
+        <g>
+          <line x1="-2" y1="6" x2="-2" y2="24" stroke="#0C2340" strokeWidth="2.4" />
+          <line x1="-10" y1="24" x2="6" y2="24" stroke="#0C2340" strokeWidth="2.6" />
+          <rect x="-8" y="-18" width="12" height="25" rx="4" fill="#0F172A" stroke="#0C2340" strokeWidth="1.4" />
+          <circle cx="-2" cy="-12" r="2.5" fill="#22C55E" />
+          <circle cx="-2" cy="-5.5" r="2.5" fill="#FACC15" />
+          <circle cx="-2" cy="1" r="2.5" fill="#FACC15" />
+          <circle cx="11" cy="-4" r="5.8" fill="#FFFFFF" stroke="#0C2340" strokeWidth="1.3" />
+          <text x="11" y="-1.5" fontSize="7" fontWeight="900" fontFamily="sans-serif" textAnchor="middle" fill="#0C2340">
+            P
+          </text>
+        </g>
+      );
+
+    case 'signal_ibs_marker':
+      return (
+        <g>
+          <line x1="-2" y1="6" x2="-2" y2="24" stroke="#0C2340" strokeWidth="2.4" />
+          <line x1="-10" y1="24" x2="6" y2="24" stroke="#0C2340" strokeWidth="2.6" />
+          <rect x="-8" y="-18" width="12" height="25" rx="4" fill="#0F172A" stroke="#0C2340" strokeWidth="1.4" />
+          <circle cx="-2" cy="-12" r="2.5" fill="#22C55E" />
+          <circle cx="-2" cy="-5.5" r="2.5" fill="#FACC15" />
+          <circle cx="-2" cy="1" r="2.5" fill="#EF4444" />
+          <rect x="6" y="-9" width="13" height="10" rx="2" fill="#FFFFFF" stroke="#0C2340" strokeWidth="1.2" />
+          <text x="12.5" y="-2" fontSize="6" fontWeight="900" fontFamily="sans-serif" textAnchor="middle" fill="#0C2340">
+            IB
+          </text>
+        </g>
+      );
+
+    case 'signal_repeater_r':
+      return (
+        <g>
+          <line x1="-2" y1="6" x2="-2" y2="24" stroke="#0C2340" strokeWidth="2.4" />
+          <line x1="-10" y1="24" x2="6" y2="24" stroke="#0C2340" strokeWidth="2.6" />
+          <rect x="-8" y="-14" width="12" height="20" rx="4" fill="#0F172A" stroke="#0C2340" strokeWidth="1.4" />
+          <circle cx="-2" cy="-8" r="2.6" fill="#22C55E" />
+          <circle cx="-2" cy="0" r="2.6" fill="#FACC15" />
+          <circle cx="11" cy="-3" r="5.8" fill="#FFFFFF" stroke="#0C2340" strokeWidth="1.3" />
+          <text x="11" y="-0.5" fontSize="7" fontWeight="900" fontFamily="sans-serif" textAnchor="middle" fill="#0C2340">
+            R
+          </text>
+        </g>
+      );
+
+    case 'signal_gantry_portal':
+      return (
+        <g>
+          <line x1="-16" y1="22" x2="-16" y2="-16" stroke="#0C2340" strokeWidth="2.6" />
+          <line x1="16" y1="22" x2="16" y2="-16" stroke="#0C2340" strokeWidth="2.6" />
+          <rect x="-18" y="-18" width="36" height="5" fill="#334155" stroke="#0C2340" strokeWidth="1.2" />
+          <rect x="-10" y="-13" width="8" height="16" rx="2.5" fill="#0F172A" stroke="#334155" strokeWidth="1" />
+          <circle cx="-6" cy="-9" r="1.8" fill="#22C55E" />
+          <circle cx="-6" cy="-5" r="1.8" fill="#FACC15" />
+          <circle cx="-6" cy="-1" r="1.8" fill="#EF4444" />
+          <rect x="2" y="-13" width="8" height="16" rx="2.5" fill="#0F172A" stroke="#334155" strokeWidth="1" />
+          <circle cx="6" cy="-9" r="1.8" fill="#22C55E" />
+          <circle cx="6" cy="-5" r="1.8" fill="#FACC15" />
+          <circle cx="6" cy="-1" r="1.8" fill="#EF4444" />
+        </g>
+      );
+
+    case 'signal_stop_board':
+      return (
+        <g>
+          <line x1="0" y1="4" x2="0" y2="24" stroke="#0C2340" strokeWidth="2.4" />
+          <line x1="-8" y1="24" x2="8" y2="24" stroke="#0C2340" strokeWidth="2.6" />
+          <rect x="-11" y="-14" width="22" height="18" rx="2" fill="#DC2626" stroke="#0C2340" strokeWidth="1.5" />
+          <line x1="-7" y1="-5" x2="7" y2="-5" stroke="#FFFFFF" strokeWidth="3" />
+        </g>
+      );
+
+    case 'underground_cable_trench':
+      return (
+        <g>
+          <line x1="-20" y1="-12" x2="20" y2="-12" stroke="#0C2340" strokeWidth="1.6" strokeDasharray="4 2" />
+          <path d="M -12,-12 L -10,16 L 10,16 L 12,-12" fill="#FEF3C7" stroke="#0C2340" strokeWidth="1.6" />
+          <rect x="-9" y="0" width="18" height="4" fill="#B91C1C" stroke="#450A0A" strokeWidth="0.7" />
+          <circle cx="-5" cy="10" r="2.2" fill="#0C2340" />
+          <circle cx="0" cy="10" r="2.2" fill="#0C2340" />
+          <circle cx="5" cy="10" r="2.2" fill="#0C2340" />
+        </g>
+      );
+
+    case 'underground_hdd_bore':
+      return (
+        <g>
+          <line x1="-22" y1="-10" x2="22" y2="-10" stroke="#16A34A" strokeWidth="1.5" strokeDasharray="4 2" />
+          <path d="M -18,-8 Q -10,8 0,8 Q 10,8 18,-8" fill="none" stroke="#0284C7" strokeWidth="5" strokeLinecap="round" />
+          <path d="M -18,-8 Q -10,8 0,8 Q 10,8 18,-8" fill="none" stroke="#F8FAFC" strokeWidth="1.6" strokeDasharray="3 3" />
+          <text x="0" y="18" fontSize="6" fontWeight="800" fontFamily="sans-serif" textAnchor="middle" fill="#0C2340">
+            HDD
+          </text>
+        </g>
+      );
+
+    case 'underground_cable_duct':
+      return (
+        <g>
+          <rect x="-15" y="-12" width="30" height="22" rx="2" fill="#CBD5E1" stroke="#0C2340" strokeWidth="1.6" />
+          <circle cx="-7" cy="-5" r="3.8" fill="#0284C7" stroke="#0C2340" strokeWidth="1" />
+          <circle cx="7" cy="-5" r="3.8" fill="#0284C7" stroke="#0C2340" strokeWidth="1" />
+          <circle cx="-7" cy="4" r="3.8" fill="#EA580C" stroke="#0C2340" strokeWidth="1" />
+          <circle cx="7" cy="4" r="3.8" fill="#EA580C" stroke="#0C2340" strokeWidth="1" />
+          <circle cx="-7" cy="-5" r="1.4" fill="#0F172A" />
+          <circle cx="7" cy="4" r="1.4" fill="#0F172A" />
+        </g>
+      );
+
+    case 'cable_draw_pit':
+      return (
+        <g>
+          <rect x="-13" y="-13" width="26" height="26" rx="2" fill="#E2E8F0" stroke="#0C2340" strokeWidth="1.8" />
+          <rect x="-8" y="-8" width="16" height="16" fill="#94A3B8" stroke="#0C2340" strokeWidth="1.2" />
+          <line x1="-8" y1="-8" x2="8" y2="8" stroke="#0C2340" strokeWidth="1.2" />
+          <line x1="8" y1="-8" x2="-8" y2="8" stroke="#0C2340" strokeWidth="1.2" />
+        </g>
+      );
+
+    case 'cable_joint_pit':
+      return (
+        <g>
+          <rect x="-16" y="-10" width="32" height="20" rx="3" fill="#F1F5F9" stroke="#0C2340" strokeWidth="1.5" strokeDasharray="3 2" />
+          <line x1="-20" y1="0" x2="-8" y2="0" stroke="#0C2340" strokeWidth="2.2" />
+          <line x1="8" y1="0" x2="20" y2="0" stroke="#0C2340" strokeWidth="2.2" />
+          <rect x="-8" y="-5" width="16" height="10" rx="3" fill="#0284C7" stroke="#0C2340" strokeWidth="1.3" />
+        </g>
+      );
+
+    case 'cable_termination_rack':
+      return (
+        <g>
+          <rect x="-10" y="-18" width="20" height="34" rx="1.5" fill="#E2E8F0" stroke="#0C2340" strokeWidth="1.8" />
+          <line x1="-6" y1="-11" x2="6" y2="-11" stroke="#334155" strokeWidth="2" />
+          <line x1="-6" y1="-5" x2="6" y2="-5" stroke="#334155" strokeWidth="2" />
+          <line x1="-6" y1="1" x2="6" y2="1" stroke="#334155" strokeWidth="2" />
+          <line x1="-6" y1="7" x2="6" y2="7" stroke="#334155" strokeWidth="2" />
+          <text x="0" y="14" fontSize="5" fontWeight="900" fontFamily="sans-serif" textAnchor="middle" fill="#0C2340">
+            CT
+          </text>
+        </g>
+      );
+
+    case 'cable_trough_concrete':
+      return (
+        <g>
+          <rect x="-15" y="-11" width="30" height="4" fill="#94A3B8" stroke="#0C2340" strokeWidth="1.2" />
+          <path d="M -13,-7 L -10,11 L 10,11 L 13,-7 Z" fill="#E2E8F0" stroke="#0C2340" strokeWidth="1.6" />
+          <circle cx="-5" cy="4" r="2.1" fill="#0C2340" />
+          <circle cx="0" cy="4" r="2.1" fill="#0C2340" />
+          <circle cx="5" cy="4" r="2.1" fill="#0C2340" />
+        </g>
+      );
+
+    case 'under_track_crossing':
+      return (
+        <g>
+          <line x1="-7" y1="-16" x2="-7" y2="16" stroke="#475569" strokeWidth="2.4" />
+          <line x1="7" y1="-16" x2="7" y2="16" stroke="#475569" strokeWidth="2.4" />
+          <line x1="-11" y1="-10" x2="11" y2="-10" stroke="#64748B" strokeWidth="2" />
+          <line x1="-11" y1="10" x2="11" y2="10" stroke="#64748B" strokeWidth="2" />
+          <rect x="-20" y="-4" width="40" height="8" fill="#FEF08A" stroke="#0C2340" strokeWidth="1.4" />
+          <line x1="-20" y1="0" x2="20" y2="0" stroke="#DC2626" strokeWidth="1.4" strokeDasharray="3 2" />
+        </g>
+      );
+
+    case 'ofc_splice_pit':
+      return (
+        <g>
+          <circle cx="0" cy="0" r="14" fill="#FFF7ED" stroke="#EA580C" strokeWidth="2" />
+          <circle cx="0" cy="0" r="8.5" fill="#FED7AA" stroke="#0C2340" strokeWidth="1.2" />
+          <line x1="-14" y1="0" x2="14" y2="0" stroke="#EA580C" strokeWidth="1.4" strokeDasharray="2 2" />
+          <text x="0" y="2.5" fontSize="6" fontWeight="900" fontFamily="sans-serif" textAnchor="middle" fill="#9A3412">
+            OFC
+          </text>
+        </g>
+      );
+
+    case 'underground_earth_grid':
+      return (
+        <g>
+          <rect x="-11" y="-14" width="22" height="9" fill="#E2E8F0" stroke="#0C2340" strokeWidth="1.5" />
+          <line x1="0" y1="-5" x2="0" y2="17" stroke="#B45309" strokeWidth="2.8" />
+          <line x1="-8" y1="5" x2="8" y2="5" stroke="#16A34A" strokeWidth="2" />
+          <line x1="-6" y1="10" x2="6" y2="10" stroke="#16A34A" strokeWidth="2" />
+          <line x1="-4" y1="15" x2="4" y2="15" stroke="#16A34A" strokeWidth="2" />
         </g>
       );
 

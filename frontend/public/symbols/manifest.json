@@ -2,7 +2,7 @@
   "standard": "Indian Railways Signal Engineering Manual (IRSEM) & RDSO Standard S&T Symbols",
   "version": "1.0.0",
   "updatedAt": "2026-11-22T01:00:00Z",
-  "totalSymbols": 70,
+  "totalSymbols": 86,
   "symbols": [
     {
       "id": "cls_2aspect",
@@ -1891,6 +1891,459 @@
         "grounding"
       ],
       "svgFile": "spd_cabinet.svg"
+    },
+    {
+      "id": "signal_theatre_route",
+      "name": "Home Signal with Theatre Route Indicator",
+      "category": "Signals",
+      "description": "RDSO Colour Light Signal equipped with an illuminated matrix Theatre Type Route Indicator for multi-turnout station yards.",
+      "sourceReference": "IRSEM Part II Chapter 15 / RDSO Drawing SA-23841",
+      "defaultSize": {
+        "width": 36,
+        "height": 60
+      },
+      "anchorPoint": {
+        "x": 18,
+        "y": 60
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "signal",
+        "theatre",
+        "route indicator",
+        "home",
+        "matrix",
+        "cls"
+      ],
+      "svgFile": "signal_theatre_route.svg"
+    },
+    {
+      "id": "signal_distant_p",
+      "name": "Distant Signal ('P' Marker Disc)",
+      "category": "Signals",
+      "description": "Permissive Distant Colour Light Signal fitted with circular white 'P' marker disc on mast per IRSEM.",
+      "sourceReference": "IRSEM Part II 15.2 / RDSO Drawing SD-10027",
+      "defaultSize": {
+        "width": 36,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "signal",
+        "distant",
+        "p marker",
+        "permissive",
+        "cls"
+      ],
+      "svgFile": "signal_distant_p.svg"
+    },
+    {
+      "id": "signal_ibs_marker",
+      "name": "Intermediate Block Signal (IBS 'IB' Marker)",
+      "category": "Signals",
+      "description": "Intermediate Block Stop Signal with white rectangular/circular 'IB' marker plate and IBS telephone indicator.",
+      "sourceReference": "IRSEM Part II 15.4 / RDSO SD-10030",
+      "defaultSize": {
+        "width": 38,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "signal",
+        "ibs",
+        "intermediate block",
+        "ib marker",
+        "cls"
+      ],
+      "svgFile": "signal_ibs_marker.svg"
+    },
+    {
+      "id": "signal_repeater_r",
+      "name": "Colour Light Repeater Signal ('R' Marker)",
+      "category": "Signals",
+      "description": "Repeating signal placed ahead of obstructed running signal, identified by white circular 'R' marker.",
+      "sourceReference": "IRSEM Part II / RDSO SD-10032",
+      "defaultSize": {
+        "width": 36,
+        "height": 56
+      },
+      "anchorPoint": {
+        "x": 16,
+        "y": 56
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "signal",
+        "repeater",
+        "r marker",
+        "cls"
+      ],
+      "svgFile": "signal_repeater_r.svg"
+    },
+    {
+      "id": "signal_gantry_portal",
+      "name": "Signal Gantry / Cantilever Mast",
+      "category": "Signals",
+      "description": "Overhead steel portal gantry or cantilever signal bridge supporting dual-line CLS heads over multiple tracks.",
+      "sourceReference": "RDSO Standard Gantry Drawing S-23150",
+      "defaultSize": {
+        "width": 52,
+        "height": 54
+      },
+      "anchorPoint": {
+        "x": 26,
+        "y": 54
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "signal",
+        "gantry",
+        "cantilever",
+        "portal",
+        "bridge",
+        "multi-track"
+      ],
+      "svgFile": "signal_gantry_portal.svg"
+    },
+    {
+      "id": "signal_stop_board",
+      "name": "Fixed Stop Board / Buffer Stop Signal",
+      "category": "Signals",
+      "description": "Illuminated or retro-reflective red stop board / buffer stop marker at dead-end siding or terminal line.",
+      "sourceReference": "IRSEM / G&SR Rule 3.23",
+      "defaultSize": {
+        "width": 36,
+        "height": 48
+      },
+      "anchorPoint": {
+        "x": 18,
+        "y": 48
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "signal",
+        "stop board",
+        "buffer stop",
+        "dead end",
+        "fixed"
+      ],
+      "svgFile": "signal_stop_board.svg"
+    },
+    {
+      "id": "underground_cable_trench",
+      "name": "Underground Cable Trench (Cross-Section)",
+      "category": "Cable Markers & Joints",
+      "description": "Standard 1.0 m deep underground signalling cable trench with Class II protective bricks, clean sand bedding, and multi-core cables.",
+      "sourceReference": "IRSEM Part II Ch. 15 / RDSO/SPN/194",
+      "defaultSize": {
+        "width": 44,
+        "height": 44
+      },
+      "anchorPoint": {
+        "x": 22,
+        "y": 22
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "underground",
+        "cable",
+        "trench",
+        "brick",
+        "sand",
+        "excavation"
+      ],
+      "svgFile": "underground_cable_trench.svg"
+    },
+    {
+      "id": "underground_hdd_bore",
+      "name": "Underground HDD / Trenchless Bore",
+      "category": "Cable Markers & Joints",
+      "description": "Horizontal Directional Drilling (HDD) underground HDPE casing bore for crossing roads, culverts, and busy yards.",
+      "sourceReference": "IRSEM Part II 15.6 / RDSO Trenchless Spec",
+      "defaultSize": {
+        "width": 48,
+        "height": 38
+      },
+      "anchorPoint": {
+        "x": 24,
+        "y": 19
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "underground",
+        "hdd",
+        "trenchless",
+        "bore",
+        "hdpe",
+        "cable"
+      ],
+      "svgFile": "underground_hdd_bore.svg"
+    },
+    {
+      "id": "underground_cable_duct",
+      "name": "Underground HDPE / RCC Duct Bank",
+      "category": "Cable Markers & Joints",
+      "description": "Multi-way underground HDPE or RCC protective duct bank carrying separated signalling and telecom cables.",
+      "sourceReference": "RDSO/SPN/TC/45 / IRSEM",
+      "defaultSize": {
+        "width": 44,
+        "height": 38
+      },
+      "anchorPoint": {
+        "x": 22,
+        "y": 19
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "underground",
+        "duct",
+        "hdpe",
+        "rcc",
+        "conduit",
+        "cable"
+      ],
+      "svgFile": "underground_cable_duct.svg"
+    },
+    {
+      "id": "cable_draw_pit",
+      "name": "Underground Cable Draw Pit / Manhole",
+      "category": "Cable Markers & Joints",
+      "description": "Brick or RCC underground cable pulling & inspection chamber with heavy-duty cover.",
+      "sourceReference": "IRSEM Part II / RDSO Cable Pit Drawing",
+      "defaultSize": {
+        "width": 40,
+        "height": 40
+      },
+      "anchorPoint": {
+        "x": 20,
+        "y": 20
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "underground",
+        "draw pit",
+        "manhole",
+        "chamber",
+        "cable"
+      ],
+      "svgFile": "cable_draw_pit.svg"
+    },
+    {
+      "id": "cable_joint_pit",
+      "name": "Underground Straight-Through Joint Pit",
+      "category": "Cable Markers & Joints",
+      "description": "Underground resin/cast-iron straight-through cable splice enclosure pit with loop slack.",
+      "sourceReference": "IRSEM Part II 15.8 / RDSO/SPN/195",
+      "defaultSize": {
+        "width": 44,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 22,
+        "y": 18
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "underground",
+        "joint pit",
+        "splice",
+        "cable joint"
+      ],
+      "svgFile": "cable_joint_pit.svg"
+    },
+    {
+      "id": "cable_termination_rack",
+      "name": "Cable Termination Rack (CT Rack)",
+      "category": "Location Boxes & Housing",
+      "description": "Indoor Relay Room / Cabin termination rack where underground signalling cables terminate onto ARA terminals.",
+      "sourceReference": "IRSEM Part II / RDSO CT Rack Spec",
+      "defaultSize": {
+        "width": 36,
+        "height": 46
+      },
+      "anchorPoint": {
+        "x": 18,
+        "y": 46
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "cable",
+        "termination",
+        "ct rack",
+        "relay room",
+        "ara"
+      ],
+      "svgFile": "cable_termination_rack.svg"
+    },
+    {
+      "id": "cable_trough_concrete",
+      "name": "Precast Concrete Cable Troughing",
+      "category": "Cable Markers & Joints",
+      "description": "Precast RCC surface/sub-surface cable trough with removable lid used along bridges, rocky strata, and station yards.",
+      "sourceReference": "IRSEM Part II 15.7",
+      "defaultSize": {
+        "width": 44,
+        "height": 36
+      },
+      "anchorPoint": {
+        "x": 22,
+        "y": 18
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "underground",
+        "cable",
+        "trough",
+        "concrete",
+        "rcc"
+      ],
+      "svgFile": "cable_trough_concrete.svg"
+    },
+    {
+      "id": "under_track_crossing",
+      "name": "Under-Track Cable Crossing (UTX)",
+      "category": "Cable Markers & Joints",
+      "description": "Underground GI / RCC pipe casing crossing perpendicular beneath railway track sleepers and ballast.",
+      "sourceReference": "IRSEM Part II 15.5 / RDSO UTX Spec",
+      "defaultSize": {
+        "width": 48,
+        "height": 42
+      },
+      "anchorPoint": {
+        "x": 24,
+        "y": 21
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "underground",
+        "utx",
+        "track crossing",
+        "gi pipe",
+        "cable"
+      ],
+      "svgFile": "under_track_crossing.svg"
+    },
+    {
+      "id": "ofc_splice_pit",
+      "name": "Underground OFC Splice Chamber",
+      "category": "Cable Markers & Joints",
+      "description": "Underground optical fibre cable (OFC) splice closure chamber with protective concrete ring and route marker.",
+      "sourceReference": "RDSO/SPN/TC/55 / RailTel OFC Spec",
+      "defaultSize": {
+        "width": 40,
+        "height": 40
+      },
+      "anchorPoint": {
+        "x": 20,
+        "y": 20
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "underground",
+        "ofc",
+        "fiber",
+        "splice",
+        "telecom",
+        "pit"
+      ],
+      "svgFile": "ofc_splice_pit.svg"
+    },
+    {
+      "id": "underground_earth_grid",
+      "name": "Underground Chemical Earth Electrode Pit",
+      "category": "Protection & Grounding",
+      "description": "Sub-surface copper-bonded / chemical earthing electrode pit with inspection chamber for S&T surge & lightning protection.",
+      "sourceReference": "RDSO/SPN/197 / IRSEM Earthing",
+      "defaultSize": {
+        "width": 40,
+        "height": 44
+      },
+      "anchorPoint": {
+        "x": 20,
+        "y": 22
+      },
+      "version": "1.0.0",
+      "verificationStatus": "VERIFIED",
+      "verifiedBy": "RailDraw S&T Library",
+      "verificationDate": "2026-11-25",
+      "verificationNotes": "Added to RDSO S&T Signal & Underground Cable library",
+      "tags": [
+        "underground",
+        "earth",
+        "earthing",
+        "electrode",
+        "grounding",
+        "pit"
+      ],
+      "svgFile": "underground_earth_grid.svg"
     }
   ]
 }

@@ -11,12 +11,19 @@ interface NativeAndroidBridge {
   exitApp?: () => void;
   handleAppExit?: () => void;
   openExternalUrl?: (url: string) => void;
+  downloadAndInstallApk?: (apkUrl: string) => string;
 }
 
 declare global {
   interface Window {
     AndroidBridge?: NativeAndroidBridge;
     __onAndroidVoiceResult?: (transcript: string) => void;
+    __onUpdateDownloadProgress?: (
+      percent: number,
+      status: string,
+      done: boolean,
+      error: boolean
+    ) => void;
   }
 }
 

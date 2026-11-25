@@ -571,6 +571,49 @@ function extractAutoPlacedSymbols(lower: string, segments: RouteSegment[]): Plac
   const cEp = matchCount(/(?:(\d+)\s+)?(?:earth\s*pits?|earthing)/i);
   if (cEp > 0) addBatch('earth_pit', 'EP', cEp, 208);
 
+  // Additional Signals & Underground Cable Infrastructure
+  const cTheatre = matchCount(/(?:(\d+)\s+)?(?:theatre\s*route\s*(?:indicators?)?|theatre\s*signals?)/i);
+  if (cTheatre > 0) addBatch('signal_theatre_route', 'TR', cTheatre, 124);
+
+  const cDistP = matchCount(/(?:(\d+)\s+)?(?:distant\s*signals?(?:\s*p\s*marker)?)/i);
+  if (cDistP > 0) addBatch('signal_distant_p', 'DS', cDistP, 124);
+
+  const cIbs = matchCount(/(?:(\d+)\s+)?(?:ibs\s*signals?|intermediate\s*block\s*signals?|\bibs\b)/i);
+  if (cIbs > 0) addBatch('signal_ibs_marker', 'IBS', cIbs, 124);
+
+  const cRepR = matchCount(/(?:(\d+)\s+)?(?:cls\s*repeaters?|repeater\s*signals?)/i);
+  if (cRepR > 0) addBatch('signal_repeater_r', 'RP', cRepR, 124);
+
+  const cGantry = matchCount(/(?:(\d+)\s+)?(?:signal\s*gantr(?:y|ies)|cantilever\s*signals?)/i);
+  if (cGantry > 0) addBatch('signal_gantry_portal', 'SG', cGantry, 124);
+
+  const cStopBoard = matchCount(/(?:(\d+)\s+)?(?:stop\s*boards?|buffer\s*stop\s*signals?)/i);
+  if (cStopBoard > 0) addBatch('signal_stop_board', 'SB', cStopBoard, 126);
+
+  const cDrawPit = matchCount(/(?:(\d+)\s+)?(?:draw\s*pits?|cable\s*manholes?|pulling\s*chambers?)/i);
+  if (cDrawPit > 0) addBatch('cable_draw_pit', 'DP', cDrawPit, 208);
+
+  const cJointPit = matchCount(/(?:(\d+)\s+)?(?:joint\s*pits?|splice\s*pits?)/i);
+  if (cJointPit > 0) addBatch('cable_joint_pit', 'JP', cJointPit, 208);
+
+  const cDuctBank = matchCount(/(?:(\d+)\s+)?(?:duct\s*banks?|hdpe\s*ducts?|rcc\s*ducts?)/i);
+  if (cDuctBank > 0) addBatch('underground_cable_duct', 'DB', cDuctBank, 208);
+
+  const cUtx = matchCount(/(?:(\d+)\s+)?(?:utx|under[\s-]*track\s*crossings?)/i);
+  if (cUtx > 0) addBatch('under_track_crossing', 'UTX', cUtx, 134);
+
+  const cCtRack = matchCount(/(?:(\d+)\s+)?(?:ct\s*racks?|cable\s*termination\s*racks?)/i);
+  if (cCtRack > 0) addBatch('cable_termination_rack', 'CTR', cCtRack, 130);
+
+  const cTrough = matchCount(/(?:(\d+)\s+)?(?:concrete\s*troughs?|cable\s*troughs?|rcc\s*troughs?)/i);
+  if (cTrough > 0) addBatch('cable_trough_concrete', 'CT', cTrough, 208);
+
+  const cOfcPit = matchCount(/(?:(\d+)\s+)?(?:ofc\s*(?:splice\s*)?pits?|ofc\s*chambers?)/i);
+  if (cOfcPit > 0) addBatch('ofc_splice_pit', 'OFP', cOfcPit, 208);
+
+  const cUgTrench = matchCount(/(?:(\d+)\s+)?(?:underground\s*(?:cable\s*)?trench(?:es)?)/i);
+  if (cUgTrench > 0) addBatch('underground_cable_trench', 'UGT', cUgTrench, 208);
+
   const cLc = matchCount(/(?:(\d+)\s+)?(?:lc\s*gates?|level\s*crossings?)/i);
   if (cLc > 0) addBatch('lc_gate', 'LC', cLc, 128);
 

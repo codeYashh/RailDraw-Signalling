@@ -28,6 +28,15 @@ public class Environment {
     public static File getExternalStoragePublicDirectory(String type) { return null; }
 }
 """,
+    "android/os/ParcelFileDescriptor.java": """
+package android.os;
+import java.io.File;
+import java.io.FileNotFoundException;
+public class ParcelFileDescriptor {
+    public static final int MODE_READ_ONLY = 0x10000000;
+    public static ParcelFileDescriptor open(File file, int mode) throws FileNotFoundException { return null; }
+}
+""",
     "android/net/Uri.java": """
 package android.net;
 import android.os.Parcelable;
@@ -35,13 +44,53 @@ import java.io.File;
 public abstract class Uri implements Parcelable {
     public static Uri fromFile(File file) { return null; }
     public static Uri parse(String uriString) { return null; }
+    public String getLastPathSegment() { return null; }
+}
+""",
+    "android/database/Cursor.java": """
+package android.database;
+public interface Cursor {}
+""",
+    "android/database/MatrixCursor.java": """
+package android.database;
+public class MatrixCursor implements Cursor {
+    public MatrixCursor(String[] columnNames) {}
+    public void addRow(Object[] columnValues) {}
+}
+""",
+    "android/content/pm/PackageManager.java": """
+package android.content.pm;
+public abstract class PackageManager {
+    public boolean canRequestPackageInstalls() { return true; }
 }
 """,
     "android/content/Context.java": """
 package android.content;
+import android.content.pm.PackageManager;
+import java.io.File;
 public class Context {
     public ContentResolver getContentResolver() { return null; }
     public SharedPreferences getSharedPreferences(String name, int mode) { return null; }
+    public File getCacheDir() { return null; }
+    public PackageManager getPackageManager() { return null; }
+    public String getPackageName() { return null; }
+}
+""",
+    "android/content/ContentProvider.java": """
+package android.content;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import java.io.FileNotFoundException;
+public abstract class ContentProvider {
+    public Context getContext() { return null; }
+    public abstract boolean onCreate();
+    public abstract Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder);
+    public abstract String getType(Uri uri);
+    public abstract Uri insert(Uri uri, ContentValues values);
+    public abstract int delete(Uri uri, String selection, String[] selectionArgs);
+    public abstract int update(Uri uri, ContentValues values, String selection, String[] selectionArgs);
+    public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException { return null; }
 }
 """,
     "android/content/SharedPreferences.java": """
@@ -93,6 +142,7 @@ public class Intent {
     public Intent(String action) {}
     public Intent(String action, Uri uri) {}
     public Intent setType(String type) { return this; }
+    public Intent setDataAndType(Uri data, String type) { return this; }
     public Intent putExtra(String name, String value) { return this; }
     public Intent putExtra(String name, Parcelable value) { return this; }
     public void setClipData(ClipData clip) {}
@@ -162,6 +212,7 @@ import android.view.Window;
 public class Activity extends Context {
     public static final int RESULT_OK = -1;
     protected void onCreate(Bundle savedInstanceState) {}
+    protected void onResume() {}
     public void setContentView(View view) {}
     public void finishAffinity() {}
     public void finish() {}
@@ -282,6 +333,8 @@ def build_dex(output_dex_path: str):
 
         # 2. Compile our actual Android shell Java sources
         app_java = [
+            os.path.join(src_root, "in", "gov", "railnet", "raildraw", "ApkFileProvider.java"),
+            os.path.join(src_root, "in", "gov", "railnet", "raildraw", "UpdateInstaller.java"),
             os.path.join(src_root, "in", "gov", "railnet", "raildraw", "UiAction.java"),
             os.path.join(src_root, "in", "gov", "railnet", "raildraw", "AppWebViewClient.java"),
             os.path.join(src_root, "in", "gov", "railnet", "raildraw", "MainActivity.java"),

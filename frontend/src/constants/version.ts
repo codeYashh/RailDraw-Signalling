@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.5.0';
+export const APP_VERSION = '1.6.0';
 export const GITHUB_REPO_OWNER = 'codeYashh';
 export const GITHUB_REPO_NAME = 'RailDraw-Signalling';
 export const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`;

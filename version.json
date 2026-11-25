@@ -1,7 +1,7 @@
 {
-  "version": "1.5.0",
-  "name": "RailDraw Signalling v1.5.0",
-  "releaseNotes": "• Dynamic Theme-Matching Load Screen: Splash screen and native Android views now seamlessly adapt to Light and Dark modes with zero load-time flicker\n• 25 New Official Indian Railways S&T Symbols (70 Total): Route Indicators (feather type), Automatic Signals ('A' marker), Semi-Automatic ('A' illuminated), Inner Distant ('ID' marker), Intermediate Starter, Co-acting Signals, Banner Repeaters, Position Light Shunts, Calling-On on CLS mast, Gate Signals ('G' marker), Semaphore Warner, Fouling Marks, Track Lead Junction Boxes (TLJB), MSDAC Wheel Sensors, Point Machines with Clamp Locks, Shunting Limit Boards (SLB), Block Section Limit Boards (BSLB), Whistle Boards (W/L), Warning Boards, Speed/Termination Boards (T/P, T/G), Emergency Telephone Sockets (EC), IPS Rooms, Solar PV Arrays, OFC Markers, and SPD Cabinets\n• Direct In-App OTA Update Engine: Download and install new releases directly from GitHub with zero manual sharing\n• Layered AutoCAD DXF & Vector CAD Integration for all placed equipment",
+  "version": "1.6.0",
+  "name": "RailDraw Signalling v1.6.0",
+  "releaseNotes": "• Redesigned Insignia & Liquid Morph Launch: Sleeker Vande Bharat S&T logo with a smooth orb-to-squircle morph transition\n• 16 New Signal & Underground Cable Symbols (86 Total): Theatre Route Indicators, Distant ('P' Marker), IBS ('IB' Marker), CLS Repeaters ('R' Marker), Signal Gantries, Stop Boards, Underground Cable Trenches, HDD Bores, HDPE/RCC Duct Banks, Draw Pits, Joint Pits, CT Racks, Concrete Troughs, Under-Track Crossings (UTX), OFC Splice Chambers, and Underground Earth Electrode Pits\n• Play Store-Style In-App Updater: Direct in-app APK download with live MB/percentage progress and automatic system installer launch",
   "apkUrl": "https://github.com/codeYashh/RailDraw-Signalling/raw/main/RailDraw.apk",
-  "publishedAt": "2026-11-22T14:20:00Z"
+  "publishedAt": "2026-11-25T18:15:00Z"
 }

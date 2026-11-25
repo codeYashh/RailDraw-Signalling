@@ -78,6 +78,7 @@ export const ROUTE_PROMPT_EXAMPLES = [
 export const SYMBOL_PICKER_CATEGORIES = [
   'All',
   'Signals',
+  'Underground Cables',
   'Track & Points',
   'Housing',
   'Markers',

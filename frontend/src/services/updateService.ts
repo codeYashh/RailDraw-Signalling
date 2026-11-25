@@ -323,10 +323,40 @@ export async function downloadUpdateApk(
   const safeUrl = apkUrl || GITHUB_RAW_APK_URL;
   const targetFilename = 'RailDraw.apk';
 
-  // Check if running inside Android WebView bridge
-  if (typeof window !== 'undefined' && (window as any).AndroidBridge?.openExternalUrl) {
+  // Play Store-style native in-app download + direct PackageInstaller trigger
+  if (typeof window !== 'undefined' && window.AndroidBridge?.downloadAndInstallApk) {
+    return new Promise((resolve, reject) => {
+      onProgress?.(2, 'Connecting to update server...');
+
+      window.__onUpdateDownloadProgress = (percent, status, done, error) => {
+        onProgress?.(percent, status);
+        if (done) {
+          window.__onUpdateDownloadProgress = undefined;
+          if (error) {
+            reject(new Error(status || 'Failed to download update.'));
+          } else {
+            resolve({ ok: true, message: status || 'Installer opened.' });
+          }
+        }
+      };
+
+      try {
+        const res = window.AndroidBridge!.downloadAndInstallApk!(safeUrl);
+        if (!res || !res.startsWith('OK:')) {
+          window.__onUpdateDownloadProgress = undefined;
+          reject(new Error(res || 'Could not start in-app update download.'));
+        }
+      } catch (err: any) {
+        window.__onUpdateDownloadProgress = undefined;
+        reject(new Error(err?.message || 'Android update bridge error.'));
+      }
+    });
+  }
+
+  // Fallback for older Android shells without downloadAndInstallApk
+  if (typeof window !== 'undefined' && window.AndroidBridge?.openExternalUrl) {
     onProgress?.(50, 'Opening Android Package Installer...');
-    (window as any).AndroidBridge.openExternalUrl(safeUrl);
+    window.AndroidBridge.openExternalUrl(safeUrl);
     onProgress?.(100, 'Update started in Android download manager.');
     return { ok: true, message: 'Downloading update in Android Package Manager' };
   }
@@ -334,7 +364,6 @@ export async function downloadUpdateApk(
   // Browser: Initiate real download
   onProgress?.(20, 'Connecting to update binary server...');
   try {
-    // First try direct link download to trigger native browser download manager
     const link = document.createElement('a');
     link.href = safeUrl;
     link.download = targetFilename;
