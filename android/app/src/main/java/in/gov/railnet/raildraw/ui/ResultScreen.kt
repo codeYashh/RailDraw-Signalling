@@ -1,4 +1,4 @@
-package in.gov.railnet.raildraw.ui
+package `in`.gov.railnet.raildraw.ui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
@@ -22,8 +22,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import in.gov.railnet.raildraw.model.SignallingDrawing
-import in.gov.railnet.raildraw.ui.theme.*
+import `in`.gov.railnet.raildraw.model.SignallingDrawing
+import `in`.gov.railnet.raildraw.ui.theme.*
 
 @Composable
 fun ResultScreen(

@@ -1,4 +1,4 @@
-package in.gov.railnet.raildraw.ui.theme
+package `in`.gov.railnet.raildraw.ui.theme
 
 import android.app.Activity
 import androidx.compose.material3.MaterialTheme

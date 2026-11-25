@@ -1,4 +1,4 @@
-package in.gov.railnet.raildraw.ui
+package `in`.gov.railnet.raildraw.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import in.gov.railnet.raildraw.ui.theme.RailwayNavy
-import in.gov.railnet.raildraw.ui.theme.TextMuted
-import in.gov.railnet.raildraw.ui.theme.TextSecondary
-import in.gov.railnet.raildraw.updater.ReleaseInfo
+import `in`.gov.railnet.raildraw.ui.theme.RailwayNavy
+import `in`.gov.railnet.raildraw.ui.theme.TextMuted
+import `in`.gov.railnet.raildraw.ui.theme.TextSecondary
+import `in`.gov.railnet.raildraw.updater.ReleaseInfo
 
 @Composable
 fun UpdateAvailableDialog(
