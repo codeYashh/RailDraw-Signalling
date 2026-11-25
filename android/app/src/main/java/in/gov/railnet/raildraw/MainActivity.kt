@@ -12,22 +12,32 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.*
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import `in`.gov.railnet.raildraw.drawing.DrawingRenderer
+import `in`.gov.railnet.raildraw.model.DrawingVariant
 import `in`.gov.railnet.raildraw.model.ParseResult
 import `in`.gov.railnet.raildraw.model.SignallingDrawing
 import `in`.gov.railnet.raildraw.parser.DrawingParser
 import `in`.gov.railnet.raildraw.ui.AboutAndUpdatesDialog
 import `in`.gov.railnet.raildraw.ui.HomeScreen
 import `in`.gov.railnet.raildraw.ui.ResultScreen
+import `in`.gov.railnet.raildraw.ui.SplashScreen
 import `in`.gov.railnet.raildraw.ui.UpdateAvailableDialog
 import `in`.gov.railnet.raildraw.ui.theme.RailDrawTheme
+import `in`.gov.railnet.raildraw.ui.theme.ThemePrefs
 import `in`.gov.railnet.raildraw.updater.GitHubUpdater
 import `in`.gov.railnet.raildraw.updater.InstallLaunchResult
 import `in`.gov.railnet.raildraw.updater.ReleaseInfo
 import `in`.gov.railnet.raildraw.updater.UpdateCheckResult
+import `in`.gov.railnet.raildraw.util.DrawingHistoryItem
+import `in`.gov.railnet.raildraw.util.HistoryStore
 import `in`.gov.railnet.raildraw.util.StorageUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,20 +53,17 @@ class MainActivity : ComponentActivity() {
     private var onInstallErrorCallback: ((String) -> Unit)? = null
     private var onInstallLaunchedCallback: (() -> Unit)? = null
 
-    // Activity Result Launcher for Voice Input (System Speech Dialog)
     private val speechRecognitionLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val matches = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                 if (!matches.isNullOrEmpty()) {
-                    val spokenText = matches[0]
-                    onSpeechResultCallback?.invoke(spokenText)
+                    onSpeechResultCallback?.invoke(matches[0])
                 }
             }
             onSpeechEndCallback?.invoke()
         }
 
-    // Permission launcher for microphone
     private val requestRecordAudioPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -71,7 +78,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-    // Callbacks for UI updates
     private var onSpeechResultCallback: ((String) -> Unit)? = null
     private var onSpeechEndCallback: (() -> Unit)? = null
 
@@ -79,17 +85,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            RailDrawTheme {
-                var promptText by remember {
-                    mutableStateOf(
-                        "Cable route from L1 to L12, 500 m: 20 m trenchless, 50 m GI pipe, 430 m normal trenching, 7 cables of 12 core"
-                    )
-                }
+            var isDark by remember { mutableStateOf(ThemePrefs.isDarkMode(this@MainActivity)) }
+
+            RailDrawTheme(darkTheme = isDark) {
+                var showSplash by remember { mutableStateOf(true) }
+                var promptText by remember { mutableStateOf("") }
+                var selectedVariant by remember { mutableStateOf(DrawingVariant.ROUTE_PLAN) }
                 var currentDrawing by remember { mutableStateOf<SignallingDrawing?>(null) }
                 var currentBitmap by remember { mutableStateOf<Bitmap?>(null) }
                 var isListening by remember { mutableStateOf(false) }
                 var errorMessage by remember { mutableStateOf<String?>(null) }
-                var noticeMessage by remember { mutableStateOf<String?>(null) }
+                var historyItems by remember {
+                    mutableStateOf<List<DrawingHistoryItem>>(HistoryStore.getHistory(this@MainActivity))
+                }
 
                 // In-app GitHub Releases updater states
                 val installedVersion = remember { GitHubUpdater.getInstalledVersionName(this@MainActivity) }
@@ -121,123 +129,165 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(Unit) {
                     if (GitHubUpdater.shouldAutoCheck(this@MainActivity)) {
                         when (val res = GitHubUpdater.checkForUpdate(this@MainActivity, isAutoCheck = true)) {
-                            is UpdateCheckResult.UpdateAvailable -> {
-                                availableRelease = res.release
-                            }
+                            is UpdateCheckResult.UpdateAvailable -> availableRelease = res.release
                             else -> Unit
                         }
                     }
                 }
 
+                fun openDrawing(text: String, variant: DrawingVariant, saveToHistory: Boolean) {
+                    generateFromPrompt(
+                        text = text,
+                        variant = variant,
+                        onSuccess = { drawing, bmp ->
+                            currentDrawing = drawing
+                            currentBitmap = bmp
+                            if (saveToHistory) {
+                                historyItems = HistoryStore.addEntry(
+                                    context = this@MainActivity,
+                                    title = "${drawing.fromLocation} to ${drawing.toLocation} (${drawing.totalLengthMeters.toInt()} m)",
+                                    prompt = text,
+                                    variant = variant
+                                )
+                            }
+                        },
+                        onError = { err ->
+                            errorMessage = err
+                        }
+                    )
+                }
+
                 // Connect speech recognizer callbacks
-                DisposableEffect(Unit) {
+                DisposableEffect(selectedVariant) {
                     onSpeechResultCallback = { resultText ->
                         promptText = resultText
                         isListening = false
                         errorMessage = null
-                        noticeMessage = null
-
-                        // Auto-generate drawing from voice
-                        generateFromPrompt(
-                            text = resultText,
-                            onSuccess = { drawing, bmp, notice ->
-                                currentDrawing = drawing
-                                currentBitmap = bmp
-                                noticeMessage = notice
-                            },
-                            onError = { err ->
-                                errorMessage = err
-                            }
-                        )
+                        openDrawing(resultText, selectedVariant, saveToHistory = true)
                     }
-                    onSpeechEndCallback = {
-                        isListening = false
-                    }
+                    onSpeechEndCallback = { isListening = false }
                     onDispose {
                         onSpeechResultCallback = null
                         onSpeechEndCallback = null
                     }
                 }
 
-                // If on Result screen, Back button returns to Home with text preserved
-                if (currentDrawing != null && currentBitmap != null) {
-                    BackHandler {
-                        currentDrawing = null
-                        currentBitmap = null
-                    }
-
-                    ResultScreen(
-                        drawing = currentDrawing!!,
-                        drawingBitmap = currentBitmap!!,
-                        onSaveToPhone = {
-                            val uri = StorageUtils.saveBitmapToGallery(
-                                this@MainActivity,
-                                currentBitmap!!,
-                                "RailDraw_${currentDrawing!!.fromLocation}_to_${currentDrawing!!.toLocation}"
-                            )
-                            if (uri != null) {
-                                Toast.makeText(this@MainActivity, getString(R.string.saved_to_gallery), Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(this@MainActivity, "Failed to save drawing.", Toast.LENGTH_SHORT).show()
-                            }
-                        },
-                        onSaveAsPdf = {
-                            val uri = StorageUtils.saveAsPdf(
-                                this@MainActivity,
-                                currentBitmap!!,
-                                "RailDraw_${currentDrawing!!.fromLocation}_to_${currentDrawing!!.toLocation}"
-                            )
-                            if (uri != null) {
-                                Toast.makeText(this@MainActivity, getString(R.string.saved_pdf), Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(this@MainActivity, "Failed to save PDF.", Toast.LENGTH_SHORT).show()
-                            }
-                        },
-                        onShare = {
-                            StorageUtils.shareDrawing(
-                                this@MainActivity,
-                                currentBitmap!!,
-                                promptText
-                            )
-                        },
-                        onEdit = {
+                if (showSplash) {
+                    SplashScreen(
+                        isDark = isDark,
+                        onFinish = { showSplash = false }
+                    )
+                } else {
+                    val isShowingResult = currentDrawing != null && currentBitmap != null
+                    if (isShowingResult) {
+                        BackHandler {
                             currentDrawing = null
                             currentBitmap = null
                         }
-                    )
-                } else {
-                    HomeScreen(
-                        promptText = promptText,
-                        onPromptChange = {
-                            promptText = it
-                            errorMessage = null
-                            noticeMessage = null
+                    }
+
+                    AnimatedContent(
+                        targetState = isShowingResult,
+                        transitionSpec = {
+                            fadeIn(animationSpec = tween(280)) togetherWith
+                                fadeOut(animationSpec = tween(220))
                         },
-                        isListening = isListening,
-                        onMicClick = {
-                            checkAndStartMic { isListening = true }
-                        },
-                        onGenerateClick = {
-                            errorMessage = null
-                            noticeMessage = null
-                            generateFromPrompt(
-                                text = promptText,
-                                onSuccess = { drawing, bmp, notice ->
-                                    currentDrawing = drawing
-                                    currentBitmap = bmp
-                                    noticeMessage = notice
+                        label = "MainScreenTransition"
+                    ) { showResult ->
+                        if (showResult && currentDrawing != null && currentBitmap != null) {
+                            ResultScreen(
+                                drawing = currentDrawing!!,
+                                drawingBitmap = currentBitmap!!,
+                                isDark = isDark,
+                                onVariantChange = { newVariant ->
+                                    selectedVariant = newVariant
+                                    val base = currentDrawing!!.copy(variant = newVariant)
+                                    lifecycleScope.launch(Dispatchers.Default) {
+                                        val bmp = renderer.renderToBitmap(base)
+                                        withContext(Dispatchers.Main) {
+                                            currentDrawing = base
+                                            currentBitmap = bmp
+                                        }
+                                    }
                                 },
-                                onError = { err ->
-                                    errorMessage = err
+                                onSaveJpg = {
+                                    val uri = StorageUtils.saveBitmapToGallery(
+                                        this@MainActivity,
+                                        currentBitmap!!,
+                                        "RailDraw_${currentDrawing!!.fromLocation}_to_${currentDrawing!!.toLocation}"
+                                    )
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        if (uri != null) "Saved JPG to Pictures/RailDraw" else "Failed to save JPG.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                },
+                                onSaveA4Pdf = {
+                                    val uri = StorageUtils.saveAsPdf(
+                                        this@MainActivity,
+                                        currentBitmap!!,
+                                        "RailDraw_${currentDrawing!!.fromLocation}_to_${currentDrawing!!.toLocation}"
+                                    )
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        if (uri != null) "Saved A4 PDF to Download/RailDraw" else "Failed to save PDF.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                },
+                                onShareJpg = {
+                                    StorageUtils.shareDrawing(this@MainActivity, currentBitmap!!, promptText)
+                                },
+                                onSharePdf = {
+                                    StorageUtils.shareDrawingAsPdf(this@MainActivity, currentBitmap!!, promptText)
+                                },
+                                onEdit = {
+                                    currentDrawing = null
+                                    currentBitmap = null
                                 }
                             )
-                        },
-                        onAboutClick = {
-                            aboutStatusMessage = null
-                            showAboutDialog = true
-                        },
-                        errorMessage = errorMessage
-                    )
+                        } else {
+                            HomeScreen(
+                                promptText = promptText,
+                                onPromptChange = {
+                                    promptText = it
+                                    errorMessage = null
+                                },
+                                selectedVariant = selectedVariant,
+                                onVariantChange = { selectedVariant = it },
+                                isListening = isListening,
+                                isDark = isDark,
+                                onToggleTheme = {
+                                    isDark = !isDark
+                                    ThemePrefs.setDarkMode(this@MainActivity, isDark)
+                                },
+                                onMicClick = {
+                                    checkAndStartMic { isListening = true }
+                                },
+                                onGenerateClick = {
+                                    errorMessage = null
+                                    openDrawing(promptText, selectedVariant, saveToHistory = true)
+                                },
+                                onAboutClick = {
+                                    aboutStatusMessage = null
+                                    showAboutDialog = true
+                                },
+                                historyItems = historyItems,
+                                onSelectHistory = { item ->
+                                    promptText = item.prompt
+                                    selectedVariant = item.variant
+                                    errorMessage = null
+                                    openDrawing(item.prompt, item.variant, saveToHistory = false)
+                                },
+                                onDeleteHistory = { id ->
+                                    historyItems = HistoryStore.deleteEntry(this@MainActivity, id)
+                                },
+                                onClearHistory = {
+                                    historyItems = HistoryStore.clearAll(this@MainActivity)
+                                },
+                                errorMessage = errorMessage
+                            )
+                        }
+                    }
                 }
 
                 if (showAboutDialog) {
@@ -350,16 +400,18 @@ class MainActivity : ComponentActivity() {
 
     private fun generateFromPrompt(
         text: String,
-        onSuccess: (SignallingDrawing, Bitmap, String?) -> Unit,
+        variant: DrawingVariant,
+        onSuccess: (SignallingDrawing, Bitmap) -> Unit,
         onError: (String) -> Unit
     ) {
         lifecycleScope.launch(Dispatchers.Default) {
             try {
                 when (val result = parser.parse(text)) {
                     is ParseResult.Success -> {
-                        val bitmap = renderer.renderToBitmap(result.drawing)
+                        val drawingWithVariant = result.drawing.copy(variant = variant)
+                        val bitmap = renderer.renderToBitmap(drawingWithVariant)
                         withContext(Dispatchers.Main) {
-                            onSuccess(result.drawing, bitmap, result.notice)
+                            onSuccess(drawingWithVariant, bitmap)
                         }
                     }
                     is ParseResult.Error -> {
@@ -395,7 +447,7 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-            putExtra(RecognizerIntent.EXTRA_PROMPT, "Describe your signalling route (English or Hindi)...")
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak your signalling route...")
             putExtra("android.speech.extra.EXTRA_ADDITIONAL_LANGUAGES", arrayOf("hi-IN", "en-IN"))
         }
 
@@ -404,7 +456,7 @@ class MainActivity : ComponentActivity() {
         } catch (e: Exception) {
             Toast.makeText(
                 this,
-                "Voice input is not supported on this device. You can type your prompt.",
+                "Voice input is not supported on this device.",
                 Toast.LENGTH_LONG
             ).show()
             onSpeechEndCallback?.invoke()

@@ -10,9 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import `in`.gov.railnet.raildraw.ui.theme.RailwayNavy
-import `in`.gov.railnet.raildraw.ui.theme.TextMuted
-import `in`.gov.railnet.raildraw.ui.theme.TextSecondary
 import `in`.gov.railnet.raildraw.updater.ReleaseInfo
 
 @Composable
@@ -28,19 +25,21 @@ fun UpdateAvailableDialog(
 ) {
     AlertDialog(
         onDismissRequest = { if (!isDownloading) onLater() },
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(24.dp),
+        containerColor = MaterialTheme.colorScheme.surface,
         title = {
             Column {
                 Text(
                     text = "Update Available (${release.tagName})",
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "Installed: v$installedVersion  ->  New: v${release.versionName}",
                     fontSize = 12.sp,
-                    color = TextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         },
@@ -54,7 +53,7 @@ fun UpdateAvailableDialog(
                 Text(
                     text = release.releaseNotes,
                     fontSize = 13.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 19.sp
                 )
 
@@ -63,12 +62,12 @@ fun UpdateAvailableDialog(
                     LinearProgressIndicator(
                         progress = { downloadProgress.coerceIn(0f, 1f) },
                         modifier = Modifier.fillMaxWidth(),
-                        color = RailwayNavy
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Text(
                         text = downloadStatus,
                         fontSize = 12.sp,
-                        color = TextMuted
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -86,7 +85,7 @@ fun UpdateAvailableDialog(
             Button(
                 onClick = onUpdateNow,
                 enabled = !isDownloading,
-                colors = ButtonDefaults.buttonColors(containerColor = RailwayNavy)
+                shape = RoundedCornerShape(24.dp)
             ) {
                 Text(if (isDownloading) "Downloading..." else "Update now")
             }
@@ -94,7 +93,8 @@ fun UpdateAvailableDialog(
         dismissButton = {
             TextButton(
                 onClick = onLater,
-                enabled = !isDownloading
+                enabled = !isDownloading,
+                shape = RoundedCornerShape(24.dp)
             ) {
                 Text("Later")
             }
@@ -112,12 +112,14 @@ fun AboutAndUpdatesDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(24.dp),
+        containerColor = MaterialTheme.colorScheme.surface,
         title = {
             Text(
                 text = "About RailDraw",
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onSurface
             )
         },
         text = {
@@ -128,34 +130,32 @@ fun AboutAndUpdatesDialog(
                 Text(
                     text = "Indian Railways S&T Cable Route CAD",
                     fontSize = 14.sp,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = "Version: v$installedVersion",
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 if (isChecking) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp,
-                            color = RailwayNavy
+                            strokeWidth = 2.dp
                         )
                         Text(
                             text = "Checking GitHub Releases...",
                             fontSize = 13.sp,
-                            color = TextMuted
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 } else if (!statusMessage.isNullOrBlank()) {
                     Text(
                         text = statusMessage,
                         fontSize = 13.sp,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -164,13 +164,16 @@ fun AboutAndUpdatesDialog(
             Button(
                 onClick = onCheckForUpdates,
                 enabled = !isChecking,
-                colors = ButtonDefaults.buttonColors(containerColor = RailwayNavy)
+                shape = RoundedCornerShape(24.dp)
             ) {
                 Text("Check for updates")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(24.dp)
+            ) {
                 Text("Close")
             }
         }

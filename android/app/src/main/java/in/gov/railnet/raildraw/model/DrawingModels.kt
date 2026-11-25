@@ -2,6 +2,12 @@ package `in`.gov.railnet.raildraw.model
 
 import java.io.Serializable
 
+enum class DrawingVariant(val displayName: String, val shortLabel: String) {
+    ROUTE_PLAN("Cable Route Plan", "Route Plan"),
+    YARD_TRACK_LAYOUT("Track & Signal Yard Plan", "Track & Yard"),
+    TRENCH_CROSS_SECTION("Trench & Track Cross-Section", "Cross-Section")
+}
+
 enum class LayingMethod(val displayName: String, val irsemRef: String) {
     NORMAL_TRENCHING("Normal Trenching", "IRSEM 15.3.1"),
     TRENCHLESS_HDD("Trenchless / HDD", "IRSEM 15.3.4"),
@@ -42,6 +48,7 @@ data class SignallingDrawing(
     val date: String = "17-11-2026",
     val railwayZone: String = "Northern Railway",
     val division: String = "Delhi Division",
+    val variant: DrawingVariant = DrawingVariant.ROUTE_PLAN,
     val notice: String? = null,
     val notes: List<String> = listOf(
         "1. Minimum cable burial depth: 1.0 m in normal ground; 1.2 m at track crossings.",

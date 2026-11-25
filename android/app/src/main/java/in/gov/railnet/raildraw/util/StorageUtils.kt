@@ -12,24 +12,23 @@ import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import java.io.File
 import java.io.FileOutputStream
-import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 object StorageUtils {
 
     /**
-     * Saves drawing Bitmap to Pictures/RailDraw using MediaStore (Android 10+)
-     * or standard external storage on older Android versions.
+     * Saves drawing Bitmap as high-quality JPEG (.jpg) to Pictures/RailDraw.
      */
     fun saveBitmapToGallery(context: Context, bitmap: Bitmap, title: String): Uri? {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val fileName = "RailDraw_${timeStamp}.png"
+        val safeTitle = title.replace(Regex("[^a-zA-Z0-9_-]"), "_").take(32)
+        val fileName = "${safeTitle}_${timeStamp}.jpg"
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
                 put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/RailDraw")
                 put(MediaStore.MediaColumns.IS_PENDING, 1)
             }
@@ -39,7 +38,7 @@ object StorageUtils {
 
             if (uri != null) {
                 resolver.openOutputStream(uri)?.use { stream ->
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 95, stream)
                 }
                 contentValues.clear()
                 contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
@@ -47,43 +46,35 @@ object StorageUtils {
             }
             uri
         } else {
-            // Android 9 and below
             val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "RailDraw")
             if (!dir.exists()) dir.mkdirs()
             val file = File(dir, fileName)
             FileOutputStream(file).use { out ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
             }
             Uri.fromFile(file)
         }
     }
 
     /**
-     * Generates a standard A3 landscape vector-equivalent PDF and saves it to Documents/RailDraw.
+     * Generates a standard A4 landscape PDF (842 x 595 pt) and saves it to Download/RailDraw.
      */
     fun saveAsPdf(context: Context, bitmap: Bitmap, title: String): Uri? {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val fileName = "RailDraw_${timeStamp}.pdf"
+        val safeTitle = title.replace(Regex("[^a-zA-Z0-9_-]"), "_").take(32)
+        val fileName = "${safeTitle}_A4_${timeStamp}.pdf"
 
-        val pdfDocument = PdfDocument()
-        // Standard A3 landscape: 1191 x 842 pt
-        val pageInfo = PdfDocument.PageInfo.Builder(1191, 842, 1).create()
-        val page = pdfDocument.startPage(pageInfo)
-
-        val canvas = page.canvas
-        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 1191, 842, true)
-        canvas.drawBitmap(scaledBitmap, 0f, 0f, null)
-        pdfDocument.finishPage(page)
+        val pdfDocument = createA4Pdf(bitmap)
 
         val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                 put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOCUMENTS}/RailDraw")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/RailDraw")
                 put(MediaStore.MediaColumns.IS_PENDING, 1)
             }
             val resolver = context.contentResolver
-            val docUri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+            val docUri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
             if (docUri != null) {
                 resolver.openOutputStream(docUri)?.use { stream ->
                     pdfDocument.writeTo(stream)
@@ -94,7 +85,7 @@ object StorageUtils {
             }
             docUri
         } else {
-            val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "RailDraw")
+            val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "RailDraw")
             if (!dir.exists()) dir.mkdirs()
             val file = File(dir, fileName)
             FileOutputStream(file).use { out ->
@@ -107,16 +98,30 @@ object StorageUtils {
         return uri
     }
 
+    private fun createA4Pdf(bitmap: Bitmap): PdfDocument {
+        val pdfDocument = PdfDocument()
+        // Standard A4 landscape at 72 DPI: 842 x 595 pt (rendered at 2x for crispness)
+        val pageWidth = 842
+        val pageHeight = 595
+        val pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+
+        val canvas = page.canvas
+        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, pageWidth, pageHeight, true)
+        canvas.drawBitmap(scaledBitmap, 0f, 0f, null)
+        pdfDocument.finishPage(page)
+        return pdfDocument
+    }
+
     /**
-     * Shares the bitmap image via Android system share sheet.
+     * Shares the drawing as JPEG via Android system share sheet.
      */
     fun shareDrawing(context: Context, bitmap: Bitmap, promptText: String) {
         try {
-            val cachePath = File(context.cacheDir, "shared_drawings")
-            cachePath.mkdirs()
-            val file = File(cachePath, "raildraw_share.png")
+            val cachePath = File(context.cacheDir, "shared_drawings").apply { mkdirs() }
+            val file = File(cachePath, "raildraw_share.jpg")
             FileOutputStream(file).use { out ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
             }
 
             val contentUri = FileProvider.getUriForFile(
@@ -125,15 +130,52 @@ object StorageUtils {
                 file
             )
 
-            val shareIntent = Intent().apply {
-                action = Intent.ACTION_SEND
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 putExtra(Intent.EXTRA_STREAM, contentUri)
-                putExtra(Intent.EXTRA_TEXT, "Indian Railways Signalling Cable Route Drawing generated by RailDraw:\n$promptText")
-                type = "image/png"
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "Indian Railways Signalling Drawing (JPG) generated by RailDraw:\n$promptText"
+                )
+                type = "image/jpeg"
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
 
-            context.startActivity(Intent.createChooser(shareIntent, "Share Signalling Drawing"))
+            context.startActivity(Intent.createChooser(shareIntent, "Share Drawing (JPG)"))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Shares the drawing as an A4 PDF via Android system share sheet.
+     */
+    fun shareDrawingAsPdf(context: Context, bitmap: Bitmap, promptText: String) {
+        try {
+            val cachePath = File(context.cacheDir, "shared_drawings").apply { mkdirs() }
+            val file = File(cachePath, "raildraw_share_A4.pdf")
+            val pdfDocument = createA4Pdf(bitmap)
+            FileOutputStream(file).use { out ->
+                pdfDocument.writeTo(out)
+            }
+            pdfDocument.close()
+
+            val contentUri = FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                file
+            )
+
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                putExtra(Intent.EXTRA_STREAM, contentUri)
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "Indian Railways Signalling Drawing (A4 PDF) generated by RailDraw:\n$promptText"
+                )
+                type = "application/pdf"
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            context.startActivity(Intent.createChooser(shareIntent, "Share Drawing (A4 PDF)"))
         } catch (e: Exception) {
             e.printStackTrace()
         }

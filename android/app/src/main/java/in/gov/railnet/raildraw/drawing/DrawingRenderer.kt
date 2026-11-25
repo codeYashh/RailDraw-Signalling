@@ -42,11 +42,34 @@ class DrawingRenderer {
         // 3. Clean Top Header
         drawTopHeader(canvas, drawing, defaultPaint)
 
-        // 4. Main Route Layout (Location Boxes, Segments, Dimensions)
-        drawRouteDiagram(canvas, drawing, defaultPaint)
-
-        // 5. Zoom Detail 'A' Callout (Cable Bundle Cross-Section)
-        drawDetailCallout(canvas, drawing, defaultPaint)
+        // 4. Variant-Specific Engineering Content (with Railway Tracks)
+        when (drawing.variant) {
+            DrawingVariant.ROUTE_PLAN -> {
+                drawRailwayTrack(
+                    canvas = canvas,
+                    startX = MARGIN_LEFT + 140f,
+                    endX = CANVAS_WIDTH - MARGIN_RIGHT - 140f,
+                    centerY = 470f,
+                    paint = defaultPaint,
+                    trackLabel = "BG MAIN LINE (1676 mm)"
+                )
+                drawClsSignal(canvas, MARGIN_LEFT + 220f, 415f, "S1", defaultPaint)
+                drawClsSignal(canvas, CANVAS_WIDTH - MARGIN_RIGHT - 220f, 415f, "S2", defaultPaint)
+                drawRouteDiagram(canvas, drawing, defaultPaint)
+                drawDetailCallout(canvas, drawing, defaultPaint)
+                drawLegend(canvas, drawing, defaultPaint)
+                drawNotesBlock(canvas, drawing, defaultPaint)
+            }
+            DrawingVariant.YARD_TRACK_LAYOUT -> {
+                drawYardTrackLayout(canvas, drawing, defaultPaint)
+                drawLegend(canvas, drawing, defaultPaint)
+                drawNotesBlock(canvas, drawing, defaultPaint)
+            }
+            DrawingVariant.TRENCH_CROSS_SECTION -> {
+                drawTrenchCrossSectionView(canvas, drawing, defaultPaint)
+                drawNotesBlock(canvas, drawing, defaultPaint)
+            }
+        }
 
         // 6. Bottom Engineering Stamp
         drawBottomStamp(canvas, drawing, defaultPaint)
@@ -120,6 +143,215 @@ class DrawingRenderer {
             y,
             textPaint
         )
+    }
+
+    private fun drawRailwayTrack(
+        canvas: Canvas,
+        startX: Float,
+        endX: Float,
+        centerY: Float,
+        paint: Paint,
+        trackLabel: String
+    ) {
+        val ballastPaint = Paint(paint).apply {
+            color = Color.parseColor("#F1F5F9")
+            style = Paint.Style.FILL
+        }
+        canvas.drawRect(startX, centerY - 28f, endX, centerY + 28f, ballastPaint)
+
+        val sleeperPaint = Paint(paint).apply {
+            color = Color.parseColor("#94A3B8")
+            strokeWidth = 6f
+        }
+        var sx = startX + 16f
+        while (sx < endX - 10f) {
+            canvas.drawLine(sx, centerY - 24f, sx, centerY + 24f, sleeperPaint)
+            sx += 34f
+        }
+
+        val railPaint = Paint(paint).apply {
+            color = Color.parseColor("#0F172A")
+            strokeWidth = 5f
+        }
+        canvas.drawLine(startX, centerY - 12f, endX, centerY - 12f, railPaint)
+        canvas.drawLine(startX, centerY + 12f, endX, centerY + 12f, railPaint)
+
+        val labelPaint = Paint(paint).apply {
+            color = Color.parseColor("#334155")
+            textSize = 20f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            textAlign = Paint.Align.CENTER
+        }
+        canvas.drawText(trackLabel, (startX + endX) / 2f, centerY - 40f, labelPaint)
+    }
+
+    private fun drawClsSignal(canvas: Canvas, x: Float, baseY: Float, label: String, paint: Paint) {
+        val mastPaint = Paint(paint).apply {
+            color = Color.parseColor("#0F172A")
+            strokeWidth = 5f
+        }
+        canvas.drawLine(x, baseY, x, baseY - 78f, mastPaint)
+        canvas.drawLine(x - 16f, baseY, x + 16f, baseY, mastPaint)
+
+        val headPaint = Paint(paint).apply {
+            color = Color.parseColor("#1E293B")
+            style = Paint.Style.FILL
+        }
+        canvas.drawRoundRect(RectF(x - 14f, baseY - 142f, x + 14f, baseY - 76f), 10f, 10f, headPaint)
+
+        val aspects = listOf(
+            Color.parseColor("#22C55E") to (baseY - 128f),
+            Color.parseColor("#FACC15") to (baseY - 109f),
+            Color.parseColor("#EF4444") to (baseY - 90f)
+        )
+        aspects.forEach { (col, cy) ->
+            canvas.drawCircle(x, cy, 5.5f, Paint(paint).apply { color = col; style = Paint.Style.FILL })
+        }
+
+        val lblPaint = Paint(paint).apply {
+            color = Color.parseColor("#0F172A")
+            textSize = 19f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            textAlign = Paint.Align.CENTER
+        }
+        canvas.drawText(label, x, baseY - 154f, lblPaint)
+    }
+
+    private fun drawYardTrackLayout(canvas: Canvas, drawing: SignallingDrawing, paint: Paint) {
+        val leftX = MARGIN_LEFT + 140f
+        val rightX = CANVAS_WIDTH - MARGIN_RIGHT - 140f
+        val mainY = 560f
+        val loopY = 770f
+
+        // Main & Loop tracks with sleepers
+        drawRailwayTrack(canvas, leftX, rightX, mainY, paint, "MAIN LINE (UP / DN) — BG 1676 mm")
+        drawRailwayTrack(canvas, leftX + 260f, rightX - 260f, loopY, paint, "LOOP / SIDING TRACK")
+
+        // Turnout crossover rails
+        val turnoutPaint = Paint(paint).apply {
+            color = Color.parseColor("#0F172A")
+            strokeWidth = 5f
+        }
+        canvas.drawLine(leftX + 180f, mainY - 12f, leftX + 340f, loopY - 12f, turnoutPaint)
+        canvas.drawLine(leftX + 180f, mainY + 12f, leftX + 340f, loopY + 12f, turnoutPaint)
+        canvas.drawLine(rightX - 340f, loopY - 12f, rightX - 180f, mainY - 12f, turnoutPaint)
+        canvas.drawLine(rightX - 340f, loopY + 12f, rightX - 180f, mainY + 12f, turnoutPaint)
+
+        // Trackside Signals & Point Machines
+        drawClsSignal(canvas, leftX + 110f, mainY - 36f, "HOME S1", paint)
+        drawClsSignal(canvas, leftX + 460f, loopY - 36f, "STARTER S3", paint)
+        drawClsSignal(canvas, rightX - 110f, mainY - 36f, "ADV S2", paint)
+
+        // Point Machine box
+        val pmPaint = Paint(paint).apply { color = Color.parseColor("#F59E0B"); style = Paint.Style.FILL }
+        canvas.drawRect(leftX + 215f, mainY + 38f, leftX + 265f, mainY + 72f, pmPaint)
+        canvas.drawText("PM-101", leftX + 240f, mainY + 95f, Paint(paint).apply {
+            color = Color.parseColor("#0F172A"); textSize = 18f; typeface = Typeface.DEFAULT_BOLD; textAlign = Paint.Align.CENTER
+        })
+
+        // Underground Cable Route below tracks + UTX crossing
+        val cableY = 980f
+        val trenchPaint = Paint(paint).apply { color = Color.parseColor("#DC2626"); strokeWidth = 6f }
+        canvas.drawLine(leftX + 80f, cableY, rightX - 80f, cableY, trenchPaint)
+        // UTX vertical crossing up to Main Line
+        val utxPaint = Paint(paint).apply { color = Color.parseColor("#2563EB"); strokeWidth = 5f; pathEffect = DashPathEffect(floatArrayOf(16f, 10f), 0f) }
+        canvas.drawLine(leftX + 240f, mainY + 72f, leftX + 240f, cableY, utxPaint)
+        canvas.drawLine((leftX + rightX) / 2f, loopY + 26f, (leftX + rightX) / 2f, cableY, utxPaint)
+
+        SymbolsData.LOCATION_BOX.draw(canvas, leftX + 80f, cableY, 70f, paint)
+        SymbolsData.LOCATION_BOX.draw(canvas, rightX - 80f, cableY, 70f, paint)
+
+        val locPaint = Paint(paint).apply {
+            color = Color.parseColor("#0D2B45"); textSize = 24f; typeface = Typeface.DEFAULT_BOLD; textAlign = Paint.Align.CENTER
+        }
+        canvas.drawText(drawing.fromLocation, leftX + 80f, cableY - 54f, locPaint)
+        canvas.drawText(drawing.toLocation, rightX - 80f, cableY - 54f, locPaint)
+        canvas.drawText(
+            "UNDERGROUND CABLE TRENCH (${drawing.totalLengthMeters.toInt()} m) — ${drawing.cableDetails.description}",
+            (leftX + rightX) / 2f,
+            cableY + 60f,
+            Paint(paint).apply { color = Color.parseColor("#0F172A"); textSize = 22f; typeface = Typeface.DEFAULT_BOLD; textAlign = Paint.Align.CENTER }
+        )
+    }
+
+    private fun drawTrenchCrossSectionView(canvas: Canvas, drawing: SignallingDrawing, paint: Paint) {
+        val centerX = CANVAS_WIDTH / 2f - 180f
+        val groundY = 620f
+
+        // Ground level + railway embankment + track sleeper/rails on left
+        val groundPaint = Paint(paint).apply {
+            color = Color.parseColor("#334155")
+            strokeWidth = 4f
+            pathEffect = DashPathEffect(floatArrayOf(24f, 12f), 0f)
+        }
+        canvas.drawLine(MARGIN_LEFT + 140f, groundY, CANVAS_WIDTH - MARGIN_RIGHT - 140f, groundY, groundPaint)
+        canvas.drawText("GROUND LEVEL (G.L.)", MARGIN_LEFT + 160f, groundY - 18f, Paint(paint).apply {
+            color = Color.parseColor("#334155"); textSize = 22f; typeface = Typeface.DEFAULT_BOLD
+        })
+
+        // Ballast trapezoid & sleeper & rails on left side of G.L.
+        val trackCx = MARGIN_LEFT + 520f
+        val ballastPath = Path().apply {
+            moveTo(trackCx - 220f, groundY)
+            lineTo(trackCx - 140f, groundY - 70f)
+            lineTo(trackCx + 140f, groundY - 70f)
+            lineTo(trackCx + 220f, groundY)
+            close()
+        }
+        canvas.drawPath(ballastPath, Paint(paint).apply { color = Color.parseColor("#E2E8F0"); style = Paint.Style.FILL })
+        canvas.drawRect(trackCx - 110f, groundY - 96f, trackCx + 110f, groundY - 70f, Paint(paint).apply { color = Color.parseColor("#64748B") })
+        // Two rail cross-sections
+        canvas.drawRect(trackCx - 75f, groundY - 134f, trackCx - 55f, groundY - 96f, Paint(paint).apply { color = Color.parseColor("#0F172A") })
+        canvas.drawRect(trackCx + 55f, groundY - 134f, trackCx + 75f, groundY - 96f, Paint(paint).apply { color = Color.parseColor("#0F172A") })
+        canvas.drawText("BG TRACK (1676 mm)", trackCx, groundY - 155f, Paint(paint).apply {
+            color = Color.parseColor("#0F172A"); textSize = 22f; typeface = Typeface.DEFAULT_BOLD; textAlign = Paint.Align.CENTER
+        })
+
+        // Trench excavation on right side (1.0m / 1.2m deep)
+        val trenchCx = centerX + 340f
+        val trenchTop = groundY
+        val trenchBot = groundY + 520f
+        val trenchHalfW = 140f
+        canvas.drawRect(trenchCx - trenchHalfW, trenchTop, trenchCx + trenchHalfW, trenchBot, Paint(paint).apply {
+            color = Color.parseColor("#FEF3C7"); style = Paint.Style.FILL
+        })
+        canvas.drawRect(trenchCx - trenchHalfW, trenchTop, trenchCx + trenchHalfW, trenchBot, Paint(paint).apply {
+            color = Color.parseColor("#0F172A"); style = Paint.Style.STROKE; strokeWidth = 4f
+        })
+
+        // Class II protective bricks
+        canvas.drawRect(trenchCx - 110f, trenchBot - 210f, trenchCx + 110f, trenchBot - 155f, Paint(paint).apply {
+            color = Color.parseColor("#B91C1C"); style = Paint.Style.FILL
+        })
+        canvas.drawText("CLASS II PROTECTIVE BRICKS", trenchCx + 180f, trenchBot - 175f, Paint(paint).apply {
+            color = Color.parseColor("#991B1B"); textSize = 21f; typeface = Typeface.DEFAULT_BOLD
+        })
+
+        // Sand bedding
+        canvas.drawRect(trenchCx - 136f, trenchBot - 150f, trenchCx + 136f, trenchBot - 4f, Paint(paint).apply {
+            color = Color.parseColor("#FDE68A"); style = Paint.Style.FILL
+        })
+        canvas.drawText("50mm CLEAN SAND BEDDING", trenchCx + 180f, trenchBot - 110f, Paint(paint).apply {
+            color = Color.parseColor("#92400E"); textSize = 21f; typeface = Typeface.DEFAULT_BOLD
+        })
+
+        // Cable circles inside sand
+        val count = drawing.cableDetails.count.coerceIn(1, 7)
+        val spacing = 34f
+        val startCableX = trenchCx - ((count - 1) * spacing) / 2f
+        for (i in 0 until count) {
+            canvas.drawCircle(startCableX + i * spacing, trenchBot - 70f, 13f, Paint(paint).apply { color = Color.parseColor("#0F172A") })
+        }
+        canvas.drawText(drawing.cableDetails.description, trenchCx + 180f, trenchBot - 62f, Paint(paint).apply {
+            color = Color.parseColor("#0F172A"); textSize = 21f; typeface = Typeface.DEFAULT_BOLD
+        })
+
+        // Depth dimension
+        val dimX = trenchCx - 200f
+        canvas.drawLine(dimX, trenchTop, dimX, trenchBot, Paint(paint).apply { color = Color.parseColor("#0F172A"); strokeWidth = 3f })
+        canvas.drawText("DEPTH: 1.0m - 1.2m", dimX - 20f, (trenchTop + trenchBot) / 2f, Paint(paint).apply {
+            color = Color.parseColor("#0F172A"); textSize = 22f; typeface = Typeface.DEFAULT_BOLD; textAlign = Paint.Align.RIGHT
+        })
     }
 
     private fun drawNotesBlock(canvas: Canvas, drawing: SignallingDrawing, paint: Paint) {
