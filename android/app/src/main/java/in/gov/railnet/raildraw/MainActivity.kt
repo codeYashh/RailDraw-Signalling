@@ -19,19 +19,29 @@ import in.gov.railnet.raildraw.drawing.DrawingRenderer
 import in.gov.railnet.raildraw.model.ParseResult
 import in.gov.railnet.raildraw.model.SignallingDrawing
 import in.gov.railnet.raildraw.parser.DrawingParser
+import in.gov.railnet.raildraw.ui.AboutAndUpdatesDialog
 import in.gov.railnet.raildraw.ui.HomeScreen
 import in.gov.railnet.raildraw.ui.ResultScreen
+import in.gov.railnet.raildraw.ui.UpdateAvailableDialog
 import in.gov.railnet.raildraw.ui.theme.RailDrawTheme
+import in.gov.railnet.raildraw.updater.GitHubUpdater
+import in.gov.railnet.raildraw.updater.InstallLaunchResult
+import in.gov.railnet.raildraw.updater.ReleaseInfo
+import in.gov.railnet.raildraw.updater.UpdateCheckResult
 import in.gov.railnet.raildraw.util.StorageUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.*
 
 class MainActivity : ComponentActivity() {
 
     private val parser = DrawingParser()
     private val renderer = DrawingRenderer()
+    private var pendingInstallApk: File? = null
+    private var onInstallErrorCallback: ((String) -> Unit)? = null
+    private var onInstallLaunchedCallback: (() -> Unit)? = null
 
     // Activity Result Launcher for Voice Input (System Speech Dialog)
     private val speechRecognitionLauncher =
@@ -80,6 +90,44 @@ class MainActivity : ComponentActivity() {
                 var isListening by remember { mutableStateOf(false) }
                 var errorMessage by remember { mutableStateOf<String?>(null) }
                 var noticeMessage by remember { mutableStateOf<String?>(null) }
+
+                // In-app GitHub Releases updater states
+                val installedVersion = remember { GitHubUpdater.getInstalledVersionName(this@MainActivity) }
+                var availableRelease by remember { mutableStateOf<ReleaseInfo?>(null) }
+                var showAboutDialog by remember { mutableStateOf(false) }
+                var isCheckingUpdates by remember { mutableStateOf(false) }
+                var aboutStatusMessage by remember { mutableStateOf<String?>(null) }
+                var isDownloadingUpdate by remember { mutableStateOf(false) }
+                var downloadProgress by remember { mutableStateOf(0f) }
+                var downloadStatus by remember { mutableStateOf("") }
+                var updateErrorMessage by remember { mutableStateOf<String?>(null) }
+
+                DisposableEffect(Unit) {
+                    onInstallErrorCallback = { msg ->
+                        isDownloadingUpdate = false
+                        updateErrorMessage = msg
+                    }
+                    onInstallLaunchedCallback = {
+                        isDownloadingUpdate = false
+                        availableRelease = null
+                    }
+                    onDispose {
+                        onInstallErrorCallback = null
+                        onInstallLaunchedCallback = null
+                    }
+                }
+
+                // Background throttled update check on launch (at most once every 4 hours)
+                LaunchedEffect(Unit) {
+                    if (GitHubUpdater.shouldAutoCheck(this@MainActivity)) {
+                        when (val res = GitHubUpdater.checkForUpdate(this@MainActivity, isAutoCheck = true)) {
+                            is UpdateCheckResult.UpdateAvailable -> {
+                                availableRelease = res.release
+                            }
+                            else -> Unit
+                        }
+                    }
+                }
 
                 // Connect speech recognizer callbacks
                 DisposableEffect(Unit) {
@@ -184,10 +232,119 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         },
+                        onAboutClick = {
+                            aboutStatusMessage = null
+                            showAboutDialog = true
+                        },
                         errorMessage = errorMessage
                     )
                 }
+
+                if (showAboutDialog) {
+                    AboutAndUpdatesDialog(
+                        installedVersion = installedVersion,
+                        isChecking = isCheckingUpdates,
+                        statusMessage = aboutStatusMessage,
+                        onCheckForUpdates = {
+                            isCheckingUpdates = true
+                            aboutStatusMessage = null
+                            lifecycleScope.launch {
+                                when (val res = GitHubUpdater.checkForUpdate(this@MainActivity, isAutoCheck = false)) {
+                                    is UpdateCheckResult.UpdateAvailable -> {
+                                        isCheckingUpdates = false
+                                        showAboutDialog = false
+                                        updateErrorMessage = null
+                                        availableRelease = res.release
+                                    }
+                                    is UpdateCheckResult.UpToDate -> {
+                                        isCheckingUpdates = false
+                                        aboutStatusMessage = "You're up to date (v${res.installedVersion})."
+                                    }
+                                    is UpdateCheckResult.Error -> {
+                                        isCheckingUpdates = false
+                                        aboutStatusMessage = res.message
+                                    }
+                                }
+                            }
+                        },
+                        onDismiss = {
+                            if (!isCheckingUpdates) showAboutDialog = false
+                        }
+                    )
+                }
+
+                availableRelease?.let { release ->
+                    UpdateAvailableDialog(
+                        release = release,
+                        installedVersion = installedVersion,
+                        isDownloading = isDownloadingUpdate,
+                        downloadProgress = downloadProgress,
+                        downloadStatus = downloadStatus,
+                        errorMessage = updateErrorMessage,
+                        onUpdateNow = {
+                            updateErrorMessage = null
+                            isDownloadingUpdate = true
+                            downloadProgress = 0f
+                            downloadStatus = "Connecting..."
+                            lifecycleScope.launch {
+                                val result = GitHubUpdater.downloadApk(
+                                    context = this@MainActivity,
+                                    apkUrl = release.apkUrl,
+                                    onProgress = { prog, status ->
+                                        downloadProgress = prog
+                                        downloadStatus = status
+                                    }
+                                )
+                                result.onSuccess { apkFile ->
+                                    triggerApkInstall(apkFile)
+                                }.onFailure { err ->
+                                    isDownloadingUpdate = false
+                                    updateErrorMessage = err.localizedMessage ?: "Download failed."
+                                }
+                            }
+                        },
+                        onLater = {
+                            if (!isDownloadingUpdate) {
+                                availableRelease = null
+                                updateErrorMessage = null
+                            }
+                        }
+                    )
+                }
             }
+        }
+    }
+
+    private fun triggerApkInstall(apkFile: File) {
+        when (val launchRes = GitHubUpdater.launchApkInstaller(this, apkFile)) {
+            is InstallLaunchResult.Launched -> {
+                pendingInstallApk = null
+                onInstallLaunchedCallback?.invoke()
+            }
+            is InstallLaunchResult.NeedsPermission -> {
+                pendingInstallApk = apkFile
+                Toast.makeText(
+                    this,
+                    "Allow 'Install unknown apps' for RailDraw, then return to continue.",
+                    Toast.LENGTH_LONG
+                ).show()
+                startActivity(launchRes.settingsIntent)
+            }
+            is InstallLaunchResult.Error -> {
+                pendingInstallApk = null
+                onInstallErrorCallback?.invoke(launchRes.message)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val pending = pendingInstallApk ?: return
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O ||
+            packageManager.canRequestPackageInstalls()
+        ) {
+            pendingInstallApk = null
+            triggerApkInstall(pending)
         }
     }
 

@@ -14,8 +14,22 @@ android {
         applicationId = "com.raildraw.app"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        val tagVersionName = (System.getenv("VERSION_NAME") ?: project.findProperty("VERSION_NAME") as String?)
+            ?.removePrefix("v")
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() }
+            ?: "1.0.0"
+        val tagVersionCode = (System.getenv("VERSION_CODE") ?: project.findProperty("VERSION_CODE") as String?)
+            ?.toIntOrNull()
+            ?: run {
+                val parts = tagVersionName.substringBefore("-").split(".").map { it.toIntOrNull() ?: 0 }
+                val major = parts.getOrElse(0) { 1 }
+                val minor = parts.getOrElse(1) { 0 }
+                val patch = parts.getOrElse(2) { 0 }
+                (major * 10000 + minor * 100 + patch).coerceAtLeast(1)
+            }
+        versionCode = tagVersionCode
+        versionName = tagVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -25,10 +39,13 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("raildraw.keystore")
-            storePassword = "raildraw123"
-            keyAlias = "raildrawkey"
-            keyPassword = "raildraw123"
+            val keystorePath = System.getenv("KEYSTORE_PATH") ?: project.findProperty("KEYSTORE_PATH") as String?
+            if (!keystorePath.isNullOrBlank()) {
+                storeFile = file(keystorePath)
+            }
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: project.findProperty("KEYSTORE_PASSWORD") as String?
+            keyAlias = System.getenv("KEY_ALIAS") ?: project.findProperty("KEY_ALIAS") as String?
+            keyPassword = System.getenv("KEY_PASSWORD") ?: project.findProperty("KEY_PASSWORD") as String?
             enableV1Signing = true
             enableV2Signing = true
             enableV3Signing = true
@@ -38,14 +55,16 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
+            val hasReleaseKeystore = signingConfigs.getByName("release").storeFile?.exists() == true
+            if (hasReleaseKeystore) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
         debug {
-            signingConfig = signingConfigs.getByName("release")
         }
     }
 

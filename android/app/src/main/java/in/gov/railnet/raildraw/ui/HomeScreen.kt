@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material3.*
@@ -34,6 +35,7 @@ fun HomeScreen(
     isListening: Boolean,
     onMicClick: () -> Unit,
     onGenerateClick: () -> Unit,
+    onAboutClick: () -> Unit = {},
     errorMessage: String? = null
 ) {
     Scaffold(
@@ -54,36 +56,50 @@ fun HomeScreen(
                     .padding(top = 12.dp)
             ) {
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(RailwayNavy),
-                        contentAlignment = Alignment.Center
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_raildraw_logo),
-                            contentDescription = "RailDraw insignia",
-                            modifier = Modifier.size(36.dp)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(RailwayNavy),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_raildraw_logo),
+                                contentDescription = "RailDraw insignia",
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
+
+                        Column {
+                            Text(
+                                text = "RailDraw",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = TextDark,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 20.sp
+                            )
+                            Text(
+                                text = "Indian Railways S&T Cable Route CAD",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextMuted,
+                                fontSize = 12.sp
+                            )
+                        }
                     }
 
-                    Column {
-                        Text(
-                            text = "RailDraw",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = TextDark,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 20.sp
-                        )
-                        Text(
-                            text = "Indian Railways S&T Cable Route CAD",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TextMuted,
-                            fontSize = 12.sp
+                    IconButton(onClick = onAboutClick) {
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = "About & Check for Updates",
+                            tint = TextSecondary
                         )
                     }
                 }
