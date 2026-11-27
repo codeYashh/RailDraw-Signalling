@@ -3,19 +3,17 @@ package in.gov.railnet.raildraw;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivity extends Activity implements DownloadListener {
     public static final int REQ_VOICE_INPUT = 4012;
+    private static final String APP_ENTRY_URL = "https://appassets.androidplatform.net/assets/main.html";
     private WebView webView;
-    private File pendingInstallApk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +34,11 @@ public class MainActivity extends Activity implements DownloadListener {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
-        settings.setAllowFileAccess(true);
-        settings.setAllowContentAccess(true);
-        settings.setAllowFileAccessFromFileURLs(true);
-        settings.setAllowUniversalAccessFromFileURLs(true);
+        settings.setAllowFileAccess(false);
+        settings.setAllowContentAccess(false);
+        settings.setAllowFileAccessFromFileURLs(false);
+        settings.setAllowUniversalAccessFromFileURLs(false);
+        settings.setMixedContentMode(1);
         settings.setMediaPlaybackRequiresUserGesture(false);
 
         webView.setWebViewClient(new AppWebViewClient(this));
@@ -47,13 +46,15 @@ public class MainActivity extends Activity implements DownloadListener {
         webView.setDownloadListener(this);
         webView.addJavascriptInterface(new RailDrawBridge(this), "AndroidBridge");
 
-        webView.loadUrl("file:///android_asset/main.html");
+        webView.loadUrl(APP_ENTRY_URL);
     }
 
     public void openUrl(String url) {
-        if (url == null || url.trim().isEmpty()) return;
+        if (url == null) return;
+        String trimmed = url.trim();
+        if (!trimmed.startsWith("https://")) return;
         try {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trimmed));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } catch (Throwable ignored) {
@@ -73,28 +74,8 @@ public class MainActivity extends Activity implements DownloadListener {
         runOnUiThread(new UiAction(UiAction.MODE_VOICE_RESULT, this, webView, false, text, null, null));
     }
 
-    public void setPendingInstallApk(File apkFile) {
-        this.pendingInstallApk = apkFile;
-    }
-
     public WebView getWebViewInstance() {
         return this.webView;
-    }
-
-    public void startInAppApkDownload(String apkUrl) {
-        UpdateInstaller.startDownload(this, webView, apkUrl);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (pendingInstallApk != null && pendingInstallApk.exists()) {
-            if (Build.VERSION.SDK_INT < 26 || getPackageManager().canRequestPackageInstalls()) {
-                File toInstall = pendingInstallApk;
-                pendingInstallApk = null;
-                UpdateInstaller.installApk(this, webView, toInstall);
-            }
-        }
     }
 
     @Override
@@ -111,7 +92,6 @@ public class MainActivity extends Activity implements DownloadListener {
     @Override
     public void onBackPressed() {
         if (webView != null) {
-            // Safely evaluate back hook without navigating WebView or loading about:blank
             webView.evaluateJavascript("if(window.__onHardwareBack){window.__onHardwareBack();}", null);
             return;
         }

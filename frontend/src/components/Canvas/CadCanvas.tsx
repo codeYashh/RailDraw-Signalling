@@ -3,7 +3,7 @@ import { Plus, Move, Check, ZoomIn, ZoomOut, Maximize2, Sliders, Tag } from 'luc
 import { DrawingProject, PlacedSymbol, SymbolItem } from '../../types/drawing';
 import { CANVAS_CONFIG } from '../../constants/uiConstants';
 import { RenderInteractiveSymbol } from './InteractiveSymbols';
-import { FieldSchematicSheet, MonochromeBlueprintSheet } from './DrawingVariants';
+import { DiagramLowerPanels } from './DrawingVariants';
 
 interface CadCanvasProps {
   project: DrawingProject;
@@ -210,8 +210,10 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
   const routeStartX = 110;
   const routeEndX = 850;
   const availableWidth = routeEndX - routeStartX; // 740px
-  const trackCenterY = 240; // Centered in between so both sides of rail track are open for drawing
-  const routeY = 320;
+  const trackCenterY = 128; // Aligned with upper track band & auto-placed S&T symbols
+  const routeY = 206;
+  const activeVariant = project.settings.drawingVariant || 'standard';
+  const isMono = activeVariant === 'blueprint';
 
   // Cable & Depth details (fully dynamic from prompt/project)
   const cableInfo = project.cables && project.cables.length > 0 ? project.cables[0] : null;
@@ -452,43 +454,44 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
             </marker>
           </defs>
 
-          {project.settings.drawingVariant === 'schematic' ? (
-            <FieldSchematicSheet
-              project={project}
-              vbWidth={VB_WIDTH}
-              vbHeight={VB_HEIGHT}
-              totalLength={totalLength}
-              cableCount={cableCount}
-              cableCore={cableCore}
-              cableTypeLabel={cableTypeLabel}
-              cableConductor={cableConductor}
-              primaryDepth={primaryDepth}
-              primaryCover={primaryCover}
-            />
-          ) : project.settings.drawingVariant === 'blueprint' ? (
-            <MonochromeBlueprintSheet
-              project={project}
-              vbWidth={VB_WIDTH}
-              vbHeight={VB_HEIGHT}
-              totalLength={totalLength}
-              cableCount={cableCount}
-              cableCore={cableCore}
-              cableTypeLabel={cableTypeLabel}
-              cableConductor={cableConductor}
-              primaryDepth={primaryDepth}
-              primaryCover={primaryCover}
-            />
-          ) : (
-            <g id="variant-standard-plan">
-              {/* 1. CLEAN ENGINEERING BORDER */}
-              <rect x="12" y="12" width={VB_WIDTH - 24} height={VB_HEIGHT - 24} fill="none" stroke="#0C2340" strokeWidth="2" rx="3" />
-              <rect x="16" y="16" width={VB_WIDTH - 32} height={VB_HEIGHT - 32} fill="none" stroke="#CBD2DC" strokeWidth="1" rx="2" />
+          <g id="layer-unified-diagram" style={isMono ? { filter: 'grayscale(1) contrast(1.12)' } : undefined}>
+            {/* 1. CLEAN ENGINEERING BORDER */}
+            <rect x="12" y="12" width={VB_WIDTH - 24} height={VB_HEIGHT - 24} fill="#FFFFFF" stroke={isMono ? '#111827' : '#0C2340'} strokeWidth="2" rx="3" />
+            <rect x="16" y="16" width={VB_WIDTH - 32} height={VB_HEIGHT - 32} fill="none" stroke="#CBD2DC" strokeWidth="1" rx="2" />
+
+            {/* 2. TOP DRAWING HEADER (No bottom Drawn By / Approved By bar) */}
+            <g transform="translate(28, 22)">
+              <text x="0" y="12" fontSize="9.5" fontWeight="700" fontFamily="sans-serif" fill="#475569" letterSpacing="0.6px">
+                {(project.metadata.railwayZone || 'INDIAN RAILWAYS').toUpperCase()} — SIGNAL &amp; TELECOMMUNICATION DEPARTMENT
+              </text>
+              <text x={VB_WIDTH - 56} y="12" fontSize="10" fontWeight="700" fontFamily="sans-serif" fill={isMono ? '#111827' : '#1E3A8A'} textAnchor="end">
+                TOTAL: {totalLength} m &nbsp;|&nbsp; {project.metadata.drawingNumber || 'IR/S&T/CAD'}
+              </text>
+              <text
+                x="0"
+                y="30"
+                fontSize="13.5"
+                fontWeight="900"
+                fontFamily="sans-serif"
+                fill={isMono ? '#111827' : '#0C2340'}
+                letterSpacing="0.3px"
+                style={{ cursor: isEditMode ? 'pointer' : 'default' }}
+                onClick={(e) => {
+                  if (isEditMode && onOpenEditInfo) {
+                    e.stopPropagation();
+                    onOpenEditInfo('titleBlock');
+                  }
+                }}
+              >
+                {cableTypeLabel.toUpperCase()} CABLE ROUTE : {project.startNode.id} TO {project.endNode.id}
+              </text>
+              <line x1="0" y1="38" x2={VB_WIDTH - 56} y2="38" stroke={isMono ? '#111827' : '#0C2340'} strokeWidth="1.2" />
+            </g>
 
           {/* 3. TOP REFERENCE ROW: START/END BADGES & TRACK C/L DESIGNATION */}
-          {/* 2. STATION LOCATION BADGES & TRACK C/L DESIGNATION */}
           {/* Start Location Node Badge */}
           <g
-            transform={`translate(${routeStartX}, ${trackCenterY - 55})`}
+            transform={`translate(${routeStartX}, ${trackCenterY - 46})`}
             id="badge-start-node"
             style={{ cursor: isEditMode ? 'pointer' : 'default' }}
             onClick={(e) => {
@@ -525,7 +528,7 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
 
           {/* End Location Node Badge */}
           <g
-            transform={`translate(${routeEndX}, ${trackCenterY - 55})`}
+            transform={`translate(${routeEndX}, ${trackCenterY - 46})`}
             id="badge-end-node"
             style={{ cursor: isEditMode ? 'pointer' : 'default' }}
             onClick={(e) => {
@@ -562,11 +565,11 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
 
           {/* Track Reference Designation (Center) */}
           <g id="track-centerline-heading">
-            <line x1="220" y1={trackCenterY - 55} x2="280" y2={trackCenterY - 55} stroke="#64748B" strokeWidth="1" strokeDasharray="6,3" />
-            <text x="480" y={trackCenterY - 51.5} fontSize="9" fontWeight="800" fontFamily="sans-serif" fill="#334155" textAnchor="middle" letterSpacing="0.4px">
+            <line x1="220" y1={trackCenterY - 46} x2="280" y2={trackCenterY - 46} stroke="#64748B" strokeWidth="1" strokeDasharray="6,3" />
+            <text x="480" y={trackCenterY - 42.5} fontSize="9" fontWeight="800" fontFamily="sans-serif" fill="#334155" textAnchor="middle" letterSpacing="0.4px">
               C/L OF NEAREST RAILWAY TRACK (1676 mm BG — OFFSET: 3.5 m MIN)
             </text>
-            <line x1="680" y1={trackCenterY - 55} x2="740" y2={trackCenterY - 55} stroke="#64748B" strokeWidth="1" strokeDasharray="6,3" />
+            <line x1="680" y1={trackCenterY - 46} x2="740" y2={trackCenterY - 46} stroke="#64748B" strokeWidth="1" strokeDasharray="6,3" />
           </g>
 
           {/* 3. REALISTIC BROAD GAUGE RAILWAY TRACK (Centered in between) */}
@@ -1033,7 +1036,7 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
                     })()}
 
                     {/* Individual Segment Dimension Below Route */}
-                    <g transform={`translate(0, ${routeY + 36})`}>
+                    <g transform={`translate(0, ${routeY + 34})`}>
                       <line x1={curX} y1="-7" x2={curX} y2="7" stroke="#64748B" strokeWidth="1" />
                       <line x1={segEndX} y1="-7" x2={segEndX} y2="7" stroke="#64748B" strokeWidth="1" />
                       <line
@@ -1068,9 +1071,9 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
             })()}
 
             {/* OVERALL ROUTE LENGTH DIMENSION */}
-            <g transform={`translate(0, ${routeY + 68})`}>
-              <line x1={routeStartX} y1="-10" x2={routeStartX} y2="10" stroke="#0C2340" strokeWidth="1.5" />
-              <line x1={routeEndX} y1="-10" x2={routeEndX} y2="10" stroke="#0C2340" strokeWidth="1.5" />
+            <g transform={`translate(0, ${routeY + 62})`}>
+              <line x1={routeStartX} y1="-9" x2={routeStartX} y2="9" stroke="#0C2340" strokeWidth="1.5" />
+              <line x1={routeEndX} y1="-9" x2={routeEndX} y2="9" stroke="#0C2340" strokeWidth="1.5" />
               <line
                 x1={routeStartX}
                 y1="0"
@@ -1081,11 +1084,11 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
                 markerStart="url(#dimArrowStart)"
                 markerEnd="url(#dimArrowEnd)"
               />
-              <rect x={(routeStartX + routeEndX) / 2 - 130} y="-11" width="260" height="22" fill="#FFFFFF" stroke="#0C2340" strokeWidth="1" rx="2" />
+              <rect x={(routeStartX + routeEndX) / 2 - 130} y="-10" width="260" height="20" fill="#FFFFFF" stroke="#0C2340" strokeWidth="1" rx="2" />
               <text
                 x={(routeStartX + routeEndX) / 2}
-                y="5"
-                fontSize="13"
+                y="4.5"
+                fontSize="12.5"
                 fontWeight="800"
                 fontFamily="sans-serif"
                 textAnchor="middle"
@@ -1096,8 +1099,25 @@ export const CadCanvas: React.FC<CadCanvasProps> = ({
               </text>
             </g>
           </g>
-            </g>
-          )}
+
+          {/* LOWER VARIANT PANELS (Detail 'A', Table, Legend & Notes — No bottom Drawn By details) */}
+          <DiagramLowerPanels
+            project={project}
+            variant={activeVariant}
+            vbWidth={VB_WIDTH}
+            vbHeight={VB_HEIGHT}
+            totalLength={totalLength}
+            cableCount={cableCount}
+            cableCore={cableCore}
+            cableTypeLabel={cableTypeLabel}
+            cableConductor={cableConductor}
+            primaryDepth={primaryDepth}
+            primaryCover={primaryCover}
+            uniqueMethods={uniqueMethods}
+            onOpenEditInfo={onOpenEditInfo}
+            isEditMode={isEditMode}
+          />
+          </g>
 
           {/* 7. USER-PLACED INTERACTIVE S&T SYMBOLS (Draggable by hand & included in PNG/PDF exports!) */}
           <g id="layer-placed-symbols">

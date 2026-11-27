@@ -36,7 +36,12 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+      if (
+        'serviceWorker' in navigator &&
+        window.location.protocol !== 'file:' &&
+        window.location.hostname !== 'appassets.androidplatform.net' &&
+        !(window.AndroidBridge && window.AndroidBridge.isNativeAndroid && window.AndroidBridge.isNativeAndroid())
+      ) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js').catch(() => {});
         });

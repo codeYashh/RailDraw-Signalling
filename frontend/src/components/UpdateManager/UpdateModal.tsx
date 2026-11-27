@@ -96,7 +96,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
         setDownloadStatusText(text);
       });
       setDownloadProgress(100);
-      setDownloadStatusText('Ready to install! Tap Install on the system prompt.');
+      setDownloadStatusText('Download started in your browser! Tap RailDraw.apk when finished.');
       setDownloadSuccess(true);
     } catch (err: any) {
       setIsDownloading(false);
@@ -314,7 +314,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
               )}
 
               <p className="text-[11px] text-ink-muted text-center leading-relaxed">
-                Downloads directly inside RailDraw and opens the Android installer automatically — your saved drawings stay intact.
+                Opens the signed HTTPS release download in your browser — your saved drawings stay intact.
               </p>
             </div>
           ) : (

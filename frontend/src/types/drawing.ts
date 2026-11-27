@@ -1,5 +1,5 @@
 export type PaperSize = 'A4' | 'A3' | 'A2' | 'A1';
-export type DrawingVariant = 'standard' | 'schematic' | 'blueprint';
+export type DrawingVariant = 'standard' | 'schematic' | 'detailed' | 'blueprint';
 export type UserRole = 'Admin' | 'Engineer' | 'Reviewer';
 export type VerificationStatus = 'NEEDS VERIFICATION' | 'VERIFIED';
 

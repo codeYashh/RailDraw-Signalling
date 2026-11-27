@@ -223,22 +223,11 @@ export const ResultWorkspace: React.FC<ResultWorkspaceProps> = ({
       {/* Drawing Image Options Strip (Hidden in compact landscape) */}
       {!isLandscapeMode && !isEditMode && (
         <div className="px-3 sm:px-4 pt-2.5 pb-1 bg-surface-page shrink-0">
-          <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
+          <div className="max-w-5xl mx-auto flex flex-col gap-2">
             <DrawingVariantPicker
               value={project.settings.drawingVariant || 'standard'}
               onChange={onChangeDrawingVariant}
             />
-
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-card border border-line text-[11px] font-bold text-ink-primary shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                RDSO Standard
-              </span>
-              <span className="hidden sm:inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-card border border-line text-[11px] font-bold text-ink-primary shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                25kV AC Immunized
-              </span>
-            </div>
           </div>
         </div>
       )}

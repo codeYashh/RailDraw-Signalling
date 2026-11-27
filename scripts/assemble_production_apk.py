@@ -111,20 +111,18 @@ def assemble():
             with open(epath, "rb") as f:
                 apk_entries[f"assets/{extra}"] = f.read()
 
-    # Bundle rich offline RDSO standards asset pack (ensures double digits of MBs)
-    rdso_pack_path = ensure_offline_assets(root)
-    with open(rdso_pack_path, "rb") as f:
-        apk_entries["assets/data/rdso_standards_pack.dat"] = f.read()
+    # Clean up any legacy synthetic padding file if present
+    legacy_pad = os.path.join(root, "android", "app", "src", "main", "assets", "data", "rdso_standards_pack.dat")
+    if os.path.exists(legacy_pad):
+        os.remove(legacy_pad)
 
     # Write unaligned APK
     # CRITICAL for Android 11+ (API 30+) / Samsung One UI:
     # resources.arsc MUST be stored UNCOMPRESSED (ZIP_STORED) and 4-byte aligned,
     # otherwise PackageInstaller rejects the APK with INSTALL_PARSE_FAILED_RESOURCES_ARSC_COMPRESSED.
-    # Storing classes.dex and large offline assets uncompressed ensures instant mmap execution.
     uncompressed_files = {
         "resources.arsc",
         "classes.dex",
-        "assets/data/rdso_standards_pack.dat"
     }
     if os.path.exists(unaligned_apk):
         os.remove(unaligned_apk)
@@ -182,14 +180,19 @@ def assemble():
         if "resources.arsc" in line or "classes.dex" in line or "Verification" in line:
             print("   ", line.strip())
 
-    print("\n6. Running apksigner verify --verbose --print-certs --min-sdk-version 23...")
+    print("\n6. Running apksigner verify --verbose --print-certs --min-sdk-version 21...")
     res_verify = subprocess.run([
         "java", "-jar", apksigner_jar, "verify",
         "--verbose", "--print-certs",
-        "--min-sdk-version", "23",
+        "--min-sdk-version", "21",
         final_apk
     ], capture_output=True, text=True)
     print(res_verify.stdout)
+    assert res_verify.returncode == 0, f"apksigner verify failed: {res_verify.stderr}"
+    expected_sha256 = "788fccbee4a44514d66a80d83865a384511eeef9d225b31c5b8933f464ff22bb"
+    assert expected_sha256 in res_verify.stdout, (
+        f"APK signature SHA-256 mismatch! Expected {expected_sha256} from raildraw.keystore."
+    )
 
     print("\n7. Running aapt2 dump badging...")
     res_dump = subprocess.run([aapt2_exe, "dump", "badging", final_apk], capture_output=True, text=True)

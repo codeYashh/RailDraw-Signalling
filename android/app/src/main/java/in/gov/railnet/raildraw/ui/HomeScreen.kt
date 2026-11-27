@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +24,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -68,6 +71,20 @@ fun HomeScreen(
     }
 
     val glassSurface = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White.copy(alpha = 0.85f)
+    val glassOrbBrush = if (isDark) {
+        Brush.verticalGradient(
+            listOf(Color.White.copy(alpha = 0.22f), Color.White.copy(alpha = 0.06f), Color(0xFF94A3B8).copy(alpha = 0.12f))
+        )
+    } else {
+        Brush.verticalGradient(
+            listOf(Color.White.copy(alpha = 0.96f), Color(0xFFF1F5F9).copy(alpha = 0.68f), Color.White.copy(alpha = 0.86f))
+        )
+    }
+    val glassRimBrush = if (isDark) {
+        Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.42f), Color.White.copy(alpha = 0.10f)))
+    } else {
+        Brush.verticalGradient(listOf(Color.White, Color(0xFFCBD5E1).copy(alpha = 0.75f)))
+    }
     val glassBorder = if (isDark) Color.White.copy(alpha = 0.14f) else Color(0xFFD5DFEA)
     val primaryText = if (isDark) TextLight else TextDark
     val secondaryText = if (isDark) TextSecondaryDark else TextSecondary
@@ -259,13 +276,26 @@ fun HomeScreen(
     ) {
         Scaffold(
             containerColor = Color.Transparent,
-            modifier = Modifier.background(bgBrush)
+            modifier = Modifier
+                .background(bgBrush)
+                .pointerInput(Unit) {
+                    var totalDrag = 0f
+                    detectHorizontalDragGestures(
+                        onDragStart = { totalDrag = 0f },
+                        onHorizontalDrag = { _, dragAmount ->
+                            totalDrag += dragAmount
+                            if (totalDrag > 72f && drawerState.isClosed) {
+                                scope.launch { drawerState.open() }
+                            }
+                        }
+                    )
+                }
         ) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                    .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 6.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 // Top Liquid Glass Bar
@@ -277,9 +307,10 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .size(44.dp)
+                            .shadow(8.dp, CircleShape, clip = false)
                             .clip(CircleShape)
-                            .background(glassSurface)
-                            .border(1.dp, glassBorder, CircleShape)
+                            .background(glassOrbBrush)
+                            .border(1.2.dp, glassRimBrush, CircleShape)
                             .clickable { scope.launch { drawerState.open() } },
                         contentAlignment = Alignment.Center
                     ) {
@@ -290,50 +321,28 @@ fun HomeScreen(
                         )
                     }
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(glassSurface)
-                            .border(1.dp, glassBorder, CircleShape)
-                            .padding(horizontal = 14.dp, vertical = 7.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(22.dp)
-                                .clip(RoundedCornerShape(7.dp))
-                                .background(RailwayNavy),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_raildraw_logo),
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-                        Text(
-                            text = "RailDraw",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = primaryText
-                        )
-                    }
+                    Text(
+                        text = "RailDraw",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = primaryText
+                    )
 
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
+                                .shadow(8.dp, CircleShape, clip = false)
                                 .clip(CircleShape)
-                                .background(glassSurface)
-                                .border(1.dp, glassBorder, CircleShape)
+                                .background(glassOrbBrush)
+                                .border(1.2.dp, glassRimBrush, CircleShape)
                                 .clickable(onClick = onToggleTheme),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = if (isDark) Icons.Filled.LightMode else Icons.Filled.DarkMode,
                                 contentDescription = "Toggle Theme",
-                                tint = primaryText,
+                                tint = if (isDark) Color(0xFFFBBF24) else Color(0xFF0284C7),
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -341,9 +350,10 @@ fun HomeScreen(
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
+                                .shadow(8.dp, CircleShape, clip = false)
                                 .clip(CircleShape)
-                                .background(glassSurface)
-                                .border(1.dp, glassBorder, CircleShape)
+                                .background(glassOrbBrush)
+                                .border(1.2.dp, glassRimBrush, CircleShape)
                                 .clickable(onClick = onAboutClick),
                             contentAlignment = Alignment.Center
                         ) {
@@ -357,7 +367,7 @@ fun HomeScreen(
                     }
                 }
 
-                // Gemini-style Center Stage ("Let's Create")
+                // Gemini-style Center Stage ("Let's Create") — Clean, without variant pills
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -367,7 +377,8 @@ fun HomeScreen(
                 ) {
                     Text(
                         text = "Let's Create",
-                        fontSize = 34.sp,
+                        fontSize = 40.sp,
+                        lineHeight = 46.sp,
                         fontWeight = FontWeight.Bold,
                         color = primaryText,
                         textAlign = TextAlign.Center
@@ -379,42 +390,6 @@ fun HomeScreen(
                         color = mutedText,
                         textAlign = TextAlign.Center
                     )
-
-                    Spacer(modifier = Modifier.height(22.dp))
-
-                    // 3 Drawing Type Liquid Glass Pills
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
-                    ) {
-                        DrawingVariant.entries.forEach { variant ->
-                            val selected = variant == selectedVariant
-                            Box(
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(
-                                        if (selected) accentColor.copy(alpha = if (isDark) 0.24f else 0.14f)
-                                        else glassSurface
-                                    )
-                                    .border(
-                                        width = if (selected) 1.5.dp else 1.dp,
-                                        color = if (selected) accentColor else glassBorder,
-                                        shape = CircleShape
-                                    )
-                                    .clickable { onVariantChange(variant) }
-                                    .padding(horizontal = 14.dp, vertical = 9.dp)
-                            ) {
-                                Text(
-                                    text = variant.shortLabel,
-                                    fontSize = 12.sp,
-                                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
-                                    color = if (selected) accentColor else secondaryText
-                                )
-                            }
-                        }
-                    }
 
                     if (!errorMessage.isNullOrBlank()) {
                         Spacer(modifier = Modifier.height(16.dp))
@@ -484,7 +459,7 @@ fun HomeScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = if (isListening) "Listening..." else selectedVariant.displayName,
+                                text = if (isListening) "Listening..." else "Speak or type route",
                                 fontSize = 12.sp,
                                 color = if (isListening) ErrorRed else mutedText,
                                 fontWeight = if (isListening) FontWeight.SemiBold else FontWeight.Normal
@@ -494,23 +469,24 @@ fun HomeScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                // Auto-detect Voice Mic Pill
+                                // Liquid Glass Voice Mic Orb
                                 Box(
                                     modifier = Modifier
-                                        .size(42.dp)
+                                        .size(44.dp)
+                                        .shadow(8.dp, CircleShape, clip = false)
                                         .clip(CircleShape)
                                         .background(
-                                            if (isListening) ErrorRed.copy(alpha = 0.16f)
-                                            else if (isDark) Color.White.copy(alpha = 0.08f)
-                                            else Color(0xFFE2E8F0)
+                                            if (isListening) Brush.verticalGradient(listOf(ErrorRed.copy(alpha = 0.25f), ErrorRed.copy(alpha = 0.12f)))
+                                            else glassOrbBrush
                                         )
+                                        .border(1.2.dp, glassRimBrush, CircleShape)
                                         .clickable(onClick = onMicClick),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
                                         imageVector = if (isListening) Icons.Filled.MicOff else Icons.Filled.Mic,
                                         contentDescription = "Voice Input",
-                                        tint = if (isListening) ErrorRed else primaryText,
+                                        tint = if (isListening) ErrorRed else accentColor,
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }

@@ -1,6 +1,9 @@
 package in.gov.railnet.raildraw;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.net.Uri;
 import android.os.Build;
 import android.webkit.WebView;
@@ -9,7 +12,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.zip.ZipFile;
 
 class UpdateInstaller {
     static void dispatchProgress(MainActivity activity, WebView webView, int percent, String status, boolean done, boolean error) {
@@ -113,16 +119,50 @@ class UpdateInstaller {
             this.apkUrl = apkUrl;
         }
 
+        private boolean verifyApkIntegrityAndSignature(File apkFile) {
+            ZipFile zf = null;
+            try {
+                zf = new ZipFile(apkFile);
+                if (zf.getEntry("AndroidManifest.xml") == null || zf.getEntry("classes.dex") == null) {
+                    return false;
+                }
+            } catch (Throwable t) {
+                return false;
+            } finally {
+                if (zf != null) { try { zf.close(); } catch (Throwable ignored) {} }
+            }
+
+            try {
+                PackageManager pm = activity.getPackageManager();
+                PackageInfo installed = pm.getPackageInfo(activity.getPackageName(), PackageManager.GET_SIGNATURES);
+                PackageInfo archive = pm.getPackageArchiveInfo(apkFile.getAbsolutePath(), PackageManager.GET_SIGNATURES);
+                if (installed != null && installed.signatures != null && installed.signatures.length > 0
+                    && archive != null && archive.signatures != null && archive.signatures.length > 0) {
+                    MessageDigest md = MessageDigest.getInstance("SHA-256");
+                    byte[] instDigest = md.digest(installed.signatures[0].toByteArray());
+                    md.reset();
+                    byte[] archDigest = md.digest(archive.signatures[0].toByteArray());
+                    return Arrays.equals(instDigest, archDigest);
+                }
+            } catch (Throwable ignored) {
+                // Fall back to Android PackageInstaller verification if signature query unavailable
+            }
+            return true;
+        }
+
         @Override
         public void run() {
             HttpURLConnection conn = null;
             InputStream in = null;
             FileOutputStream out = null;
             try {
-                dispatchProgress(activity, webView, 2, "Connecting to update server...", false, false);
+                dispatchProgress(activity, webView, 2, "Connecting securely to update server...", false, false);
                 String currentUrl = apkUrl.trim();
                 int redirects = 0;
                 while (redirects < 6) {
+                    if (!currentUrl.startsWith("https://")) {
+                        throw new Exception("Only HTTPS update downloads are permitted");
+                    }
                     URL url = new URL(currentUrl);
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setInstanceFollowRedirects(false);
@@ -191,7 +231,12 @@ class UpdateInstaller {
                     throw new Exception("Could not finalize update APK file");
                 }
 
-                dispatchProgress(activity, webView, 100, "Verifying package & opening installer...", false, false);
+                if (!verifyApkIntegrityAndSignature(outFile)) {
+                    outFile.delete();
+                    throw new Exception("Update APK failed integrity or publisher signature check");
+                }
+
+                dispatchProgress(activity, webView, 100, "Verified publisher signature & opening installer...", false, false);
                 installApk(activity, webView, outFile);
             } catch (Throwable t) {
                 dispatchProgress(

@@ -11,10 +11,7 @@ import android.util.Base64;
 import android.webkit.JavascriptInterface;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class RailDrawBridge {
     private final MainActivity activity;
@@ -255,15 +252,6 @@ public class RailDrawBridge {
     @JavascriptInterface
     public void openExternalUrl(String url) {
         activity.openUrl(url);
-    }
-
-    @JavascriptInterface
-    public String downloadAndInstallApk(final String apkUrl) {
-        if (apkUrl == null || apkUrl.trim().isEmpty()) {
-            return "ERR:Missing APK URL";
-        }
-        activity.startInAppApkDownload(apkUrl);
-        return "OK:STARTED";
     }
 
     @JavascriptInterface

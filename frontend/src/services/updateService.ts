@@ -58,7 +58,11 @@ const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeoutM
 
 export async function checkForGitHubUpdates(force: boolean = false): Promise<UpdateInfo> {
   const now = new Date().toISOString();
-  const isFileProtocol = typeof window !== 'undefined' && window.location.protocol === 'file:';
+  const isNativeAndroidEnv =
+    typeof window !== 'undefined' &&
+    (window.location.protocol === 'file:' ||
+      window.location.hostname === 'appassets.androidplatform.net' ||
+      Boolean((window as any).AndroidBridge?.isNativeAndroid?.()));
 
   // 1. Primary Remote: Direct raw version.json from GitHub main with strict cache-busting
   try {
@@ -252,7 +256,7 @@ export async function checkForGitHubUpdates(force: boolean = false): Promise<Upd
   }
 
   // 5. Local endpoint check ONLY when running on local development server AND isNewer is true
-  if (!isFileProtocol) {
+  if (!isNativeAndroidEnv) {
     try {
       const localUrl = `/version.json?_t=${Date.now()}`;
       const localResp = await fetchWithTimeout(localUrl, { cache: 'no-cache' }, 2000);
@@ -323,42 +327,12 @@ export async function downloadUpdateApk(
   const safeUrl = apkUrl || GITHUB_RAW_APK_URL;
   const targetFilename = 'RailDraw.apk';
 
-  // Play Store-style native in-app download + direct PackageInstaller trigger
-  if (typeof window !== 'undefined' && window.AndroidBridge?.downloadAndInstallApk) {
-    return new Promise((resolve, reject) => {
-      onProgress?.(2, 'Connecting to update server...');
-
-      window.__onUpdateDownloadProgress = (percent, status, done, error) => {
-        onProgress?.(percent, status);
-        if (done) {
-          window.__onUpdateDownloadProgress = undefined;
-          if (error) {
-            reject(new Error(status || 'Failed to download update.'));
-          } else {
-            resolve({ ok: true, message: status || 'Installer opened.' });
-          }
-        }
-      };
-
-      try {
-        const res = window.AndroidBridge!.downloadAndInstallApk!(safeUrl);
-        if (!res || !res.startsWith('OK:')) {
-          window.__onUpdateDownloadProgress = undefined;
-          reject(new Error(res || 'Could not start in-app update download.'));
-        }
-      } catch (err: any) {
-        window.__onUpdateDownloadProgress = undefined;
-        reject(new Error(err?.message || 'Android update bridge error.'));
-      }
-    });
-  }
-
-  // Fallback for older Android shells without downloadAndInstallApk
+  // Android native shell: open signed HTTPS release download in system browser / Download Manager
   if (typeof window !== 'undefined' && window.AndroidBridge?.openExternalUrl) {
-    onProgress?.(50, 'Opening Android Package Installer...');
+    onProgress?.(40, 'Opening signed APK download in browser...');
     window.AndroidBridge.openExternalUrl(safeUrl);
-    onProgress?.(100, 'Update started in Android download manager.');
-    return { ok: true, message: 'Downloading update in Android Package Manager' };
+    onProgress?.(100, 'Download started in your browser.');
+    return { ok: true, message: 'Downloading update in system browser' };
   }
 
   // Browser: Initiate real download

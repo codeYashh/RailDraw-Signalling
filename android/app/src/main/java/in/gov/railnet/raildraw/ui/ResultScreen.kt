@@ -19,6 +19,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -49,6 +51,20 @@ fun ResultScreen(
 
     val bgColor = if (isDark) BackgroundDark else BackgroundLight
     val glassSurface = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White.copy(alpha = 0.9f)
+    val glassOrbBrush = if (isDark) {
+        Brush.verticalGradient(
+            listOf(Color.White.copy(alpha = 0.22f), Color.White.copy(alpha = 0.06f), Color(0xFF94A3B8).copy(alpha = 0.12f))
+        )
+    } else {
+        Brush.verticalGradient(
+            listOf(Color.White.copy(alpha = 0.96f), Color(0xFFF1F5F9).copy(alpha = 0.68f), Color.White.copy(alpha = 0.86f))
+        )
+    }
+    val glassRimBrush = if (isDark) {
+        Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.42f), Color.White.copy(alpha = 0.10f)))
+    } else {
+        Brush.verticalGradient(listOf(Color.White, Color(0xFFCBD5E1).copy(alpha = 0.75f)))
+    }
     val glassBorder = if (isDark) Color.White.copy(alpha = 0.14f) else BorderLight
     val primaryText = if (isDark) TextLight else TextDark
     val mutedText = if (isDark) TextMutedDark else TextMuted
@@ -74,10 +90,11 @@ fun ResultScreen(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(42.dp)
+                                .shadow(8.dp, CircleShape, clip = false)
                                 .clip(CircleShape)
-                                .background(glassSurface)
-                                .border(1.dp, glassBorder, CircleShape)
+                                .background(glassOrbBrush)
+                                .border(1.2.dp, glassRimBrush, CircleShape)
                                 .clickable(onClick = onEdit),
                             contentAlignment = Alignment.Center
                         ) {
@@ -107,9 +124,10 @@ fun ResultScreen(
                     if (scale != 1f || offsetX != 0f || offsetY != 0f) {
                         Box(
                             modifier = Modifier
+                                .shadow(6.dp, CircleShape, clip = false)
                                 .clip(CircleShape)
-                                .background(glassSurface)
-                                .border(1.dp, glassBorder, CircleShape)
+                                .background(glassOrbBrush)
+                                .border(1.2.dp, glassRimBrush, CircleShape)
                                 .clickable {
                                     scale = 1f
                                     offsetX = 0f
@@ -235,17 +253,17 @@ fun ResultScreen(
                     Text("A4 PDF", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                 }
 
-                OutlinedButton(
-                    onClick = { showShareDialog = true },
-                    shape = CircleShape,
-                    border = BorderStroke(1.dp, glassBorder),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = glassSurface,
-                        contentColor = primaryText
-                    ),
-                    modifier = Modifier.height(48.dp)
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .shadow(8.dp, CircleShape, clip = false)
+                        .clip(CircleShape)
+                        .background(glassOrbBrush)
+                        .border(1.2.dp, glassRimBrush, CircleShape)
+                        .clickable { showShareDialog = true },
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(Icons.Filled.Share, contentDescription = "Share", modifier = Modifier.size(18.dp))
+                    Icon(Icons.Filled.Share, contentDescription = "Share", tint = primaryText, modifier = Modifier.size(19.dp))
                 }
             }
         }

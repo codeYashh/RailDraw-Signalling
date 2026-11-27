@@ -45,6 +45,8 @@ public abstract class Uri implements Parcelable {
     public static Uri fromFile(File file) { return null; }
     public static Uri parse(String uriString) { return null; }
     public String getLastPathSegment() { return null; }
+    public String getHost() { return null; }
+    public String getPath() { return null; }
 }
 """,
     "android/database/Cursor.java": """
@@ -58,21 +60,47 @@ public class MatrixCursor implements Cursor {
     public void addRow(Object[] columnValues) {}
 }
 """,
+    "android/content/pm/Signature.java": """
+package android.content.pm;
+public class Signature {
+    public byte[] toByteArray() { return null; }
+}
+""",
+    "android/content/pm/PackageInfo.java": """
+package android.content.pm;
+public class PackageInfo {
+    public Signature[] signatures;
+}
+""",
     "android/content/pm/PackageManager.java": """
 package android.content.pm;
 public abstract class PackageManager {
+    public static final int GET_SIGNATURES = 0x00000040;
+    public static class NameNotFoundException extends Exception {}
     public boolean canRequestPackageInstalls() { return true; }
+    public PackageInfo getPackageInfo(String packageName, int flags) throws NameNotFoundException { return null; }
+    public PackageInfo getPackageArchiveInfo(String archiveFilePath, int flags) { return null; }
+}
+""",
+    "android/content/res/AssetManager.java": """
+package android.content.res;
+import java.io.IOException;
+import java.io.InputStream;
+public final class AssetManager {
+    public InputStream open(String fileName) throws IOException { return null; }
 }
 """,
     "android/content/Context.java": """
 package android.content;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import java.io.File;
 public class Context {
     public ContentResolver getContentResolver() { return null; }
     public SharedPreferences getSharedPreferences(String name, int mode) { return null; }
     public File getCacheDir() { return null; }
     public PackageManager getPackageManager() { return null; }
+    public AssetManager getAssets() { return null; }
     public String getPackageName() { return null; }
 }
 """,
@@ -261,7 +289,22 @@ public abstract class WebSettings {
     public abstract void setAllowContentAccess(boolean allow);
     public abstract void setAllowFileAccessFromFileURLs(boolean flag);
     public abstract void setAllowUniversalAccessFromFileURLs(boolean flag);
+    public abstract void setMixedContentMode(int mode);
     public abstract void setMediaPlaybackRequiresUserGesture(boolean require);
+}
+""",
+    "android/webkit/WebResourceRequest.java": """
+package android.webkit;
+import android.net.Uri;
+public interface WebResourceRequest {
+    Uri getUrl();
+}
+""",
+    "android/webkit/WebResourceResponse.java": """
+package android.webkit;
+import java.io.InputStream;
+public class WebResourceResponse {
+    public WebResourceResponse(String mimeType, String encoding, InputStream data) {}
 }
 """,
     "android/webkit/DownloadListener.java": """
@@ -274,6 +317,7 @@ public interface DownloadListener {
 package android.webkit;
 public class WebViewClient {
     public WebViewClient() {}
+    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) { return null; }
     public boolean shouldOverrideUrlLoading(WebView view, String url) { return false; }
 }
 """,
@@ -333,8 +377,6 @@ def build_dex(output_dex_path: str):
 
         # 2. Compile our actual Android shell Java sources
         app_java = [
-            os.path.join(src_root, "in", "gov", "railnet", "raildraw", "ApkFileProvider.java"),
-            os.path.join(src_root, "in", "gov", "railnet", "raildraw", "UpdateInstaller.java"),
             os.path.join(src_root, "in", "gov", "railnet", "raildraw", "UiAction.java"),
             os.path.join(src_root, "in", "gov", "railnet", "raildraw", "AppWebViewClient.java"),
             os.path.join(src_root, "in", "gov", "railnet", "raildraw", "MainActivity.java"),

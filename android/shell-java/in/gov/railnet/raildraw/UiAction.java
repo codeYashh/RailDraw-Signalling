@@ -96,14 +96,12 @@ class UiAction implements Runnable {
             } else if (mode == MODE_EXIT) {
                 if (activity != null) {
                     activity.finishAffinity();
-                    System.exit(0);
                 }
             } else if (mode == MODE_HANDLE_BACK) {
                 if (activity != null) {
                     long now = System.currentTimeMillis();
                     if (now - lastBackPressTime < 2000) {
                         activity.finishAffinity();
-                        System.exit(0);
                     } else {
                         lastBackPressTime = now;
                         Toast.makeText(activity, "Press back again to exit", Toast.LENGTH_SHORT).show();

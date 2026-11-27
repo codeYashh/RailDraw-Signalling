@@ -1,7 +1,7 @@
 {
-  "version": "1.6.0",
-  "name": "RailDraw Signalling v1.6.0",
-  "releaseNotes": "• Redesigned Insignia & Liquid Morph Launch: Sleeker Vande Bharat S&T logo with a smooth orb-to-squircle morph transition\n• 16 New Signal & Underground Cable Symbols (86 Total): Theatre Route Indicators, Distant ('P' Marker), IBS ('IB' Marker), CLS Repeaters ('R' Marker), Signal Gantries, Stop Boards, Underground Cable Trenches, HDD Bores, HDPE/RCC Duct Banks, Draw Pits, Joint Pits, CT Racks, Concrete Troughs, Under-Track Crossings (UTX), OFC Splice Chambers, and Underground Earth Electrode Pits\n• Play Store-Style In-App Updater: Direct in-app APK download with live MB/percentage progress and automatic system installer launch",
+  "version": "1.7.0",
+  "name": "RailDraw Signalling v1.7.0",
+  "releaseNotes": "• Unified Vande Bharat Express Insignia: Matching sleek aerodynamic Vande Bharat launcher & transition logo\n• Clean Main Screen: Streamlined RailDraw header, enhanced Liquid Glass icons, and focused prompt composer\n• Smart Auto-Calibration: Automatically calibrates unmeasured prompts and mismatched totals without blocking errors\n• 4 Unified Route Diagram Options: Post-generation options matching standard S&T route diagrams without bottom credit blocks\n• Hardened Android Packaging & HTTPS-verified OTA updates",
   "apkUrl": "https://github.com/codeYashh/RailDraw-Signalling/raw/main/RailDraw.apk",
-  "publishedAt": "2026-11-25T18:15:00Z"
+  "publishedAt": "2026-11-26T10:45:00Z"
 }

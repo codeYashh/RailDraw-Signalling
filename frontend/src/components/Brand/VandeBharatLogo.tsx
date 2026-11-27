@@ -15,9 +15,7 @@ export const VandeBharatLogo: React.FC<VandeBharatLogoProps> = ({
 }) => {
   const uid = useId().replace(/:/g, '');
   const clipId = `vbFrameClip_${uid}`;
-  const bgGradId = `vbBgGrad_${uid}`;
   const noseGradId = `vbNoseGrad_${uid}`;
-  const glowGradId = `vbGlowGrad_${uid}`;
 
   return (
     <svg
@@ -27,126 +25,105 @@ export const VandeBharatLogo: React.FC<VandeBharatLogoProps> = ({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
-      aria-label="RailDraw insignia"
+      aria-label="RailDraw Vande Bharat insignia"
     >
       <defs>
         <clipPath id={clipId}>
           <rect x="0" y="0" width="108" height="108" rx="24" />
         </clipPath>
-        <radialGradient id={bgGradId} cx="50%" cy="30%" r="75%">
-          <stop offset="0%" stopColor="#163D66" />
-          <stop offset="60%" stopColor="#0D2540" />
-          <stop offset="100%" stopColor="#071324" />
-        </radialGradient>
-        <linearGradient id={noseGradId} x1="54" y1="18" x2="54" y2="76" gradientUnits="userSpaceOnUse">
+        <linearGradient id={noseGradId} x1="32" y1="18" x2="76" y2="76" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FFFFFF" />
-          <stop offset="70%" stopColor="#F1F5F9" />
+          <stop offset="55%" stopColor="#F8FAFC" />
           <stop offset="100%" stopColor="#CBD5E1" />
         </linearGradient>
-        <radialGradient id={glowGradId} cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.45" />
-          <stop offset="100%" stopColor="#38BDF8" stopOpacity="0" />
-        </radialGradient>
       </defs>
 
       <g clipPath={showFrame ? `url(#${clipId})` : undefined}>
         {showFrame && (
           <>
-            <rect width="108" height="108" rx="24" fill={`url(#${bgGradId})`} />
-            {/* Subtle S&T signal-arc aura behind train nose */}
-            <circle cx="54" cy="48" r="36" fill={`url(#${glowGradId})`} />
-            <path
-              d="M22,38 A34,34 0 0,1 86,38"
-              stroke="#38BDF8"
-              strokeOpacity="0.28"
-              strokeWidth="1.2"
-              strokeDasharray="3 4"
-              strokeLinecap="round"
-            />
-            <rect
-              x="1"
-              y="1"
-              width="106"
-              height="106"
-              rx="23"
-              stroke="#FFFFFF"
-              strokeOpacity="0.14"
-              strokeWidth="1.5"
-            />
+            {/* Identical Deep Railway Night Navy Background + Sweeping Tricolour Ribbons */}
+            <rect width="108" height="108" rx="24" fill="#071426" />
+            <path d="M0,0 L108,0 L108,56 Q54,74 0,56 Z" fill="#0E294B" />
+            <path d="M0,73 Q54,61 108,73 L108,78 Q54,66 0,78 Z" fill="#FF9933" />
+            <path d="M0,78.5 Q54,66.5 108,78.5 L108,83.5 Q54,71.5 0,83.5 Z" fill="#FFFFFF" />
+            <path d="M0,84 Q54,72 108,84 L108,89 Q54,77 0,89 Z" fill="#138808" />
           </>
         )}
 
-        {/* Perspective Rails */}
+        {/* Converging Perspective Steel Rails */}
         <path
-          d="M32,94 L43,72 M76,94 L65,72"
-          stroke="#94A3B8"
-          strokeOpacity="0.85"
-          strokeWidth="2.2"
+          d="M31,89 L45,73 M77,89 L63,73"
+          stroke="#CBD5E1"
+          strokeWidth="2.4"
           strokeLinecap="round"
         />
         <path
-          d="M34.5,87 L73.5,87 M38.5,80.5 L69.5,80.5"
+          d="M34,84.5 L74,84.5 M38.5,79.5 L69.5,79.5"
           stroke="#64748B"
-          strokeOpacity="0.7"
           strokeWidth="1.5"
           strokeLinecap="round"
         />
 
-        {/* Sleek Aerodynamic Vande Bharat Nose */}
+        {/* Vande Bharat Sleek Tapered Aerodynamic Bullet Nose Shell */}
         <path
-          d="M54,17.5 C66.5,17.5 74.5,25.5 77,40 L79,59.5 C79,67.5 72.8,73.5 64.2,75 L43.8,75 C35.2,73.5 29,67.5 29,59.5 L31,40 C33.5,25.5 41.5,17.5 54,17.5 Z"
+          d="M54,18 C61,18 66,21 69,28 L76,48 C78.5,56 76.5,64 70.5,69.5 L59,75.5 C55.8,77 52.2,77 49,75.5 L37.5,69.5 C31.5,64 29.5,56 32,48 L39,28 C42,21 47,18 54,18 Z"
           fill={`url(#${noseGradId})`}
         />
-
-        {/* Lower Aerodynamic Skirt */}
         <path
-          d="M29.5,55 C37.5,60.2 45.8,62.5 54,62.5 C62.2,62.5 70.5,60.2 78.5,55 L78.8,61 C78,68 72.2,73.5 64.2,75 L43.8,75 C35.8,73.5 30,68 29.2,61 Z"
-          fill="#1D4ED8"
+          d="M54,18 C61,18 66,21 69,28 L76,48 C78.5,56 76.5,64 70.5,69.5 L59,75.5 C56.5,76.6 55,76.8 54,76.8 L54,18 Z"
+          fill="#E2E8F0"
+          fillOpacity="0.65"
         />
 
-        {/* Coupler & Cowcatcher */}
-        <path d="M38.5,69.5 L69.5,69.5 L65,75 L43,75 Z" fill="#0B1F3A" />
-
-        {/* Panoramic Cockpit Windshield */}
+        {/* Signature Vande Bharat Electric Blue Lower Nose Fairing & Wedge Skirt */}
         <path
-          d="M54,25.5 C63.8,25.5 70,31.8 72.4,42 C66.4,45.5 60.2,47.2 54,47.2 C47.8,47.2 41.6,45.5 35.6,42 C38,31.8 44.2,25.5 54,25.5 Z"
-          fill="#0F172A"
+          d="M31.6,51.5 Q54,60.5 76.4,51.5 L76.8,57.5 C76.4,63.5 73.2,67.8 68.5,70.8 L58.5,75.6 C55.6,77 52.4,77 49.5,75.6 L39.5,70.8 C34.8,67.8 31.6,63.5 31.2,57.5 Z"
+          fill="#0284C7"
         />
-        {/* Windshield Glass Reflection */}
+
+        {/* Lower Aerodynamic Splitter / Cowcatcher */}
         <path
-          d="M42,30.5 C46,28.2 50,27.5 54,27.5 C57.5,27.5 61,28.1 64.2,29.5 L57,43.5 L48.5,43.5 Z"
+          d="M39.5,69.5 L54,73.5 L68.5,69.5 L63.5,74.8 C57.5,77.2 50.5,77.2 44.5,74.8 Z"
+          fill="#0B1F3A"
+        />
+
+        {/* Swept-Back Wrap-Around Panoramic Black Cockpit Windshield */}
+        <path
+          d="M54,24.5 C61.5,24.5 66.5,28 69.5,35.5 L72.5,44.5 C66.2,48 60,49.5 54,49.5 C48,49.5 41.8,48 35.5,44.5 L38.5,35.5 C41.5,28 46.5,24.5 54,24.5 Z"
+          fill="#091324"
+        />
+
+        {/* Windshield Glass Diagonal Sky Glint */}
+        <path
+          d="M41.5,31.5 C45,27.8 49.2,26.8 53.2,26.8 L49.2,40.5 C44.5,40 40.5,38.8 37.8,37.2 Z"
           fill="#38BDF8"
-          fillOpacity="0.16"
+          fillOpacity="0.85"
         />
 
-        {/* Top Signal Destination Beacon */}
-        <rect x="49" y="20.8" width="10" height="2.8" rx="1.4" fill="#F59E0B" />
+        {/* Top Destination LED Beacon */}
+        <path d="M50,20.6 L58,20.6 L57,23.2 L51,23.2 Z" fill="#FACC15" />
 
-        {/* Smooth Curved Tricolour Fairing Ribbon */}
-        <path d="M32.6,49.4 Q54,54.2 75.4,49.4 L75.9,51.6 Q54,56.4 32.1,51.6 Z" fill="#F97316" />
-        <path d="M32.1,51.6 Q54,56.4 75.9,51.6 L76.3,53.8 Q54,58.6 31.7,53.8 Z" fill="#FFFFFF" />
-        <path d="M31.7,53.8 Q54,58.6 76.3,53.8 L76.7,56.0 Q54,60.8 31.3,56.0 Z" fill="#16A34A" />
+        {/* Sleek V-Curved Tricolour Nose Chevron (Saffron, White, Green) */}
+        <path d="M32.4,48.2 Q54,57.5 75.6,48.2 L76.0,50.5 Q54,59.8 32.0,50.5 Z" fill="#FF9933" />
+        <path d="M32.0,50.5 Q54,59.8 76.0,50.5 L76.3,52.8 Q54,62.1 31.7,52.8 Z" fill="#FFFFFF" />
+        <path d="M31.7,52.8 Q54,62.1 76.3,52.8 L76.6,55.1 Q54,64.4 31.4,55.1 Z" fill="#138808" />
 
-        {/* Modern LED Headlamps */}
-        <path d="M34.5,59.2 L44.5,62.2 L43,65.2 L33.8,62.2 Z" fill="#E0F2FE" />
-        <path d="M73.5,59.2 L63.5,62.2 L65,65.2 L74.2,62.2 Z" fill="#E0F2FE" />
-        <circle
-          cx="39.2"
-          cy="62.2"
-          r="1.3"
+        {/* Sharp Angled Vande Bharat Twin LED Headlamps */}
+        <path d="M34.2,57.5 L46.0,62.4 L44.4,65.8 L33.5,61.0 Z" fill="#E0F2FE" />
+        <path d="M73.8,57.5 L62.0,62.4 L63.6,65.8 L74.5,61.0 Z" fill="#E0F2FE" />
+        <path
+          d="M36.5,59.6 L43.5,62.6 L42.8,64.1 L35.8,61.1 Z"
           fill="#38BDF8"
           className={isAnimated ? 'animate-pulse' : undefined}
         />
-        <circle
-          cx="68.8"
-          cy="62.2"
-          r="1.3"
+        <path
+          d="M71.5,59.6 L64.5,62.6 L65.2,64.1 L72.2,61.1 Z"
           fill="#38BDF8"
           className={isAnimated ? 'animate-pulse' : undefined}
         />
 
-        {/* Center Aerodynamic Seam */}
-        <path d="M54,47.2 L54,69" stroke="#94A3B8" strokeOpacity="0.7" strokeWidth="1" />
+        {/* Aerodynamic Center Nose Ridge */}
+        <path d="M54,49.5 L54,73.5" stroke="#CBD5E1" strokeWidth="1.1" />
       </g>
     </svg>
   );

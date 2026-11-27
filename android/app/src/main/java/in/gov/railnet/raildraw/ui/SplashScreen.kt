@@ -178,22 +178,17 @@ fun SplashScreen(
                     .size(116.dp)
                     .clip(RoundedCornerShape(cornerRadiusDp.value.dp))
                     .background(glassCardBg)
-                    .border(1.dp, glassBorder, RoundedCornerShape(cornerRadiusDp.value.dp)),
+                    .border(1.dp, glassBorder, RoundedCornerShape(cornerRadiusDp.value.dp))
+                    .padding(10.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Box(
+                Image(
+                    painter = painterResource(id = R.drawable.ic_raildraw_logo),
+                    contentDescription = "RailDraw Logo",
                     modifier = Modifier
-                        .size(88.dp)
+                        .fillMaxSize()
                         .clip(RoundedCornerShape(22.dp))
-                        .background(RailwayNavy),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_raildraw_logo),
-                        contentDescription = "RailDraw Logo",
-                        modifier = Modifier.size(66.dp)
-                    )
-                }
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))

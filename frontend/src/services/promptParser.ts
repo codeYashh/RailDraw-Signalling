@@ -58,7 +58,25 @@ function reconcileSegmentsToTotal(
       cloned[normalIdx].length = newLen;
       return {
         segments: cloned,
-        explanation: `Adjusted Normal Trenching from ${oldLen} m to ${newLen} m (+${diff} m) to match ${targetTotal} m total.`,
+        explanation: `Calibrated Normal Trenching from ${oldLen} m to ${newLen} m (+${diff} m) to match ${targetTotal} m total.`,
+      };
+    }
+    // If there is a dominant continuous run (Cable Trough / Cable Tray / Pipe), extend it minimally without adding clutter
+    let mainRunIdx = -1;
+    cloned.forEach((s, idx) => {
+      if (s.layingMethod === 'Cable Trough' || s.layingMethod === 'Cable Tray' || s.layingMethod === 'HDPE Pipe' || s.layingMethod === 'GI Pipe' || s.layingMethod === 'RCC Pipe') {
+        if (mainRunIdx === -1 || s.length > cloned[mainRunIdx].length) {
+          mainRunIdx = idx;
+        }
+      }
+    });
+    if (mainRunIdx >= 0 && cloned[mainRunIdx].length >= currentSum * 0.4) {
+      const oldLen = cloned[mainRunIdx].length;
+      const newLen = round1(oldLen + diff);
+      cloned[mainRunIdx].length = newLen;
+      return {
+        segments: cloned,
+        explanation: `Calibrated ${cloned[mainRunIdx].layingMethod} from ${oldLen} m to ${newLen} m (+${diff} m) to match ${targetTotal} m total.`,
       };
     }
     if (cloned.length === 1 && diff >= 40) {
@@ -70,13 +88,13 @@ function reconcileSegmentsToTotal(
           cloned[0],
           makeSegment(3, half2, 'Normal Trenching', customDepth),
         ],
-        explanation: `Added ${half1} m and ${half2} m of Normal Trenching around ${cloned[0].layingMethod} to match ${targetTotal} m total.`,
+        explanation: `Calibrated route with ${half1} m and ${half2} m of Normal Trenching around ${cloned[0].layingMethod} to match ${targetTotal} m total.`,
       };
     }
     cloned.push(makeSegment(cloned.length + 1, diff, 'Normal Trenching', customDepth));
     return {
       segments: cloned,
-      explanation: `Added ${diff} m of Normal Trenching to fill the gap and match ${targetTotal} m total.`,
+      explanation: `Added ${diff} m of Normal Trenching to calibrate ${targetTotal} m total.`,
     };
   }
 
@@ -760,8 +778,9 @@ export function parseNaturalLanguagePrompt(
   const customDepth = depthMatch ? parseFloat(depthMatch[1] || depthMatch[2]) : undefined;
 
   // 2. Detect Explicit Route Segments (supports m & km, English & Hindi)
+  // \b before \d+ prevents matching digits inside location IDs like S12, P4, L1
   const segmentRegex =
-    /(\d+(?:\.\d+)?)\s*(km|kilometer|kilometers|kilometre|kilometres|m|meter|meters|metre|metres|मीटर|मी)?\s*(?:of|in|via|by|का|पर|में)?\s*(trenchless(?:\s*-\s*hdd|\s*hdd)?|hdd|ट्रेंचलेस|एचडीडी|gi\s*pipes?|जीआई\s*पाइप|rcc\s*pipes?|आरसीसी\s*पाइप|hdpe(?:\s*pipes?)?|dwc(?:\s*pipes?)?|एचडीपीई|normal\s*trenching|open\s*trenching|soil\s*trenching|trenching|trench|नॉर्मल\s*ट्रेंचिंग|ट्रेंचिंग|ट्रेंच|खाई|मिट्टी\s*में|जमीन\s*में|track\s*crossings?|rail\s*crossings?|ट्रैक\s*क्रॉसिंग|रेल\s*क्रॉसिंग|पटरी\s*क्रॉसिंग|road\s*crossings?|सड़क\s*क्रॉसिंग|रोड\s*क्रॉसिंग|along\s*bridge|bridge(?:\s*crossing)?|पुल|ब्रिज|culvert(?:\s*crossings?)?|कल्वर्ट(?:\s*क्रॉसिंग)?|नाला|cable\s*trays?|केबल\s*ट्रे|ट्रे|cable\s*troughs?|केबल\s*ट्रफ|ट्रफ)/gi;
+    /\b(\d+(?:\.\d+)?)\s*(km|kilometer|kilometers|kilometre|kilometres|m|meter|meters|metre|metres|मीटर|मी)?\s*(?:of|in|via|by|का|पर|में)?\s*(trenchless(?:\s*-\s*hdd|\s*hdd)?|hdd|ट्रेंचलेस|एचडीडी|gi\s*pipes?|जीआई\s*पाइप|rcc\s*pipes?|आरसीसी\s*पाइप|hdpe(?:\s*pipes?)?|dwc(?:\s*pipes?)?|एचडीपीई|normal\s*trenching|open\s*trenching|soil\s*trenching|trenching|trench|नॉर्मल\s*ट्रेंचिंग|ट्रेंचिंग|ट्रेंच|खाई|मिट्टी\s*में|जमीन\s*में|track\s*crossings?|rail\s*crossings?|ट्रैक\s*क्रॉसिंग|रेल\s*क्रॉसिंग|पटरी\s*क्रॉसिंग|road\s*crossings?|सड़क\s*क्रॉसिंग|रोड\s*क्रॉसिंग|along\s*bridge|bridge(?:\s*crossing)?|पुल|ब्रिज|culvert(?:\s*crossings?)?|कल्वर्ट(?:\s*क्रॉसिंग)?|नाला|cable\s*trays?|केबल\s*ट्रे|ट्रे|cable\s*troughs?|केबल\s*ट्रफ|ट्रफ)/gi;
 
   const parsedSegments: RouteSegment[] = [];
   let segMatch: RegExpExecArray | null;
@@ -842,61 +861,67 @@ export function parseNaturalLanguagePrompt(
     }
   }
 
-  // 4. Assemble Segments & Detect Any Dimension Mismatch for User Approval
-  let mismatchMeta: {
-    specifiedTotal: number;
-    segmentsSum: number;
-    originalSegments: RouteSegment[];
-    adjustedSegments: RouteSegment[];
-    adjustedExplanation: string;
-  } | null = null;
+  // 4. Assemble Segments & Silently Auto-Calibrate Unmeasured or Mismatched Totals
+  const detectUnmeasuredMethods = (): LayingMethod[] => {
+    const mentioned: LayingMethod[] = [];
+    if (lower.includes('track crossing') || lower.includes('rail crossing') || lower.includes('ट्रैक क्रॉसिंग')) mentioned.push('Track crossing');
+    if (lower.includes('road crossing') || lower.includes('सड़क क्रॉसिंग')) mentioned.push('Road crossing');
+    if (lower.includes('trenchless') || lower.includes('hdd') || lower.includes('ट्रेंचलेस')) mentioned.push('Trenchless-HDD');
+    if (lower.includes('bridge') || lower.includes('पुल') || lower.includes('ब्रिज')) mentioned.push('Along Bridge');
+    if (lower.includes('culvert') || lower.includes('कल्वर्ट')) mentioned.push('Culvert crossing');
+    if (lower.includes('rcc')) mentioned.push('RCC Pipe');
+    if (lower.includes('hdpe') || lower.includes('dwc')) mentioned.push('HDPE Pipe');
+    if (lower.includes('gi pipe') || lower.includes('जीआई पाइप')) mentioned.push('GI Pipe');
+    if (lower.includes('trough') || lower.includes('ट्रफ')) mentioned.push('Cable Trough');
+    if (lower.includes('tray') || lower.includes('ट्रे')) mentioned.push('Cable Tray');
+    if (lower.includes('normal trench') || lower.includes('trenching') || lower.includes('ट्रेंचिंग')) mentioned.push('Normal Trenching');
+    return mentioned;
+  };
 
   if (parsedSegments.length > 0) {
-    const sumParsed = round1(parsedSegments.reduce((acc, s) => acc + s.length, 0));
+    // Include any laying methods mentioned without explicit measurements
+    const existingMethods = new Set(parsedSegments.map((s) => s.layingMethod));
+    const missingMethods = detectUnmeasuredMethods().filter((m) => !existingMethods.has(m));
+    if (missingMethods.length > 0) {
+      let currentSum = round1(parsedSegments.reduce((acc, s) => acc + s.length, 0));
+      missingMethods.forEach((m, idx) => {
+        const isLast = idx === missingMethods.length - 1;
+        const remaining = specifiedTotal !== null ? round1(specifiedTotal - currentSum) : 0;
+        let alloc = 30;
+        if (m === 'Along Bridge' || m === 'GI Pipe' || m === 'RCC Pipe' || m === 'HDPE Pipe') alloc = 50;
+        if ((m === 'Normal Trenching' || m === 'Cable Trough') && isLast && remaining > 20) {
+          alloc = remaining;
+        } else if (specifiedTotal !== null && remaining > 0) {
+          alloc = Math.max(10, Math.min(alloc, Math.round(remaining / (missingMethods.length - idx))));
+        }
+        parsedSegments.push(makeSegment(parsedSegments.length + 1, alloc, m, customDepth));
+        currentSum = round1(currentSum + alloc);
+      });
+    }
 
+    const sumParsed = round1(parsedSegments.reduce((acc, s) => acc + s.length, 0));
     if (specifiedTotal !== null && Math.abs(sumParsed - specifiedTotal) > 0.01) {
       const reconciled = reconcileSegmentsToTotal(parsedSegments, specifiedTotal, customDepth);
       project.segments = reconciled.segments;
-      mismatchMeta = {
-        specifiedTotal,
-        segmentsSum: sumParsed,
-        originalSegments: parsedSegments,
-        adjustedSegments: reconciled.segments,
-        adjustedExplanation: reconciled.explanation,
-      };
     } else {
       project.segments = parsedSegments;
     }
   } else {
-    // No explicit per-segment breakdown — synthesize an authentic route matching the prompt's total length & keywords!
+    // No explicit per-segment breakdown — synthesize an authentic calibrated route!
     const fallbackAnyLen = lower.match(/\b(\d+(?:\.\d+)?)\s*(km|m|meter|meters|metre|metres|मीटर)\b/i);
     let routeTotal = specifiedTotal;
     if (routeTotal === null && fallbackAnyLen) {
       let v = parseFloat(fallbackAnyLen[1]);
       if ((fallbackAnyLen[2] || '').toLowerCase().startsWith('km')) v *= 1000;
-      // Ignore small depth numbers like 1.0m or 1.5m when looking for route length
       if (v >= 10) routeTotal = v;
     }
     if (routeTotal === null) {
-      // Pick a realistic default based on prompt type
-      routeTotal = lower.includes('yard') ? 800 : lower.includes('bridge') ? 300 : lower.includes('gate') ? 450 : 250;
+      routeTotal = lower.includes('yard') ? 800 : lower.includes('bridge') ? 300 : lower.includes('gate') ? 450 : 500;
     }
 
-    // Detect any qualitative laying methods mentioned without explicit sub-lengths
-    const mentionedMethods: LayingMethod[] = [];
-    if (lower.includes('track crossing') || lower.includes('rail crossing') || lower.includes('ट्रैक क्रॉसिंग')) mentionedMethods.push('Track crossing');
-    if (lower.includes('road crossing') || lower.includes('सड़क क्रॉसिंग')) mentionedMethods.push('Road crossing');
-    if (lower.includes('trenchless') || lower.includes('hdd') || lower.includes('ट्रेंचलेस')) mentionedMethods.push('Trenchless-HDD');
-    if (lower.includes('bridge') || lower.includes('पुल')) mentionedMethods.push('Along Bridge');
-    if (lower.includes('culvert') || lower.includes('कल्वर्ट')) mentionedMethods.push('Culvert crossing');
-    if (lower.includes('rcc')) mentionedMethods.push('RCC Pipe');
-    if (lower.includes('hdpe') || lower.includes('dwc')) mentionedMethods.push('HDPE Pipe');
-    if (lower.includes('gi pipe') || lower.includes('जीआई पाइप')) mentionedMethods.push('GI Pipe');
-    if (lower.includes('trough')) mentionedMethods.push('Cable Trough');
-    if (lower.includes('tray')) mentionedMethods.push('Cable Tray');
+    const mentionedMethods = detectUnmeasuredMethods().filter((m) => m !== 'Normal Trenching');
 
     if (mentionedMethods.length === 0) {
-      // Pure single-method normal trenching of exact requested length
       project.segments = [makeSegment(1, routeTotal, 'Normal Trenching', customDepth)];
     } else if (mentionedMethods.length === 1 && !lower.includes('trench')) {
       const m = mentionedMethods[0];
@@ -914,7 +939,6 @@ export function parseNaturalLanguagePrompt(
         project.segments = [makeSegment(1, routeTotal, m, customDepth)];
       }
     } else {
-      // Split proportionally across mentioned methods + normal trenching
       const specialShare = Math.min(0.45, mentionedMethods.length * 0.15);
       const eachSpecial = Math.max(10, Math.round((routeTotal * specialShare) / mentionedMethods.length));
       const specialTotal = eachSpecial * mentionedMethods.length;
@@ -1035,7 +1059,7 @@ export function parseNaturalLanguagePrompt(
     specifiedTotal !== null ||
     Boolean(cableMatch || singleCoreMatch) ||
     project.placedSymbols.length > 0 ||
-    /\b(cable|route|signal|trench|pipe|hdd|track|road|bridge|culvert|point|axle|earth|location|loc|cabin|station|gate|yard|ofc|core|meter|metre|km|drawing|plan|केबल|रूट|सिग्नल|ट्रेंच|पाइप|मीटर)\b/i.test(lower);
+    /\b(cable|route|signal|trench|pipe|hdd|track|road|bridge|culvert|trough|tray|relay|hut|box|point|axle|earth|location|loc|cabin|station|gate|yard|ofc|core|meter|metre|km|drawing|plan|s\d+|p\d+|pm\d+|l\d+|केबल|रूट|सिग्नल|ट्रेंच|पाइप|मीटर|पुल|ब्रिज|ट्रफ|ट्रे|कल्वर्ट|क्रॉसिंग)\b/i.test(lower);
 
   if (!hasAnySignalKeyword) {
     return {
@@ -1051,47 +1075,6 @@ export function parseNaturalLanguagePrompt(
 
   const summary = detectedParts.join(' • ');
   const hindiSummary = `${project.startNode.id} से ${project.endNode.id} • कुल लम्बाई: ${totalLength} मीटर`;
-
-  if (mismatchMeta) {
-    const adjustedProject: DrawingProject = JSON.parse(JSON.stringify(project));
-    adjustedProject.segments = mismatchMeta.adjustedSegments;
-    adjustedProject.name = `${adjustedProject.startNode.id} to ${adjustedProject.endNode.id} (${mismatchMeta.specifiedTotal}m)`;
-
-    const sumMatchedProject: DrawingProject = JSON.parse(JSON.stringify(project));
-    sumMatchedProject.segments = mismatchMeta.originalSegments;
-    sumMatchedProject.name = `${sumMatchedProject.startNode.id} to ${sumMatchedProject.endNode.id} (${mismatchMeta.segmentsSum}m)`;
-
-    const diff = round1(mismatchMeta.specifiedTotal - mismatchMeta.segmentsSum);
-    const adjustedSegmentsSummary = mismatchMeta.adjustedSegments
-      .map((s) => `${s.length} m ${s.layingMethod}`)
-      .join(' + ');
-    const sumMatchedSegmentsSummary = mismatchMeta.originalSegments
-      .map((s) => `${s.length} m ${s.layingMethod}`)
-      .join(' + ');
-
-    const dimensionProposal: DimensionProposal = {
-      specifiedTotal: mismatchMeta.specifiedTotal,
-      segmentsSum: mismatchMeta.segmentsSum,
-      difference: diff,
-      issueSummary:
-        diff > 0
-          ? `Entered segments sum to ${mismatchMeta.segmentsSum} m, which is ${diff} m short of the stated ${mismatchMeta.specifiedTotal} m total.`
-          : `Entered segments sum to ${mismatchMeta.segmentsSum} m, which exceeds the stated ${mismatchMeta.specifiedTotal} m total by ${Math.abs(diff)} m.`,
-      adjustedProject,
-      adjustedExplanation: mismatchMeta.adjustedExplanation,
-      adjustedSegmentsSummary,
-      sumMatchedProject,
-      sumMatchedExplanation: `Keep your exact segment lengths and update total route length to ${mismatchMeta.segmentsSum} m.`,
-      sumMatchedSegmentsSummary,
-    };
-
-    return {
-      project: adjustedProject,
-      summary,
-      hindiSummary,
-      dimensionProposal,
-    };
-  }
 
   return { project, summary, hindiSummary };
 }

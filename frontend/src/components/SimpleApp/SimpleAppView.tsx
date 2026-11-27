@@ -147,36 +147,83 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
     };
   }, [handleBack]);
 
-  // Phone swipe-to-go-back gesture (detects swipe right from left edge of screen)
+  // Left-swipe drawer gesture: swipe from left (left-to-right) opens left sidebar; swipe left closes it
   useEffect(() => {
     let touchStartX = 0;
     let touchStartY = 0;
+    let startedInInput = false;
+    let startedInCanvas = false;
+    let gestureHandled = false;
+    let tracking = false;
+
+    const tryHandleSwipe = (clientX: number, clientY: number, minDx: number) => {
+      if (!tracking || gestureHandled) return;
+      const dx = clientX - touchStartX;
+      const dy = clientY - touchStartY;
+
+      if (Math.abs(dy) > 80 || Math.abs(dy) > Math.abs(dx)) {
+        return;
+      }
+
+      if (isSidebarOpen) {
+        if (dx < -minDx) {
+          gestureHandled = true;
+          setIsSidebarOpen(false);
+        }
+        return;
+      }
+
+      if (isSymbolPickerOpen || isShareSheetOpen) return;
+
+      const allowOpenFromHome =
+        screen === 'home' && (!startedInInput || touchStartX < 72);
+      const allowOpenFromResult =
+        screen === 'result' && !isEditMode && (touchStartX < 56 || !startedInCanvas);
+
+      if ((allowOpenFromHome || allowOpenFromResult) && dx > minDx) {
+        gestureHandled = true;
+        setHistoryItems(getSavedDrawings());
+        setIsSidebarOpen(true);
+      }
+    };
 
     const onTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 1) {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
+      if (e.touches.length !== 1) {
+        tracking = false;
+        return;
       }
+      tracking = true;
+      gestureHandled = false;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      const target = e.target as HTMLElement | null;
+      startedInInput = Boolean(target?.closest('textarea, input, select'));
+      startedInCanvas = Boolean(target?.closest('#rail-cad-canvas'));
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!tracking || gestureHandled || e.touches.length !== 1) return;
+      tryHandleSwipe(e.touches[0].clientX, e.touches[0].clientY, 72);
     };
 
     const onTouchEnd = (e: TouchEvent) => {
-      if (e.changedTouches.length === 1) {
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        const dy = e.changedTouches[0].clientY - touchStartY;
-        // Edge swipe from left: started in leftmost 50px, swiped right > 60px with minimal vertical drift
-        if (touchStartX < 50 && dx > 60 && Math.abs(dy) < 80) {
-          handleBack();
-        }
+      if (!tracking || gestureHandled || e.changedTouches.length !== 1) {
+        tracking = false;
+        return;
       }
+      tryHandleSwipe(e.changedTouches[0].clientX, e.changedTouches[0].clientY, 50);
+      tracking = false;
     };
 
     window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
     window.addEventListener('touchend', onTouchEnd, { passive: true });
     return () => {
       window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchend', onTouchEnd);
     };
-  }, [handleBack]);
+  }, [isSidebarOpen, isSymbolPickerOpen, isShareSheetOpen, screen, isEditMode]);
 
   const showToast = useCallback((nextToast: ToastState) => {
     if (toastTimerRef.current) {
@@ -317,12 +364,7 @@ export const SimpleAppView: React.FC<SimpleAppViewProps> = ({
       return;
     }
 
-    if (result.dimensionProposal) {
-      setErrorMessage(null);
-      setDimensionProposal(result.dimensionProposal);
-      return;
-    }
-
+    // Automatically calibrate unmeasured or mismatched segment totals without blocking on errors
     commitGeneratedProject(result.project);
   };
 

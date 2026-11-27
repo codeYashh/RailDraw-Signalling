@@ -84,15 +84,29 @@ class DrawingParserTest {
         assertEquals(12, drawing.cableDetails.coreCount)
     }
 
-    // Test 5: Segments do not add up (500 vs 470)
+    // Test 5: Mismatched totals (500 m total vs 470 m segments) auto-calibrate silently without error
     @Test
-    fun test05_segmentsDoNotAddUp() {
+    fun test05_segmentsAutoCalibrateToTotal() {
         val input = "Cable route from L1 to L12, 500 m: 20 m trenchless, 50 m GI pipe, 400 m normal trenching, 7 cables of 12 core"
         val result = parser.parse(input)
 
-        assertTrue("Expected validation error", result is ParseResult.Error)
-        val errorMsg = (result as ParseResult.Error).message
-        assertTrue(errorMsg.contains("470") && errorMsg.contains("500"))
+        assertTrue("Expected auto-calibrated success", result is ParseResult.Success)
+        val drawing = (result as ParseResult.Success).drawing
+        assertEquals(500.0, drawing.totalLengthMeters, 0.01)
+        assertEquals(500.0, drawing.segments.sumOf { it.lengthMeters }, 0.01)
+        assertEquals(430.0, drawing.segments[2].lengthMeters, 0.01)
+    }
+
+    // Test 5b: Unmeasured prompt auto-calibrates cleanly without failing
+    @Test
+    fun test05b_unmeasuredPromptAutoCalibrates() {
+        val input = "Signal S12 to Point Machine P4 along bridge and culvert crossing"
+        val result = parser.parse(input)
+
+        assertTrue("Expected unmeasured prompt to auto-calibrate", result is ParseResult.Success)
+        val drawing = (result as ParseResult.Success).drawing
+        assertTrue(drawing.segments.isNotEmpty())
+        assertEquals(drawing.totalLengthMeters, drawing.segments.sumOf { it.lengthMeters }, 0.01)
     }
 
     // Test 6: Missing cable details (standard default applied with notice)

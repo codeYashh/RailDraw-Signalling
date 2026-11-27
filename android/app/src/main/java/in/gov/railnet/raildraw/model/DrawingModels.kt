@@ -3,9 +3,10 @@ package `in`.gov.railnet.raildraw.model
 import java.io.Serializable
 
 enum class DrawingVariant(val displayName: String, val shortLabel: String) {
-    ROUTE_PLAN("Cable Route Plan", "Route Plan"),
-    YARD_TRACK_LAYOUT("Track & Signal Yard Plan", "Track & Yard"),
-    TRENCH_CROSS_SECTION("Trench & Track Cross-Section", "Cross-Section")
+    ROUTE_PLAN("Standard Route Plan", "Standard Plan"),
+    ROUTE_SCHEDULE("Route + Chainage Table", "Route + Table"),
+    ROUTE_TRENCH("Route + Trench Detail", "Route + Detail"),
+    CLASSIC_PRINT("Classic Print Sheet", "Classic Print")
 }
 
 enum class LayingMethod(val displayName: String, val irsemRef: String) {
@@ -15,7 +16,11 @@ enum class LayingMethod(val displayName: String, val irsemRef: String) {
     RCC_PIPE("RCC Pipe", "IRSEM 15.3.3"),
     HDPE_PIPE("HDPE Pipe", "IRSEM 15.3.5"),
     ROAD_CROSSING("Road Crossing", "IRSEM 15.4.1"),
-    TRACK_CROSSING("Track Crossing", "IRSEM 15.4.2")
+    TRACK_CROSSING("Track Crossing", "IRSEM 15.4.2"),
+    ALONG_BRIDGE("Along Bridge", "IRSEM 15.4.3"),
+    CULVERT_CROSSING("Culvert Crossing", "IRSEM 15.4.4"),
+    CABLE_TROUGH("Cable Trough", "IRSEM 15.3.6"),
+    CABLE_TRAY("Cable Tray", "IRSEM 15.4.5")
 }
 
 data class RouteSegment(

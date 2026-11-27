@@ -3,7 +3,6 @@ import { Menu, Sun, Moon, Mic, MicOff, ArrowRight, AlertCircle, Radio, Sparkles 
 import { UI_LIMITS } from '../../constants/uiConstants';
 import { DimensionProposal } from '../../services/promptParser';
 import { DrawingProject } from '../../types/drawing';
-import { VandeBharatLogo } from '../Brand/VandeBharatLogo';
 import { Button } from '../ui/Button';
 import { DimensionApprovalCard } from '../ui/DimensionApprovalCard';
 
@@ -82,9 +81,8 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
           )}
         </button>
 
-        <div className="flex items-center gap-2">
-          <VandeBharatLogo size={28} />
-          <span className="text-base font-extrabold tracking-tight text-ink-primary">
+        <div className="flex items-center justify-center">
+          <span className="text-lg font-extrabold tracking-tight text-ink-primary select-none">
             RailDraw
           </span>
         </div>
@@ -119,13 +117,13 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
       </header>
 
       {/* Main Drafting Workspace - Centered with Liquid Glass Styling */}
-      <main className="flex-1 flex flex-col justify-center w-full max-w-xl mx-auto px-4 py-8 relative z-10">
+      <main className="flex-1 flex flex-col justify-center w-full max-w-xl mx-auto px-4 pt-16 pb-4 sm:pt-20 sm:pb-6 relative z-10">
         {/* Let's Create - Centered in Bigger Fonts with No Emojis */}
-        <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-ink-primary">
+        <div className="text-center mb-10 sm:mb-12">
+          <h1 className="text-[2.625rem] leading-[1.1] sm:text-5xl md:text-6xl font-black tracking-tight text-ink-primary">
             Let's Create
           </h1>
-          <p className="mt-2 text-xs sm:text-sm text-ink-muted font-medium">
+          <p className="mt-2.5 text-xs sm:text-sm text-ink-muted font-medium">
             Speak or type to generate signalling cable route plans
           </p>
         </div>
@@ -133,7 +131,7 @@ export const HomeComposer: React.FC<HomeComposerProps> = ({
         {/* Prompt Giving Area - Liquid Glass Card with Soft Rounded Corners */}
         <section
           aria-label="Route specification prompt"
-          className="glass-panel rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 border border-line/60"
+          className="mt-2 sm:mt-4 glass-panel rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 border border-line/60"
         >
           <div className="p-4 sm:p-5">
             <textarea

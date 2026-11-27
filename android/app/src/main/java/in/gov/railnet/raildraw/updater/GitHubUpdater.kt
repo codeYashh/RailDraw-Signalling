@@ -40,8 +40,16 @@ sealed class InstallLaunchResult {
 object GitHubUpdater {
     private const val REPO_OWNER = "codeYashh"
     private const val REPO_NAME = "RailDraw-Signalling"
+    private const val RAW_VERSION_JSON_URL =
+        "https://raw.githubusercontent.com/$REPO_OWNER/$REPO_NAME/main/version.json"
+    private const val GITHUB_RAW_VERSION_JSON_URL =
+        "https://github.com/$REPO_OWNER/$REPO_NAME/raw/main/version.json"
+    private const val WEB_LATEST_RELEASE_URL =
+        "https://github.com/$REPO_OWNER/$REPO_NAME/releases/latest"
     private const val LATEST_RELEASE_URL =
         "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/latest"
+    private const val FALLBACK_APK_URL =
+        "https://github.com/$REPO_OWNER/$REPO_NAME/raw/main/RailDraw.apk"
 
     private const val PREFS_NAME = "raildraw_github_updater"
     private const val KEY_LAST_AUTO_CHECK_MS = "last_auto_check_ms"
@@ -94,6 +102,85 @@ object GitHubUpdater {
         return 0
     }
 
+    private fun fetchVersionJson(urlStr: String, installedVersion: String): UpdateCheckResult? {
+        var conn: HttpURLConnection? = null
+        return try {
+            val sep = if (urlStr.contains("?")) "&" else "?"
+            val url = URL("$urlStr${sep}_cb=${System.currentTimeMillis()}")
+            conn = (url.openConnection() as HttpURLConnection).apply {
+                requestMethod = "GET"
+                connectTimeout = 8_000
+                readTimeout = 10_000
+                useCaches = false
+                setRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate")
+                setRequestProperty("User-Agent", "RailDraw-Android/$installedVersion")
+            }
+            if (conn.responseCode !in 200..299) return null
+            val body = conn.inputStream.bufferedReader().use { it.readText() }
+            val json = JSONObject(body)
+            val remoteVersion = json.optString("version", "").trim().removePrefix("v").removePrefix("V")
+            if (remoteVersion.isEmpty()) return null
+            if (compareSemver(remoteVersion, installedVersion) <= 0) {
+                return UpdateCheckResult.UpToDate(installedVersion)
+            }
+            val notes = json.optString("releaseNotes", "").trim().ifEmpty {
+                "Bug fixes and performance improvements."
+            }
+            val apkUrl = json.optString("apkUrl", "").trim().ifEmpty { FALLBACK_APK_URL }
+            UpdateCheckResult.UpdateAvailable(
+                release = ReleaseInfo(
+                    versionName = remoteVersion,
+                    tagName = "v$remoteVersion",
+                    releaseNotes = notes,
+                    apkUrl = apkUrl
+                ),
+                installedVersion = installedVersion
+            )
+        } catch (_: Exception) {
+            null
+        } finally {
+            conn?.disconnect()
+        }
+    }
+
+    private fun checkWebLatestReleaseRedirect(installedVersion: String): UpdateCheckResult? {
+        var conn: HttpURLConnection? = null
+        return try {
+            conn = (URL(WEB_LATEST_RELEASE_URL).openConnection() as HttpURLConnection).apply {
+                requestMethod = "GET"
+                instanceFollowRedirects = false
+                connectTimeout = 8_000
+                readTimeout = 10_000
+                setRequestProperty("User-Agent", "RailDraw-Android/$installedVersion")
+            }
+            val code = conn.responseCode
+            if (code !in listOf(301, 302, 303, 307, 308)) return null
+            val location = conn.getHeaderField("Location")?.trim() ?: return null
+            val tagSegment = location.substringAfterLast("/tag/", "").substringBefore("?").trim()
+            if (tagSegment.isEmpty()) return null
+            val remoteVersion = tagSegment.removePrefix("v").removePrefix("V").trim()
+            if (remoteVersion.isEmpty()) return null
+            if (compareSemver(remoteVersion, installedVersion) <= 0) {
+                return UpdateCheckResult.UpToDate(installedVersion)
+            }
+            val releaseApkUrl =
+                "https://github.com/$REPO_OWNER/$REPO_NAME/releases/download/$tagSegment/app-release.apk"
+            UpdateCheckResult.UpdateAvailable(
+                release = ReleaseInfo(
+                    versionName = remoteVersion,
+                    tagName = tagSegment,
+                    releaseNotes = "Latest RailDraw Signalling release ($tagSegment).",
+                    apkUrl = releaseApkUrl
+                ),
+                installedVersion = installedVersion
+            )
+        } catch (_: Exception) {
+            null
+        } finally {
+            conn?.disconnect()
+        }
+    }
+
     suspend fun checkForUpdate(context: Context, isAutoCheck: Boolean): UpdateCheckResult =
         withContext(Dispatchers.IO) {
             val installedVersion = getInstalledVersionName(context)
@@ -102,6 +189,17 @@ object GitHubUpdater {
                 if (isAutoCheck) {
                     markAutoChecked(context)
                 }
+
+                // 1. Primary (Zero API rate limit): GitHub web releases/latest redirect -> tag & release APK
+                checkWebLatestReleaseRedirect(installedVersion)?.let { return@withContext it }
+
+                // 2. Secondary (Zero API rate limit): Direct version.json from raw.githubusercontent.com
+                fetchVersionJson(RAW_VERSION_JSON_URL, installedVersion)?.let { return@withContext it }
+
+                // 3. Tertiary (Zero API rate limit): Direct github.com raw version.json mirror
+                fetchVersionJson(GITHUB_RAW_VERSION_JSON_URL, installedVersion)?.let { return@withContext it }
+
+                // 4. Last-resort fallback: GitHub REST API
                 val url = URL(LATEST_RELEASE_URL)
                 conn = (url.openConnection() as HttpURLConnection).apply {
                     requestMethod = "GET"
@@ -203,6 +301,9 @@ object GitHubUpdater {
             var currentUrl = apkUrl.trim()
             var redirects = 0
             while (redirects < 6) {
+                if (!currentUrl.startsWith("https://")) {
+                    return@withContext Result.failure(Exception("Only HTTPS update downloads are allowed."))
+                }
                 conn = (URL(currentUrl).openConnection() as HttpURLConnection).apply {
                     instanceFollowRedirects = false
                     connectTimeout = 15_000
@@ -274,6 +375,32 @@ object GitHubUpdater {
             if (partFile.length() < 64 * 1024) {
                 partFile.delete()
                 return@withContext Result.failure(Exception("Downloaded APK is invalid or incomplete."))
+            }
+
+            // Verify ZIP structure and matching publisher signature before launching installer
+            val sigMatches = runCatching {
+                java.util.zip.ZipFile(partFile).use { zf ->
+                    if (zf.getEntry("AndroidManifest.xml") == null || zf.getEntry("classes.dex") == null) {
+                        return@runCatching false
+                    }
+                }
+                @Suppress("DEPRECATION")
+                val installed = context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
+                @Suppress("DEPRECATION")
+                val archive = context.packageManager.getPackageArchiveInfo(partFile.absolutePath, PackageManager.GET_SIGNATURES)
+                val instSig = installed.signatures?.firstOrNull()?.toByteArray()
+                val archSig = archive?.signatures?.firstOrNull()?.toByteArray()
+                if (instSig != null && archSig != null) {
+                    val md = java.security.MessageDigest.getInstance("SHA-256")
+                    md.digest(instSig).contentEquals(md.digest(archSig))
+                } else {
+                    true
+                }
+            }.getOrDefault(false)
+
+            if (!sigMatches) {
+                partFile.delete()
+                return@withContext Result.failure(Exception("Update APK failed integrity or signature verification."))
             }
 
             if (finalFile.exists()) finalFile.delete()

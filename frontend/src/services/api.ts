@@ -4,9 +4,13 @@ import { STORAGE_KEYS, UI_LIMITS } from '../constants/uiConstants';
 import bundledSymbolManifest from '../constants/symbolManifest.json';
 import { generateClientDxf } from './dxfClient';
 
-const IS_FILE_PROTOCOL = typeof window !== 'undefined' && window.location.protocol === 'file:';
+const IS_NATIVE_SHELL =
+  typeof window !== 'undefined' &&
+  (window.location.protocol === 'file:' ||
+    window.location.hostname === 'appassets.androidplatform.net' ||
+    Boolean((window as any).AndroidBridge?.isNativeAndroid?.()));
 const API_BASE_URL =
-  typeof window !== 'undefined' && !IS_FILE_PROTOCOL
+  typeof window !== 'undefined' && !IS_NATIVE_SHELL
     ? `${window.location.protocol}//${window.location.hostname}:8000/api`
     : 'http://localhost:8000/api';
 
@@ -14,7 +18,7 @@ class ApiService {
   private isServerOnline = false;
 
   async checkServerHealth(): Promise<boolean> {
-    if (IS_FILE_PROTOCOL) {
+    if (IS_NATIVE_SHELL) {
       this.isServerOnline = false;
       return false;
     }
@@ -128,7 +132,7 @@ class ApiService {
       }
     }
 
-    if (IS_FILE_PROTOCOL) {
+    if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
       return bundledSymbolManifest as unknown as SymbolManifest;
     }
 

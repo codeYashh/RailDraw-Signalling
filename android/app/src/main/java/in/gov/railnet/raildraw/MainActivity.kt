@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.widget.Toast
@@ -33,7 +34,6 @@ import `in`.gov.railnet.raildraw.ui.UpdateAvailableDialog
 import `in`.gov.railnet.raildraw.ui.theme.RailDrawTheme
 import `in`.gov.railnet.raildraw.ui.theme.ThemePrefs
 import `in`.gov.railnet.raildraw.updater.GitHubUpdater
-import `in`.gov.railnet.raildraw.updater.InstallLaunchResult
 import `in`.gov.railnet.raildraw.updater.ReleaseInfo
 import `in`.gov.railnet.raildraw.updater.UpdateCheckResult
 import `in`.gov.railnet.raildraw.util.DrawingHistoryItem
@@ -42,16 +42,12 @@ import `in`.gov.railnet.raildraw.util.StorageUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.util.*
 
 class MainActivity : ComponentActivity() {
 
     private val parser = DrawingParser()
     private val renderer = DrawingRenderer()
-    private var pendingInstallApk: File? = null
-    private var onInstallErrorCallback: ((String) -> Unit)? = null
-    private var onInstallLaunchedCallback: (() -> Unit)? = null
 
     private val speechRecognitionLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -109,21 +105,6 @@ class MainActivity : ComponentActivity() {
                 var downloadProgress by remember { mutableStateOf(0f) }
                 var downloadStatus by remember { mutableStateOf("") }
                 var updateErrorMessage by remember { mutableStateOf<String?>(null) }
-
-                DisposableEffect(Unit) {
-                    onInstallErrorCallback = { msg ->
-                        isDownloadingUpdate = false
-                        updateErrorMessage = msg
-                    }
-                    onInstallLaunchedCallback = {
-                        isDownloadingUpdate = false
-                        availableRelease = null
-                    }
-                    onDispose {
-                        onInstallErrorCallback = null
-                        onInstallLaunchedCallback = null
-                    }
-                }
 
                 // Background throttled update check on launch (at most once every 4 hours)
                 LaunchedEffect(Unit) {
@@ -332,25 +313,16 @@ class MainActivity : ComponentActivity() {
                         downloadStatus = downloadStatus,
                         errorMessage = updateErrorMessage,
                         onUpdateNow = {
-                            updateErrorMessage = null
-                            isDownloadingUpdate = true
-                            downloadProgress = 0f
-                            downloadStatus = "Connecting..."
-                            lifecycleScope.launch {
-                                val result = GitHubUpdater.downloadApk(
-                                    context = this@MainActivity,
-                                    apkUrl = release.apkUrl,
-                                    onProgress = { prog, status ->
-                                        downloadProgress = prog
-                                        downloadStatus = status
-                                    }
-                                )
-                                result.onSuccess { apkFile ->
-                                    triggerApkInstall(apkFile)
-                                }.onFailure { err ->
-                                    isDownloadingUpdate = false
-                                    updateErrorMessage = err.localizedMessage ?: "Download failed."
+                            val targetUrl = release.apkUrl.trim()
+                            if (targetUrl.startsWith("https://")) {
+                                try {
+                                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl)))
+                                    availableRelease = null
+                                } catch (err: Exception) {
+                                    updateErrorMessage = err.localizedMessage ?: "Could not open download link."
                                 }
+                            } else {
+                                updateErrorMessage = "Invalid update URL."
                             }
                         },
                         onLater = {
@@ -362,39 +334,6 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
-        }
-    }
-
-    private fun triggerApkInstall(apkFile: File) {
-        when (val launchRes = GitHubUpdater.launchApkInstaller(this, apkFile)) {
-            is InstallLaunchResult.Launched -> {
-                pendingInstallApk = null
-                onInstallLaunchedCallback?.invoke()
-            }
-            is InstallLaunchResult.NeedsPermission -> {
-                pendingInstallApk = apkFile
-                Toast.makeText(
-                    this,
-                    "Allow 'Install unknown apps' for RailDraw, then return to continue.",
-                    Toast.LENGTH_LONG
-                ).show()
-                startActivity(launchRes.settingsIntent)
-            }
-            is InstallLaunchResult.Error -> {
-                pendingInstallApk = null
-                onInstallErrorCallback?.invoke(launchRes.message)
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val pending = pendingInstallApk ?: return
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O ||
-            packageManager.canRequestPackageInstalls()
-        ) {
-            pendingInstallApk = null
-            triggerApkInstall(pending)
         }
     }
 
